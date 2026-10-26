@@ -14,7 +14,11 @@ import { AssetPair } from './ds/components/AssetPair/AssetPair.jsx';
 import { TraderCell } from './ds/components/TraderCell/TraderCell.jsx';
 import { OverflowChips } from './ds/components/OverflowChips/OverflowChips.jsx';
 import { NetworkChip } from './ds/components/NetworkChip/NetworkChip.jsx';
-import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS } from './data/offers.js';
+import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/offers.js';
+import logoUrl from './assets/logo.svg';
+import swapIcon from './assets/icons/swap.svg';
+import checkIcon from './assets/icons/check.svg';
+import botIcon from './assets/icons/bot.svg';
 
 /**
  * peetoo · Mercado Crypto.
@@ -54,12 +58,24 @@ export default function App() {
   const [modalAmount, setModalAmount] = React.useState('');
   const [modalChain, setModalChain] = React.useState('');
   const [orderDone, setOrderDone] = React.useState(false);
-  const [light, setLight] = React.useState(false);
+  const [theme, setTheme] = React.useState('oscuro');
 
+  // Tema como en el footer de la app original: Oscuro / Claro / Sistema
+  // (Sistema sigue la preferencia del sistema operativo).
   React.useEffect(() => {
-    if (light) document.documentElement.dataset.theme = 'claro';
-    else delete document.documentElement.dataset.theme;
-  }, [light]);
+    const apply = () => {
+      const light = theme === 'claro'
+        || (theme === 'sistema' && window.matchMedia('(prefers-color-scheme: light)').matches);
+      if (light) document.documentElement.dataset.theme = 'claro';
+      else delete document.documentElement.dataset.theme;
+    };
+    apply();
+    if (theme === 'sistema') {
+      const mq = window.matchMedia('(prefers-color-scheme: light)');
+      mq.addEventListener('change', apply);
+      return () => mq.removeEventListener('change', apply);
+    }
+  }, [theme]);
 
   const paymentOptions = uniq(OFFERS.flatMap((o) => o.payment_methods));
   const chainOptions = uniq(OFFERS.flatMap((o) => o.blockchains));
@@ -116,19 +132,18 @@ export default function App() {
     <OverflowChips
       items={o.blockchains}
       maxVisible={2}
-      renderItem={(c) => <NetworkChip name={c} symbol={CHAIN_SHORT[c]} color={CHAIN_COLORS[c]} />}
+      renderItem={(c) => <NetworkChip name={c} symbol={CHAIN_SHORT[c]} color={CHAIN_COLORS[c]} src={CHAIN_SRC[c]} />}
     />
   );
 
   return (
     <div className="app">
       <header className="topbar">
-        <span className="wordmark">peetoo</span>
+        <span className="brand">
+          <img src={logoUrl} alt="Zeroo" className="logo-img" />
+        </span>
         <span className="topbar-right">
           <Badge variant="lavender">Demo · datos de muestra</Badge>
-          <IconButton label={light ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro'} onClick={() => setLight((v) => !v)}>
-            {light ? '🌙' : '☀'}
-          </IconButton>
         </span>
       </header>
 
@@ -164,7 +179,7 @@ export default function App() {
               placeholder="Cualquier blockchain"
               className="combo"
             />
-            <IconButton label="Intercambiar monedas" onClick={swapCurrencies}>⇄</IconButton>
+            <IconButton label="Intercambiar monedas" onClick={swapCurrencies}><img src={swapIcon} alt="" className="ui-icon" /></IconButton>
             <Combobox
               value={payment}
               onChange={upd(setPayment)}
@@ -249,6 +264,30 @@ export default function App() {
         </section>
       </main>
 
+      <footer className="app-footer">
+        <div className="foot-inner">
+          <span className="foot-left">
+            © {new Date().getFullYear()} Crypto as a Service™
+            <img src={botIcon} alt="" className="ui-icon-sm" />
+          </span>
+          <span className="foot-right">
+            <span className="foot-link">Legal Notice</span>
+            <span aria-hidden="true">•</span>
+            <span className="foot-link">Privacy Policy</span>
+            <SegmentedControl
+              ariaLabel="Tema"
+              options={[
+                { value: 'oscuro', label: 'Oscuro' },
+                { value: 'claro', label: 'Claro' },
+                { value: 'sistema', label: 'Sistema' },
+              ]}
+              value={theme}
+              onChange={setTheme}
+            />
+          </span>
+        </div>
+      </footer>
+
       <Modal open={!!selected} onClose={closeModal} size="lg" title={selected ? (orderDone ? 'Orden creada' : `${verb} ${selected.buy_currency}`) : ''}>
         {selected && !orderDone && (
           <div className="order-grid">
@@ -295,7 +334,7 @@ export default function App() {
         )}
         {selected && orderDone && (
           <div className="order-done">
-            <div className="done-check">✓</div>
+            <img src={checkIcon} alt="" className="ui-icon-lg" />
             <Text>Orden creada con {fmt(modalParsed)} {selected.buy_currency} a {fmt2(selected.price)} {selected.sell_currency} con {selected.advertiser_name}.</Text>
             <Text tone="muted">Datos de muestra: no se realizó ninguna operación real.</Text>
             <Button size="lg" onClick={closeModal}>Volver al mercado</Button>

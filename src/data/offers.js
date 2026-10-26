@@ -6,11 +6,32 @@
  * available, min_amount, max_amount, payment_methods, blockchains,
  * deposit_made, advertiser_*.
  */
+import usdcLogo from '../assets/coins/usdc.svg';
+import usdtLogo from '../assets/coins/usdt.svg';
+import bnbLogo from '../assets/chains/bnb-chain.svg';
+import polygonLogo from '../assets/chains/polygon.svg';
+import baseLogo from '../assets/chains/base.svg';
+import arbitrumLogo from '../assets/chains/arbitrum.svg';
+import optimismLogo from '../assets/chains/optimism.svg';
+
+/**
+ * Logos web3 copiados al proyecto desde web3icons.io (variante branded):
+ * no se enlazan en caliente, son archivos locales en src/assets/.
+ * Las fíat (CUP, USD) no tienen logo web3 y mantienen el símbolo del DS.
+ */
 export const ASSETS = {
-  USDC: { code: 'USDC', symbol: '$', color: '#2775CA' },
-  USDT: { code: 'USDT', symbol: '₮', color: '#26A17B' },
+  USDC: { code: 'USDC', symbol: '$', color: '#2775CA', src: usdcLogo },
+  USDT: { code: 'USDT', symbol: '₮', color: '#26A17B', src: usdtLogo },
   CUP: { code: 'CUP', symbol: '$', color: '#D64545' },
   USD: { code: 'USD', symbol: '$', color: '#2E7D32' },
+};
+
+export const CHAIN_SRC = {
+  'BNB Chain': bnbLogo,
+  Polygon: polygonLogo,
+  Base: baseLogo,
+  Arbitrum: arbitrumLogo,
+  Optimism: optimismLogo,
 };
 
 export const CHAIN_SHORT = {
