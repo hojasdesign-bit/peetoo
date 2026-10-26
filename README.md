@@ -1,41 +1,46 @@
 # peetoo · App P2P
 
 La app P2P de peetoo, construida con el sistema de diseño Crypto DS. Sin
-homepage: al entrar caes directo en el mercado.
+homepage: al entrar caes directo en el mercado Crypto.
 
-## Qué incluye
+## Referencia (importante)
 
-- Mercado P2P (comprar / vender) con tabla densa de ofertas.
-- Tomar orden → sala de orden (espera → pago / venta) → éxito → calificar.
-- Mis anuncios: crear anuncio → revisar y publicar → detalle.
-- Botón «🧪 Probar flujos» (abajo a la izquierda) para saltar directo a cada
-  pantalla, y toggle claro/oscuro (abajo a la derecha).
+Esta app reconstruye el mercado `/p2p/crypto/` del repo original de peetoo
+(tabla densa de ofertas, barra de filtros, modal de compra) con el lenguaje
+visual del Crypto DS. NO usa los flujos P2P de Cueva: esos flujos se
+eliminaron del sistema de diseño el 2026-10-26 para no confundirlos con el
+producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
 
-Saltos directos por hash: `/#mercado`, `/#mercado-vender`, `/#login`,
-`/#tomar-orden`, `/#sala-espera`, `/#sala-pago`, `/#sala-venta`, `/#exito`,
-`/#calificar`, `/#mis-anuncios`, `/#crear`, `/#revisar`, `/#detalle`.
+## Qué incluye (v2)
+
+- Mercado Crypto: título, barra de filtros (Comprar/Vender, cantidad +
+  moneda a comprar, blockchain, intercambiar monedas, método + moneda a
+  vender, eliminar filtros) con la misma lógica de filtrado del original.
+- Tabla densa en escritorio (Das/Recibes, Disponible/Min-Max, Precio, Red
+  blockchain, Anunciante, acción) y tarjetas en móvil.
+- Paginación de 6 por página con resumen «Mostrando X - Y de Z items».
+- Modal de compra/venta: resumen de la orden, monto con precio unitario y
+  límites, selector de blockchain y confirmación (demo).
+- Toggle claro/oscuro. Sin router: la navegación es por estado interno.
 
 ## Datos de muestra
 
-Todo lo que ves son **datos de solo muestra**: no hay login real, ni
-transacciones reales, ni conexión con Supabase u OpenFort en esta versión.
-Las ofertas de ejemplo vienen de las composiciones de flujos del Crypto DS
-(reconstruidas a partir de los videos de Cueva). Nada de lo mostrado es una
-operación real ni usa datos personales reales.
+Todo lo que ves son **datos de solo muestra**: las 10 ofertas crypto del
+repo original, sin carteras ni datos personales (los anunciantes son
+ficticios). No hay login real, ni transacciones reales, ni conexión con
+Supabase u OpenFort en esta versión.
 
 ## Stack
 
-React 19 + Vite 8. Sin router: la navegación es por estado interno y los
-saltos directos usan el hash de la URL.
+React 19 + Vite 8.
 
 ## Sistema de diseño
 
 Los componentes del Crypto DS están vendorizados en `src/ds/` (snapshot de
-`crypto-design-system` v1.11 + prop opcional `brand` en el Sidebar de los
-flujos, para que el logo diga «peetoo»). La fuente de verdad del DS sigue
-siendo el proyecto `crypto-design-system`; para actualizar el snapshot,
-volver a copiar su `src/` aquí excluyendo `*.stories.jsx`, `App.jsx`,
-`main.jsx` y los SVG de plantilla sin uso en `assets/`.
+`crypto-design-system` v1.11, sin la carpeta de flujos). La fuente de verdad
+del DS sigue siendo el proyecto `crypto-design-system`; para actualizar el
+snapshot, volver a copiar su `src/` aquí excluyendo `*.stories.jsx`,
+`App.jsx`, `main.jsx` y los SVG de plantilla sin uso en `assets/`.
 
 ## Desarrollo
 
@@ -56,7 +61,3 @@ Proyecto Pages `peetoo`, con el mismo build en dos sitios:
 npx wrangler pages deploy dist --project-name peetoo --branch main --commit-dirty=true
 npx wrangler pages deploy dist --project-name peetoo --branch app --commit-dirty=true
 ```
-
-La demo vieja con homepage (deployment `40ba58dc`, 2026-10-23) quedó
-sustituida en producción; su código sigue en `~/workspace/peetoo-original`
-y se podría redesplegar si hiciera falta.
