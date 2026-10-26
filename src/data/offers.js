@@ -8,8 +8,7 @@
  */
 import usdcLogo from '../assets/coins/usdc.svg';
 import usdtLogo from '../assets/coins/usdt.svg';
-import cupLogo from '../assets/coins/cup.png';
-import usdLogo from '../assets/coins/usd.png';
+import { cupPng, usdPng } from '../assets/coins/fiat-images.js';
 import bnbLogo from '../assets/chains/bnb-chain.svg';
 import polygonLogo from '../assets/chains/polygon.svg';
 import baseLogo from '../assets/chains/base.svg';
@@ -26,8 +25,8 @@ import optimismLogo from '../assets/chains/optimism.svg';
 export const ASSETS = {
   USDC: { code: 'USDC', symbol: '$', color: '#2775CA', src: usdcLogo },
   USDT: { code: 'USDT', symbol: '₮', color: '#26A17B', src: usdtLogo },
-  CUP: { code: 'CUP', symbol: '$', color: '#D64545', src: cupLogo },
-  USD: { code: 'USD', symbol: '$', color: '#2E7D32', src: usdLogo },
+  CUP: { code: 'CUP', symbol: '$', color: '#D64545', src: cupPng },
+  USD: { code: 'USD', symbol: '$', color: '#2E7D32', src: usdPng },
 };
 
 export const CHAIN_SRC = {
