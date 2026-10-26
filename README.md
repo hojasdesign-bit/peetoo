@@ -47,9 +47,16 @@ npm run build    # build de producción en dist/
 
 ## Despliegue
 
-Solo en la rama `app` del proyecto Pages `peetoo` (subdominio
-`app.peetoo.pages.dev`). La producción `peetoo.pages.dev` NO se toca.
+Proyecto Pages `peetoo`, con el mismo build en dos sitios:
+
+- Producción: `https://peetoo.pages.dev` (rama `main`).
+- Preview de la rama `app`: `https://app.peetoo.pages.dev` (mismo build).
 
 ```bash
+npx wrangler pages deploy dist --project-name peetoo --branch main --commit-dirty=true
 npx wrangler pages deploy dist --project-name peetoo --branch app --commit-dirty=true
 ```
+
+La demo vieja con homepage (deployment `40ba58dc`, 2026-10-23) quedó
+sustituida en producción; su código sigue en `~/workspace/peetoo-original`
+y se podría redesplegar si hiciera falta.
