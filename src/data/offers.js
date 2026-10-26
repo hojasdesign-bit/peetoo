@@ -8,6 +8,8 @@
  */
 import usdcLogo from '../assets/coins/usdc.svg';
 import usdtLogo from '../assets/coins/usdt.svg';
+import cupLogo from '../assets/coins/cup.png';
+import usdLogo from '../assets/coins/usd.png';
 import bnbLogo from '../assets/chains/bnb-chain.svg';
 import polygonLogo from '../assets/chains/polygon.svg';
 import baseLogo from '../assets/chains/base.svg';
@@ -15,15 +17,17 @@ import arbitrumLogo from '../assets/chains/arbitrum.svg';
 import optimismLogo from '../assets/chains/optimism.svg';
 
 /**
- * Logos web3 copiados al proyecto desde web3icons.io (variante branded):
- * no se enlazan en caliente, son archivos locales en src/assets/.
- * Las fíat (CUP, USD) no tienen logo web3 y mantienen el símbolo del DS.
+ * Iconos copiados al proyecto desde el repo de referencia (peetoo original,
+ * public/coins/ y public/chains/): no se enlazan en caliente, son archivos
+ * locales en src/assets/. Las cadenas son glifos blancos, pensados para ir
+ * sobre el círculo de color de la red. Las monedas llenan todo el círculo
+ * (el DS ya renderiza la imagen a 100% con object-cover).
  */
 export const ASSETS = {
   USDC: { code: 'USDC', symbol: '$', color: '#2775CA', src: usdcLogo },
   USDT: { code: 'USDT', symbol: '₮', color: '#26A17B', src: usdtLogo },
-  CUP: { code: 'CUP', symbol: '$', color: '#D64545' },
-  USD: { code: 'USD', symbol: '$', color: '#2E7D32' },
+  CUP: { code: 'CUP', symbol: '$', color: '#D64545', src: cupLogo },
+  USD: { code: 'USD', symbol: '$', color: '#2E7D32', src: usdLogo },
 };
 
 export const CHAIN_SRC = {

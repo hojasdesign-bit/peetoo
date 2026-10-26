@@ -36,12 +36,23 @@ body {
   overflow: hidden;
 }
 
+/* El fondo pautado (PageBackground) es fijo con z-index 0: el contenido
+   va por encima con position relative + z-index 1. */
+.shell, .app-footer { position: relative; z-index: 1; }
+
+/* Filtros en una sola línea horizontal: sin salto de fila; en pantallas
+   estrechas la fila se desplaza horizontalmente en vez de partirse. */
 .filters {
-  display: flex; flex-wrap: wrap; align-items: center;
-  gap: 12px; padding: 20px 24px;
+  display: flex; flex-wrap: nowrap; align-items: center;
+  gap: 8px; padding: 20px 24px;
   border-bottom: 1px solid var(--cds-border);
+  overflow-x: auto; scrollbar-width: thin;
 }
-.filters .combo { min-width: 200px; flex: 1 1 200px; }
+.filters .filter-seg { flex: 0 0 210px; }
+.filters .filter-amount { flex: 0 0 118px; }
+.filters .filter-currency { flex: 0 0 118px; }
+.filters .combo { min-width: 145px; flex: 1 1 145px; }
+.filters .filter-clear { flex: 0 0 auto; white-space: nowrap; }
 
 .table-wrap { overflow-x: auto; }
 .market-table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 14px; }

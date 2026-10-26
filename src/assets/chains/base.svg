@@ -1,3 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="web3icons">
-    <path fill="#00F" d="M3 4.706c0-.585 0-.877.11-1.101.106-.215.28-.39.496-.495C3.83 3 4.122 3 4.706 3h14.588c.585 0 .876 0 1.101.11.215.105.389.28.494.495.111.225.111.517.111 1.101v14.588c0 .585 0 .876-.11 1.101-.106.215-.28.389-.495.494-.225.111-.517.111-1.101.111H4.706c-.585 0-.876 0-1.101-.11a1.08 1.08 0 0 1-.494-.495C3 20.17 3 19.878 3 19.294z"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(8,0,0,6,0,-6)">
+        <rect x="0" y="1" width="3" height="4" style="fill:rgb(0,0,235);"/>
+    </g>
+    <g transform="matrix(0.786796,0,0,0.786796,2.558451,2.558451)">
+        <path d="M3,4.706C3,4.121 3,3.829 3.11,3.605C3.216,3.39 3.39,3.215 3.606,3.11C3.83,3 4.122,3 4.706,3L19.294,3C19.879,3 20.17,3 20.395,3.11C20.61,3.215 20.784,3.39 20.889,3.605C21,3.83 21,4.122 21,4.706L21,19.294C21,19.879 21,20.17 20.89,20.395C20.784,20.61 20.61,20.784 20.395,20.889C20.17,21 19.878,21 19.294,21L4.706,21C4.121,21 3.83,21 3.605,20.89C3.39,20.784 3.216,20.61 3.111,20.395C3,20.17 3,19.878 3,19.294L3,4.706Z" style="fill:white;fill-rule:nonzero;"/>
+    </g>
 </svg>

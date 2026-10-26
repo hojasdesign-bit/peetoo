@@ -1,10 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="web3icons">
-    <path fill="url(#polygon__a)" d="m16.364 15.217 4.27-2.435a.73.73 0 0 0 .366-.627V7.284a.72.72 0 0 0-.366-.627l-4.27-2.435a.74.74 0 0 0-.732 0l-4.27 2.435a.72.72 0 0 0-.366.627v8.704l-2.994 1.707-2.994-1.707v-3.415l2.994-1.707 1.974 1.127V9.702l-1.608-.918a.75.75 0 0 0-.732 0l-4.27 2.435a.72.72 0 0 0-.366.627v4.87c0 .258.14.498.366.627l4.27 2.436a.75.75 0 0 0 .732 0l4.27-2.436a.72.72 0 0 0 .366-.626V8.012l.053-.03 2.94-1.677 2.994 1.707v3.415l-2.994 1.707-1.972-1.124v2.291l1.606.916a.75.75 0 0 0 .732 0z"/>
-    <defs>
-        <linearGradient id="polygon__a" x1="2.942" x2="20.119" y1="17.194" y2="7.101" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#A726C1"/>
-            <stop offset=".88" stop-color="#803BDF"/>
-            <stop offset="1" stop-color="#7B3FE4"/>
-        </linearGradient>
-    </defs>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1.5,0,0,1.333333,0,0)">
+        <rect x="0" y="0" width="16" height="18" style="fill:rgb(125,73,255);"/>
+    </g>
+    <path d="M16.364,15.217L20.634,12.782C20.858,12.653 20.998,12.414 21,12.155L21,7.284C21,7.025 20.86,6.785 20.634,6.657L16.364,4.222C16.137,4.093 15.859,4.093 15.632,4.222L11.362,6.657C11.136,6.785 10.996,7.025 10.996,7.284L10.996,15.988L8.002,17.695L5.008,15.988L5.008,12.573L8.002,10.866L9.976,11.993L9.976,9.702L8.368,8.784C8.141,8.657 7.863,8.657 7.636,8.784L3.366,11.219C3.14,11.347 3,11.587 3,11.846L3,16.716C3,16.974 3.14,17.214 3.366,17.343L7.636,19.779C7.863,19.906 8.141,19.906 8.368,19.779L12.638,17.343C12.864,17.216 13.004,16.976 13.004,16.717L13.004,8.012L13.057,7.982L15.997,6.305L18.991,8.012L18.991,11.427L15.997,13.134L14.025,12.01L14.025,14.301L15.631,15.217C15.858,15.344 16.136,15.344 16.363,15.217L16.364,15.217Z" style="fill:white;fill-rule:nonzero;"/>
 </svg>

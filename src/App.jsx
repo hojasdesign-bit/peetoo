@@ -14,6 +14,7 @@ import { AssetPair } from './ds/components/AssetPair/AssetPair.jsx';
 import { TraderCell } from './ds/components/TraderCell/TraderCell.jsx';
 import { OverflowChips } from './ds/components/OverflowChips/OverflowChips.jsx';
 import { NetworkChip } from './ds/components/NetworkChip/NetworkChip.jsx';
+import { PageBackground } from './ds/components/PageBackground/PageBackground.jsx';
 import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/offers.js';
 import logoUrl from './assets/logo.svg';
 import swapIcon from './assets/icons/swap.svg';
@@ -138,6 +139,7 @@ export default function App() {
 
   return (
     <div className="app">
+      <PageBackground />
       <header className="topbar">
         <span className="brand">
           <img src={logoUrl} alt="Zeroo" className="logo-img" />
@@ -158,6 +160,7 @@ export default function App() {
               options={[{ value: 'buy', label: 'Comprar' }, { value: 'sell', label: 'Vender' }]}
               value={side}
               onChange={upd(setSide)}
+              className="filter-seg"
             />
             <Input
               placeholder="Cantidad"
@@ -165,12 +168,14 @@ export default function App() {
               inputMode="decimal"
               value={amount}
               onChange={updEvent(setAmount, (v) => v.replace(/[^0-9.]/g, ''))}
+              className="filter-amount"
             />
             <Select
               aria-label="Moneda a comprar"
               value={buyCurrency}
               onChange={updEvent(setBuyCurrency)}
               options={[{ value: 'all', label: 'Comprar' }, ...buyOptions.map((c) => ({ value: c, label: c }))]}
+              className="filter-currency"
             />
             <Combobox
               value={chain}
@@ -193,8 +198,9 @@ export default function App() {
               value={sellCurrency}
               onChange={updEvent(setSellCurrency)}
               options={[{ value: 'all', label: 'Vender' }, ...sellOptions.map((c) => ({ value: c, label: c }))]}
+              className="filter-currency"
             />
-            <Button variant="outline" onClick={clearFilters}>Eliminar filtros</Button>
+            <Button variant="outline" onClick={clearFilters} className="filter-clear">Eliminar filtros</Button>
           </div>
 
           <div className="table-wrap">
