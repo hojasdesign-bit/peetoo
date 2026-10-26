@@ -1,0 +1,29 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border: 1px solid transparent;
+  border-radius: var(--cds-radius-md);
+  background: transparent;
+  color: var(--cds-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.btn svg { display: block; }
+.btn:focus-visible { outline: none; box-shadow: var(--cds-focus-ring); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.sm { width: 32px; height: 32px; }
+.md { width: 40px; height: 40px; }
+.lg { width: 44px; height: 44px; }
+
+.ghost:hover:not(:disabled) { background: var(--cds-accent-softer); color: var(--cds-ink); }
+.surface { background: var(--cds-surface-raised); color: var(--cds-ink-2); }
+.surface:hover:not(:disabled) { background: var(--cds-surface-overlay); }
+.outline { border-color: var(--cds-border); background: var(--cds-surface); color: var(--cds-ink-2); }
+.outline:hover:not(:disabled) { border-color: var(--cds-border-strong); }
+.accent { background: var(--cds-accent); color: var(--cds-on-accent); }
+.accent:hover:not(:disabled) { background: var(--cds-accent-hover); }
+.danger { color: var(--cds-danger); }
+.danger:hover:not(:disabled) { background: rgba(239, 68, 68, 0.12); color: var(--cds-danger); }

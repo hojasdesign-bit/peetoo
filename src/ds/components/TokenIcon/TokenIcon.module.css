@@ -1,0 +1,35 @@
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--cds-gradient-accent);
+  color: var(--cds-on-accent);
+  font-family: var(--cds-font-sans);
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* ---- Tamaños ---- */
+.sm {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+.md {
+  width: 32px;
+  height: 32px;
+  font-size: 15px;
+}
+.lg {
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+}
+.xl {
+  width: 60px;
+  height: 60px;
+  font-size: 28px;
+}

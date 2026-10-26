@@ -1,0 +1,86 @@
+.card {
+  width: 100%;
+  max-width: 440px;
+  padding: var(--cds-space-5);
+  background: var(--cds-surface);
+  border: 1px solid var(--cds-border);
+  border-radius: var(--cds-radius-card);
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+}
+
+.trader { display: flex; align-items: center; gap: var(--cds-space-3); }
+
+.traderBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.traderName {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--cds-text-body);
+  font-weight: 700;
+}
+
+.traderMeta { font-size: var(--cds-text-caption); color: var(--cds-muted); }
+
+.network {
+  padding: 4px 10px;
+  border-radius: var(--cds-radius-pill);
+  background: var(--cds-accent-soft);
+  color: var(--cds-accent-hover);
+  font-size: var(--cds-text-caption);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.priceRow {
+  display: flex;
+  align-items: center;
+  gap: var(--cds-space-3);
+  margin-top: var(--cds-space-4);
+}
+
+.price {
+  font-size: var(--cds-text-h3);
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.priceNote { margin: var(--cds-space-1) 0 0; font-size: var(--cds-text-body-sm); color: var(--cds-muted); }
+
+.facts {
+  display: flex;
+  gap: var(--cds-space-6);
+  margin: var(--cds-space-4) 0 0;
+}
+
+.fact { display: flex; flex-direction: column; gap: 1px; margin: 0; }
+.fact dt { font-size: var(--cds-text-caption); color: var(--cds-faint); }
+.fact dd { margin: 0; font-size: var(--cds-text-body-sm); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cds-space-3);
+  margin-top: var(--cds-space-5);
+}
+
+.methods { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.method {
+  padding: 5px 10px;
+  border: 1px solid var(--cds-border-strong);
+  border-radius: var(--cds-radius-sm);
+  font-size: var(--cds-text-caption);
+  font-weight: 500;
+  color: var(--cds-ink-2);
+  white-space: nowrap;
+}

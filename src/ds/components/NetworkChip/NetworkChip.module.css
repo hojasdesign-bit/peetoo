@@ -1,0 +1,29 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px 4px 4px;
+  border: 1px solid var(--cds-border);
+  border-radius: var(--cds-radius-sm);
+  background: var(--cds-surface);
+  font-family: var(--cds-font-sans);
+  white-space: nowrap;
+}
+.icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--cds-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  overflow: hidden;
+}
+.img { width: 100%; height: 100%; object-fit: cover; }
+.name { font-size: var(--cds-text-caption); font-weight: 600; color: var(--cds-ink-2); }
+.sm { padding: 3px 8px 3px 3px; }
+.sm .icon { width: 16px; height: 16px; border-radius: 5px; font-size: 9px; }

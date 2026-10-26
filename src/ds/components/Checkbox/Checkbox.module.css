@@ -1,0 +1,73 @@
+.root {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--cds-space-3);
+  font-family: var(--cds-font-sans);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Input nativo: invisible pero enfocable por teclado y lectores */
+.native {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  background: var(--cds-input-bg);
+  border: 1.5px solid var(--cds-border-strong);
+  border-radius: 6px;
+  color: var(--cds-on-accent);
+  flex-shrink: 0;
+  transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.check {
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+/* Estado marcado: usa el selector de hermano del input nativo */
+.native:checked + .box {
+  background: var(--cds-accent);
+  border-color: var(--cds-accent);
+  box-shadow: var(--cds-glow-sm);
+}
+
+.native:checked + .box .check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.native:focus-visible + .box {
+  outline: none;
+  border-color: var(--cds-accent);
+  box-shadow: var(--cds-focus-ring);
+}
+
+.native:disabled + .box {
+  opacity: 0.5;
+}
+
+.label {
+  font-size: var(--cds-text-body-sm);
+  color: var(--cds-ink-2);
+  line-height: 1.5;
+}
+
+.disabled {
+  cursor: not-allowed;
+}
+
+.disabled .label { color: var(--cds-faint); }

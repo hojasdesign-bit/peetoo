@@ -1,0 +1,36 @@
+.divider {
+  font-family: var(--cds-font-sans);
+}
+
+/* ---- Horizontal ---- */
+.horizontal {
+  display: flex;
+  align-items: center;
+  gap: var(--cds-space-3);
+  width: 100%;
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  background: var(--cds-border-strong);
+}
+
+.label {
+  font-size: var(--cds-text-caption);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cds-faint);
+  white-space: nowrap;
+}
+
+/* ---- Vertical ---- */
+.vertical {
+  display: inline-block;
+  width: 1px;
+  align-self: stretch;
+  min-height: 16px;
+  background: var(--cds-border-strong);
+  flex-shrink: 0;
+}

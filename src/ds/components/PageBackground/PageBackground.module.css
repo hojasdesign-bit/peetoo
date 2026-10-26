@@ -1,0 +1,21 @@
+.root {
+  --pb-bg: #101010;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--pb-bg);
+}
+.glow {
+  position: absolute;
+  left: 50%;
+  top: calc(100vh - 195px);
+  width: 2688px;
+  height: 920px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse closest-side, rgba(70, 8, 227, 0.76) 0%, rgba(70, 8, 227, 0.70) 20%, rgba(70, 8, 227, 0.59) 35%, rgba(70, 8, 227, 0.46) 50%, rgba(70, 8, 227, 0.32) 65%, rgba(70, 8, 227, 0.19) 80%, rgba(70, 8, 227, 0.10) 90%, rgba(70, 8, 227, 0) 100%);
+}
+.glowCenter { top: 50%; }
+:global([data-theme="claro"]) .root { --pb-bg: #f3f4f9; }
+:global([data-theme="claro"]) .glow { opacity: 0.28; }

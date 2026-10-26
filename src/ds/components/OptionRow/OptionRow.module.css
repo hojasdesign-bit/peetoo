@@ -1,0 +1,63 @@
+/* OptionRow — fila de panel: fondo #202020, radio 12 (medido en el widget) */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--cds-space-3);
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  background: var(--cds-row-bg);
+  border: 1px solid transparent;
+  border-radius: var(--cds-radius-tile);
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-body);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.row:hover:not(:disabled) { border-color: var(--cds-border-strong); }
+.row:focus-visible { outline: none; box-shadow: var(--cds-focus-ring); }
+.row:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label { font-weight: 500; line-height: 1.3; }
+
+.code {
+  margin-left: var(--cds-space-2);
+  color: var(--cds-faint);
+  font-weight: 400;
+}
+
+.meta {
+  margin-left: auto;
+  color: var(--cds-muted);
+  font-size: var(--cds-text-body-sm);
+  white-space: nowrap;
+}
+
+/* Insignia de seleccionado: círculo blanco con check oscuro
+   (en claro, círculo de marca con check blanco) */
+.check {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--cds-check-bg);
+  color: var(--cds-check-ink);
+}
+
+.meta + .check { margin-left: var(--cds-space-2); }

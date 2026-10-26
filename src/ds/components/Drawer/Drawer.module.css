@@ -1,0 +1,94 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(6, 6, 8, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: cds-drawer-fade 0.2s ease;
+}
+
+.panel {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  background: var(--cds-surface);
+  border: 1px solid var(--cds-border);
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+  box-shadow: var(--cds-shadow-lg);
+}
+.panel:focus { outline: none; }
+
+/* ---- Posiciones ---- */
+.right {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 94vw);
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+  animation: cds-drawer-in-right 0.3s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 82vh;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: var(--cds-radius-xl) var(--cds-radius-xl) 0 0;
+  animation: cds-drawer-in-bottom 0.3s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cds-space-4);
+  padding: var(--cds-space-5) var(--cds-space-6) var(--cds-space-2);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--cds-text-h4);
+  font-weight: 700;
+  letter-spacing: var(--cds-tracking-tight);
+  color: var(--cds-ink);
+}
+
+.close {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--cds-muted);
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+.close:hover { background: var(--cds-accent-softer); color: var(--cds-ink); }
+.close:focus-visible { outline: none; box-shadow: var(--cds-focus-ring); }
+
+.body {
+  padding: var(--cds-space-4) var(--cds-space-6) var(--cds-space-6);
+  overflow-y: auto;
+  font-size: var(--cds-text-body);
+  line-height: 1.6;
+  color: var(--cds-ink-2);
+}
+
+@keyframes cds-drawer-fade { from { opacity: 0; } }
+@keyframes cds-drawer-in-right { from { transform: translateX(100%); } }
+@keyframes cds-drawer-in-bottom { from { transform: translateY(100%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .panel { animation: none; }
+}

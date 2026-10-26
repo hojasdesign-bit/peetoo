@@ -1,0 +1,80 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cds-space-2);
+  border: 0;
+  border-radius: var(--cds-radius-lg);
+  font-family: var(--cds-font-sans);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease, border-color 0.18s ease, filter 0.18s ease;
+  white-space: nowrap;
+}
+
+.button:active:not(:disabled) { transform: translateY(1px) scale(0.99); }
+.button:disabled { cursor: not-allowed; opacity: 0.55; }
+
+/* ---- Variantes ---- */
+.primary {
+  background: var(--cds-accent);
+  color: var(--cds-on-accent);
+}
+.primary:hover:not(:disabled) { background: var(--cds-accent-hover); filter: brightness(1.08); }
+
+.secondary {
+  background: transparent;
+  color: var(--cds-ink);
+  border: 1px solid var(--cds-border-strong);
+}
+.secondary:hover:not(:disabled) { border-color: var(--cds-accent); color: var(--cds-accent-hover); }
+
+.ghost {
+  background: transparent;
+  color: var(--cds-muted);
+}
+.ghost:hover:not(:disabled) { color: var(--cds-ink); background: var(--cds-accent-softer); }
+
+.dark {
+  background: var(--cds-cta-dark);
+  color: #ffffff;
+}
+.dark:hover:not(:disabled) { background: var(--cds-cta-dark-hover); }
+
+.surface {
+  background: var(--cds-surface-btn);
+  color: var(--cds-ink);
+}
+.surface:hover:not(:disabled) { background: var(--cds-accent-soft); }
+
+.outline {
+  background: transparent;
+  color: var(--cds-ink);
+  border: 1px solid var(--cds-border-accent);
+}
+.outline:hover:not(:disabled) { border-color: var(--cds-accent); }
+
+/* ---- Tamaños ---- */
+.sm { height: 36px; padding: 0 14px; font-size: var(--cds-text-body-sm); }
+.md { height: 44px; padding: 0 18px; font-size: var(--cds-text-body); }
+.lg { height: 48px; padding: 0 20px; font-size: var(--cds-text-body); font-weight: 700; }
+.xl { height: 56px; padding: 0 20px; font-size: var(--cds-text-body-lg); font-weight: 700; }
+
+.fullWidth { width: 100%; }
+
+.icon, .arrow { display: inline-flex; flex-shrink: 0; }
+.arrow { transition: transform 0.18s ease; }
+.button:hover .arrow { transform: translateX(3px); }
+
+/* ---- Loading ---- */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: cds-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes cds-spin { to { transform: rotate(360deg); } }

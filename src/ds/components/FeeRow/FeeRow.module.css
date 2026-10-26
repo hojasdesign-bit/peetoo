@@ -1,0 +1,32 @@
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--cds-space-4);
+  font-family: var(--cds-font-sans);
+}
+
+.label {
+  font-size: var(--cds-text-body-sm);
+  color: var(--cds-muted);
+}
+
+.value {
+  font-size: var(--cds-text-body-sm);
+  font-weight: 500;
+  color: var(--cds-ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Variante total ---- */
+.total .label { color: var(--cds-ink); font-weight: 600; }
+.total .value {
+  font-size: var(--cds-text-body-lg);
+  font-weight: 700;
+  letter-spacing: var(--cds-tracking-tight);
+  color: var(--cds-ink);
+}
+
+/* ---- Variante atenuada ---- */
+.muted .label, .muted .value { color: var(--cds-faint); }

@@ -1,0 +1,40 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--cds-accent-bright);
+  font-family: var(--cds-font-sans);
+}
+
+.base {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--cds-border-strong);
+}
+
+.fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  color: var(--cds-accent-bright);
+}
+
+.baseInner { display: inline-flex; gap: 2px; }
+
+.star { display: inline-flex; flex-shrink: 0; }
+.star svg { width: 100%; height: 100%; }
+
+.btn {
+  display: inline-flex;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--cds-border-strong);
+  cursor: pointer;
+}
+
+.btn.on { color: var(--cds-accent-bright); }
+.btn:focus-visible { outline: none; box-shadow: var(--cds-focus-ring); border-radius: 4px; }
+.btn svg { width: 100%; height: 100%; }

@@ -1,0 +1,18 @@
+.root {
+  margin: 0;
+  font-family: var(--cds-font-sans);
+  color: var(--cds-ink);
+}
+.bodyLg { font-size: var(--cds-text-body-lg); line-height: var(--cds-leading-body); }
+.body { font-size: var(--cds-text-body); line-height: var(--cds-leading-body); }
+.bodySm { font-size: var(--cds-text-body-sm); line-height: var(--cds-leading-body); }
+.caption { font-size: var(--cds-text-caption); line-height: 1.4; }
+.micro { font-size: var(--cds-text-micro); line-height: 1.4; }
+.w400 { font-weight: 400; }
+.w500 { font-weight: 500; }
+.w600 { font-weight: 600; }
+.w700 { font-weight: 700; }
+.toneInk2 { color: var(--cds-ink-2); }
+.toneMuted { color: var(--cds-muted); }
+.toneLabel { color: var(--cds-label); }
+.toneAccent { color: var(--cds-accent); }

@@ -1,0 +1,63 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cds-space-1);
+  border: 1px solid transparent;
+  border-radius: var(--cds-radius-pill);
+  font-family: var(--cds-font-sans);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* ---- Tamaños ---- */
+.sm {
+  padding: 3px 9px;
+  font-size: var(--cds-text-micro);
+}
+.md {
+  padding: 4px 12px;
+  font-size: var(--cds-text-caption);
+}
+
+/* ---- Variantes ---- */
+.lavender {
+  background: var(--cds-lavender);
+  color: var(--cds-lavender-ink);
+}
+
+.accent {
+  background: var(--cds-accent);
+  color: var(--cds-on-accent);
+}
+
+.success {
+  background: color-mix(in srgb, var(--cds-success) 15%, transparent);
+  color: var(--cds-success);
+  border-color: color-mix(in srgb, var(--cds-success) 30%, transparent);
+}
+
+.warning {
+  background: color-mix(in srgb, var(--cds-warning) 15%, transparent);
+  color: var(--cds-warning);
+  border-color: color-mix(in srgb, var(--cds-warning) 30%, transparent);
+}
+
+.danger {
+  background: color-mix(in srgb, var(--cds-danger) 15%, transparent);
+  color: var(--cds-danger);
+  border-color: color-mix(in srgb, var(--cds-danger) 30%, transparent);
+}
+
+.neutral {
+  background: var(--cds-surface-3);
+  color: var(--cds-muted);
+  border-color: var(--cds-border-strong);
+}
+
+.dark {
+  background: var(--cds-cta-dark);
+  color: var(--cds-on-accent);
+}

@@ -1,0 +1,81 @@
+.card {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 400px;
+  padding: var(--cds-space-5);
+  background: var(--cds-surface);
+  border: 1px solid var(--cds-border);
+  border-radius: var(--cds-radius-xl);
+  box-shadow: var(--cds-shadow-md);
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--cds-gradient-card);
+  pointer-events: none;
+}
+.card > * { position: relative; }
+
+.title {
+  margin: 0 0 var(--cds-space-4);
+  font-size: var(--cds-text-h4);
+  font-weight: 700;
+  letter-spacing: var(--cds-tracking-tight);
+  color: var(--cds-ink);
+}
+
+.rows { display: flex; flex-direction: column; gap: var(--cds-space-3); }
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--cds-space-4);
+}
+.label { font-size: var(--cds-text-body-sm); color: var(--cds-muted); }
+.value {
+  font-size: var(--cds-text-body-sm);
+  font-weight: 500;
+  color: var(--cds-ink);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.divider {
+  margin: var(--cds-space-4) 0;
+  border: 0;
+  border-top: 1px solid var(--cds-border);
+}
+
+.totalRow { align-items: center; margin-bottom: var(--cds-space-4); }
+.totalLabel { font-size: var(--cds-text-body); font-weight: 600; color: var(--cds-ink); }
+.totalValue {
+  font-size: var(--cds-text-h4);
+  font-weight: 700;
+  letter-spacing: var(--cds-tracking-tight);
+  color: var(--cds-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.cta {
+  width: 100%;
+  padding: 16px;
+  border: 0;
+  border-radius: var(--cds-radius-md);
+  background: var(--cds-gradient-accent);
+  color: var(--cds-on-accent);
+  box-shadow: var(--cds-glow-sm);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-body);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: filter 0.18s ease, transform 0.12s ease;
+}
+.cta:hover { filter: brightness(1.08); }
+.cta:active { transform: translateY(1px); }
+.cta:focus-visible { outline: none; box-shadow: var(--cds-focus-ring); }

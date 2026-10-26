@@ -1,0 +1,91 @@
+.steps {
+  --step-node: 32px;
+  display: flex;
+  align-items: flex-start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-family: var(--cds-font-sans);
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+}
+
+/* ---- Conector entre nodos ---- */
+.connector {
+  position: absolute;
+  top: calc(var(--step-node) / 2);
+  left: calc(-50% + var(--step-node) / 2 + 4px);
+  right: calc(50% + var(--step-node) / 2 + 4px);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--cds-border-strong);
+  transition: background-color 0.25s ease;
+}
+.connectorDone {
+  background: var(--cds-accent);
+}
+
+/* ---- Nodo ---- */
+.node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--step-node);
+  height: var(--step-node);
+  border-radius: 50%;
+  background: var(--cds-surface-3);
+  border: 1px solid var(--cds-border-strong);
+  color: var(--cds-faint);
+  font-size: var(--cds-text-caption);
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.step.done .node {
+  background: var(--cds-accent);
+  border-color: var(--cds-accent);
+  color: var(--cds-on-accent);
+}
+
+.step.current .node {
+  background: var(--cds-gradient-accent);
+  border-color: var(--cds-accent);
+  color: var(--cds-on-accent);
+  box-shadow: var(--cds-glow-md);
+}
+
+/* ---- Etiqueta ---- */
+.label {
+  margin-top: var(--cds-space-2);
+  font-size: var(--cds-text-caption);
+  font-weight: 500;
+  color: var(--cds-muted);
+  line-height: 1.35;
+}
+.step.current .label {
+  color: var(--cds-ink);
+  font-weight: 700;
+}
+.step.done .label {
+  color: var(--cds-ink-2);
+}
+
+/* ---- Variante compacta: nodos sin etiquetas ---- */
+.compact {
+  --step-node: 24px;
+  align-items: center;
+}
+.compact .node {
+  font-size: var(--cds-text-micro);
+}

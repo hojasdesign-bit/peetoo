@@ -1,0 +1,14 @@
+.wrap { width: 100%; max-width: 440px; font-family: var(--cds-font-sans); }
+.head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: var(--cds-space-2); }
+.label { font-size: var(--cds-text-body-sm); font-weight: 600; color: var(--cds-ink-2); }
+.headValue { font-size: var(--cds-text-body-sm); font-weight: 800; color: var(--cds-ink); font-variant-numeric: tabular-nums; }
+.bars { display: flex; flex-direction: column; gap: 6px; }
+.track { height: 8px; border-radius: var(--cds-radius-pill); background: var(--cds-surface-overlay); overflow: hidden; }
+.fill { height: 100%; border-radius: var(--cds-radius-pill); transition: width 0.5s ease; }
+.valueFill { background: var(--cds-accent); }
+.benchFill { background: var(--cds-faint); opacity: 0.55; }
+.legend { display: flex; gap: var(--cds-space-5); margin-top: var(--cds-space-2); }
+.legendItem { display: inline-flex; align-items: center; gap: 6px; font-size: var(--cds-text-caption); color: var(--cds-muted); font-variant-numeric: tabular-nums; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.valueDot { background: var(--cds-accent); }
+.benchDot { background: var(--cds-faint); }

@@ -1,0 +1,40 @@
+.root {
+  --mh-bg: #101010;
+  --mh-text: #ffffff;
+  --mh-muted: #c5c5c5;
+  --mh-subtle: #9f9f9f;
+  --mh-label: #b2b2b2;
+  --mh-card: #181818;
+  --mh-nav2: #16161c;
+  --mh-field-border: #26262c;
+  --mh-brand: #4608e3;
+  --mh-brand-hover: #6c3ae9;
+  --mh-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  --mh-shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  background: var(--mh-card);
+  border: 1px solid transparent;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 12px;
+  min-height: 260px;
+  font-family: var(--cds-font-sans);
+}
+.title { margin: 0; font-size: 20px; font-weight: 700; line-height: 28px; color: var(--mh-text); letter-spacing: 0; }
+.text { margin: 0; font-size: 16px; font-weight: 500; color: var(--mh-muted); line-height: 1.45; }
+
+:global([data-theme="claro"]) .root {
+  --mh-bg: #f3f4f9;
+  --mh-text: #101010;
+  --mh-muted: #4a4d59;
+  --mh-subtle: #9a9daa;
+  --mh-label: #404040;
+  --mh-card: #ffffff;
+  --mh-nav2: #ffffff;
+  --mh-field-border: #e2e4ee;
+  --mh-shadow-lg: 0 24px 60px rgba(30, 27, 80, 0.12);
+}
+

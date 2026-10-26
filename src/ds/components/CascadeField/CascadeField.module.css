@@ -1,0 +1,91 @@
+.root {
+  width: 100%;
+  font-family: var(--cds-font-sans);
+}
+.label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: var(--cds-text-body-sm);
+  font-weight: 600;
+  color: var(--cds-ink-2);
+}
+
+/* La pieza unida: un solo borde y un solo fondo para los dos campos */
+.joint {
+  display: flex;
+  align-items: stretch;
+  background: var(--cds-input-bg);
+  border: 1px solid var(--cds-border);
+  border-radius: var(--cds-radius-lg);
+  transition: border-color 0.15s ease;
+}
+.joint:focus-within { border-color: var(--cds-accent); box-shadow: var(--cds-focus-ring); }
+.joint.hasError { border-color: var(--cds-danger); }
+
+.firstWrap { position: relative; flex: 1.25; min-width: 0; }
+.input {
+  width: 100%;
+  height: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  background: transparent;
+  border: 0;
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-body-sm);
+  font-weight: 600;
+}
+.input::placeholder { color: var(--cds-faint); font-weight: 500; }
+.input:focus { outline: none; }
+
+.divider { width: 1px; background: var(--cds-border); flex: none; }
+
+.selectWrap { position: relative; flex: 1; min-width: 0; }
+.select {
+  width: 100%;
+  height: 100%;
+  min-height: 48px;
+  padding: 12px 36px 12px 14px;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-body-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+.select:focus { outline: none; }
+.select:disabled { color: var(--cds-faint); cursor: not-allowed; }
+.chevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cds-muted);
+  pointer-events: none;
+}
+
+.panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 40;
+  min-width: 250px;
+  list-style: none;
+  margin: 0;
+  padding: var(--cds-space-3);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--cds-panel-bg);
+  border: 1px solid var(--cds-border);
+  border-radius: var(--cds-radius-lg);
+  box-shadow: var(--cds-shadow-lg);
+}
+.highlighted { border-color: var(--cds-border-strong); }
+
+.error { margin: 6px 0 0; font-size: var(--cds-text-caption); color: var(--cds-danger); }
+.hint { margin: 6px 0 0; font-size: var(--cds-text-caption); color: var(--cds-faint); }

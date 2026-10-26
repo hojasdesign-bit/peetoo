@@ -1,0 +1,76 @@
+.root {
+  --mh-bg: #101010;
+  --mh-text: #ffffff;
+  --mh-muted: #c5c5c5;
+  --mh-subtle: #9f9f9f;
+  --mh-label: #b2b2b2;
+  --mh-card: #181818;
+  --mh-nav2: #16161c;
+  --mh-field-border: #26262c;
+  --mh-brand: #4608e3;
+  --mh-brand-hover: #6c3ae9;
+  --mh-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  --mh-shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 50;
+  width: min(1100px, calc(100vw - 40px));
+  background: var(--mh-bg);
+  border: 0;
+  border-radius: 10px;
+  box-shadow: var(--mh-shadow);
+  padding: 10px;
+  font-family: var(--cds-font-sans);
+  transform: translate(-50%, 0) scale(1);
+  animation: mhMenuIn 0.2s ease;
+  transform-origin: top center;
+}
+@keyframes mhMenuIn {
+  from { opacity: 0; transform: translate(-50%, -8px) scale(0.98); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+.grid { display: grid; gap: 16px; }
+.gridCoins { grid-template-columns: 366px 1fr 144px; }
+.gridCards { grid-template-columns: 1fr 144px; }
+.gridLinks { grid-template-columns: 1fr 144px; }
+.coins { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; }
+.main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ---- Modo móvil: acordeón estático ---- */
+.mobile {
+  position: static;
+  transform: none;
+  opacity: 1;
+  box-shadow: none;
+  border: 0;
+  background: transparent;
+  width: auto;
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 0 0 10px;
+  animation: none;
+  transition: max-height 0.25s ease;
+}
+.mobileOpen { max-height: 78vh; overflow-y: auto; }
+.mobile .grid { grid-template-columns: 1fr; }
+@media (max-width: 720px) {
+  .root:not(.mobile) { display: none; }
+}
+.mobile .coins { grid-template-columns: 1fr; }
+.mobile .cards { grid-template-columns: 1fr; }
+
+:global([data-theme="claro"]) .root {
+  --mh-bg: #f3f4f9;
+  --mh-text: #101010;
+  --mh-muted: #4a4d59;
+  --mh-subtle: #9a9daa;
+  --mh-label: #404040;
+  --mh-card: #ffffff;
+  --mh-nav2: #ffffff;
+  --mh-field-border: #e2e4ee;
+  --mh-shadow-lg: 0 24px 60px rgba(30, 27, 80, 0.12);
+}
+

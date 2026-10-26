@@ -1,0 +1,144 @@
+.root {
+  width: 100%;
+  font-family: var(--cds-font-sans);
+}
+
+/* ---- La pieza unida: una caja, dos filas, un divisor ---- */
+.joined {
+  position: relative;
+  border: 1px solid var(--cds-border-strong);
+  border-radius: var(--cds-radius-lg);
+  background: var(--cds-surface);
+  overflow: hidden;
+}
+
+.row { padding: 12px var(--cds-space-4) 14px; }
+
+.rowReceive {
+  /* Mismos estilos que el campo de paga: mismo fondo, solo el divisor */
+  border-top: 1px solid var(--cds-border);
+}
+
+.label {
+  display: block;
+  margin-bottom: 2px;
+  font-size: var(--cds-text-body-sm);
+  font-weight: 500;
+  color: var(--cds-label);
+}
+
+.fieldRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 40px;
+}
+
+.amount {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-amount);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+.amount:focus { outline: none; }
+.amount::placeholder { color: var(--cds-faint); }
+
+.amountStatic {
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-amount); /* 28px, igual que el campo de paga */
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Píldora de moneda ---- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 var(--cds-space-2);
+  border: 1px solid var(--cds-border-strong);
+  border-radius: var(--cds-radius-sm);
+  background: transparent;
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-body-sm);
+  font-weight: 500;
+  cursor: pointer;
+  flex: none;
+}
+.pill:hover { border-color: var(--cds-accent); }
+.pill:focus-visible { outline: none; box-shadow: var(--cds-focus-ring); }
+
+.coin {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+/* ---- Botón de intercambio (opt-in), centrado en la costura ---- */
+.flipBtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--cds-bg);
+  border-radius: 50%;
+  background: var(--cds-accent);
+  color: var(--cds-on-accent);
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.flipBtn:hover { background: var(--cds-accent-hover); transform: rotate(180deg); }
+.flipBtn:focus-visible { outline: none; box-shadow: var(--cds-focus-ring); }
+
+/* ---- Montos rápidos ---- */
+.quicks {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.chip {
+  flex: 1;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--cds-input-bg);
+  border-radius: var(--cds-radius-pill);
+  background: var(--cds-input-bg);
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-caption);
+  font-weight: 700;
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--cds-border-strong); }
+.chip:focus-visible { outline: none; box-shadow: var(--cds-focus-ring); }
+.chipActive { border-color: var(--cds-accent); }

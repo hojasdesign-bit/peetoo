@@ -1,0 +1,63 @@
+/* ============================================================
+   CRYPTO DS · Estilos base
+   ========================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cds-bg);
+  color: var(--cds-muted);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  color: var(--cds-ink);
+  font-family: var(--cds-font-display);
+  font-weight: 700;
+  letter-spacing: var(--cds-tracking-tight);
+  line-height: 1.08;
+}
+
+h1 { font-size: var(--cds-text-h1); letter-spacing: var(--cds-tracking-tighter); }
+h2 { font-size: var(--cds-text-h2); }
+h3 { font-size: var(--cds-text-h3); }
+h4 { font-size: var(--cds-text-h4); }
+
+p { margin: 0; }
+
+a {
+  color: var(--cds-accent-hover);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+button { font-family: inherit; }
+
+::selection {
+  background: var(--cds-accent);
+  color: var(--cds-on-accent);
+}
+
+/* Scrollbar sutil a juego */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--cds-border-strong);
+  border-radius: var(--cds-radius-pill);
+  border: 2px solid var(--cds-bg);
+}

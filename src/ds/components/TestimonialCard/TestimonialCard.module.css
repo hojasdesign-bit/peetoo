@@ -1,0 +1,42 @@
+.card {
+  margin: 0;
+  width: 100%;
+  max-width: 380px;
+  padding: var(--cds-space-8);
+  background: var(--cds-card-tint);
+  border-radius: var(--cds-radius-card);
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+}
+
+.stars { display: flex; gap: 4px; margin-bottom: var(--cds-space-4); }
+.star { color: var(--cds-accent-tint); }
+
+.quote {
+  margin: 0 0 var(--cds-space-5);
+  font-size: var(--cds-text-body-lg);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--cds-ink);
+}
+
+.author { display: flex; align-items: center; gap: var(--cds-space-3); }
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--cds-accent-soft);
+  color: var(--cds-accent-hover);
+  font-size: var(--cds-text-body);
+  font-weight: 700;
+}
+
+.authorTexts { display: flex; flex-direction: column; gap: 2px; }
+.authorName { font-size: var(--cds-text-body-sm); font-weight: 700; color: var(--cds-ink); }
+.authorRole { font-size: var(--cds-text-caption); color: var(--cds-muted); }

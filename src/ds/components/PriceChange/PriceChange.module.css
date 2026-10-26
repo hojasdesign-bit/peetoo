@@ -1,0 +1,24 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--cds-radius-pill);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-body-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.up {
+  color: var(--cds-success);
+  background: color-mix(in srgb, var(--cds-success) 14%, transparent);
+}
+
+.down {
+  color: var(--cds-danger);
+  background: color-mix(in srgb, var(--cds-danger) 14%, transparent);
+}
+
+.flip { transform: rotate(180deg); }

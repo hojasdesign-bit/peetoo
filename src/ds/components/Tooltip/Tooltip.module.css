@@ -1,0 +1,120 @@
+.wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.trigger {
+  display: inline-flex;
+  border-radius: var(--cds-radius-xs);
+}
+.trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--cds-focus-ring);
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 10;
+  max-width: 240px;
+  padding: var(--cds-space-2) var(--cds-space-3);
+  border-radius: var(--cds-radius-sm);
+  background: var(--cds-surface-3);
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-caption);
+  font-weight: 500;
+  line-height: 1.45;
+  box-shadow: var(--cds-shadow-md);
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.16s ease, visibility 0.16s ease, transform 0.16s ease;
+}
+
+.wrapper:hover .tooltip,
+.wrapper:focus-within .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---- Posiciones ---- */
+.top {
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+}
+.wrapper:hover .top,
+.wrapper:focus-within .top {
+  transform: translateX(-50%) translateY(0);
+}
+.top::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  transform: translate(-50%, -4.5px) rotate(45deg);
+}
+
+.bottom {
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+}
+.wrapper:hover .bottom,
+.wrapper:focus-within .bottom {
+  transform: translateX(-50%) translateY(0);
+}
+.bottom::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  transform: translate(-50%, 4.5px) rotate(45deg);
+}
+
+.left {
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(4px);
+}
+.wrapper:hover .left,
+.wrapper:focus-within .left {
+  transform: translateY(-50%) translateX(0);
+}
+.left::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  transform: translate(-4.5px, -50%) rotate(45deg);
+}
+
+.right {
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-4px);
+}
+.wrapper:hover .right,
+.wrapper:focus-within .right {
+  transform: translateY(-50%) translateX(0);
+}
+.right::after {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  transform: translate(4.5px, -50%) rotate(45deg);
+}

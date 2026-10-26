@@ -1,0 +1,45 @@
+.wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--cds-space-2);
+  font-family: var(--cds-font-sans);
+}
+
+.ring { position: relative; display: inline-block; }
+
+.track {
+  fill: none;
+  stroke: var(--cds-surface-overlay);
+  stroke-width: 5;
+}
+
+.arc {
+  fill: none;
+  stroke: var(--cds-accent);
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s linear;
+}
+
+.urgent { stroke: var(--cds-danger); }
+
+.time {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--cds-ink);
+}
+
+.urgentText { color: var(--cds-danger); }
+
+.label {
+  font-size: var(--cds-text-caption);
+  font-weight: 500;
+  color: var(--cds-muted);
+  text-align: center;
+}

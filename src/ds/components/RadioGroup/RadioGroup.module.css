@@ -1,0 +1,99 @@
+.group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: var(--cds-font-sans);
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: var(--cds-space-2);
+  font-size: var(--cds-text-caption);
+  font-weight: 600;
+  color: var(--cds-ink-2);
+  letter-spacing: 0.01em;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cds-space-2);
+}
+
+.option {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--cds-space-3);
+  cursor: pointer;
+  user-select: none;
+}
+
+.native {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.dot {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--cds-input-bg);
+  border: 1.5px solid var(--cds-border-strong);
+  flex-shrink: 0;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Punto interior violeta */
+.dot::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: var(--cds-accent);
+  box-shadow: var(--cds-glow-sm);
+  transform: scale(0);
+  transition: transform 0.18s ease;
+}
+
+.native:checked + .dot {
+  border-color: var(--cds-accent);
+}
+
+.native:checked + .dot::after {
+  transform: scale(1);
+}
+
+.native:focus-visible + .dot {
+  outline: none;
+  border-color: var(--cds-accent);
+  box-shadow: var(--cds-focus-ring);
+}
+
+.native:disabled + .dot {
+  opacity: 0.5;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  font-size: var(--cds-text-body-sm);
+  font-weight: 500;
+  color: var(--cds-ink-2);
+  line-height: 1.5;
+}
+
+.hint {
+  font-size: var(--cds-text-caption);
+  color: var(--cds-faint);
+  line-height: 1.45;
+}

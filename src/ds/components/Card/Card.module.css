@@ -1,0 +1,54 @@
+.card {
+  background: var(--cds-surface);
+  border: 1px solid var(--cds-border);
+  border-radius: var(--cds-radius-card);
+  color: var(--cds-ink);
+  font-family: var(--cds-font-sans);
+  box-shadow: var(--cds-shadow-sm);
+}
+
+/* ---- Relleno ---- */
+.pad-sm { padding: var(--cds-space-3); }
+.pad-md { padding: var(--cds-space-5); }
+.pad-lg { padding: var(--cds-space-8); }
+
+/* ---- Variantes ---- */
+.default {
+  /* superficie plana por defecto */
+}
+
+.glow {
+  border-color: var(--cds-border-accent);
+  box-shadow: var(--cds-glow-md);
+}
+
+.gradient {
+  background: var(--cds-gradient-card), var(--cds-surface);
+  border-color: var(--cds-border-accent);
+}
+
+.tint {
+  background: var(--cds-card-tint);
+  border-color: transparent;
+}
+
+.neutral {
+  background: var(--cds-card-neutral);
+  border-color: transparent;
+}
+
+/* ---- Interactiva ---- */
+.hoverable {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.hoverable:hover {
+  transform: translateY(-3px);
+  border-color: var(--cds-border-accent);
+  box-shadow: var(--cds-shadow-md), var(--cds-glow-sm);
+}
+
+.hoverable:focus-visible {
+  outline: none;
+  box-shadow: var(--cds-focus-ring);
+}

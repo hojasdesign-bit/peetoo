@@ -1,0 +1,31 @@
+.price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--cds-space-1);
+  font-family: var(--cds-font-sans);
+  color: var(--cds-ink);
+  white-space: nowrap;
+}
+
+.amount {
+  font-weight: 700;
+  letter-spacing: var(--cds-tracking-tight);
+}
+
+.currency {
+  font-weight: 500;
+  color: var(--cds-muted);
+}
+
+/* ---- Tamaños ---- */
+.sm { font-size: var(--cds-text-body-sm); }
+.md { font-size: var(--cds-text-body); }
+.lg { font-size: var(--cds-text-h4); }
+
+/* ---- Tendencia ---- */
+.trend {
+  align-self: center;
+  flex-shrink: 0;
+}
+.up { color: var(--cds-success); }
+.down { color: var(--cds-danger); }
