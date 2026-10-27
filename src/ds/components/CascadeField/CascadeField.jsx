@@ -132,6 +132,11 @@ export function CascadeField({
             autoComplete="off"
             onChange={handleText}
             onFocus={() => setOpen(true)}
+            // FIX LOCAL peetoo-app (no está en el DS fuente): tras elegir una
+            // opción el input conserva el foco (mousedown con preventDefault),
+            // así que un segundo clic no dispara onFocus y el panel no
+            // reabría. Con onClick reabre siempre; subir este fix al DS.
+            onClick={() => setOpen(true)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
           />

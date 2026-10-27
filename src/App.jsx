@@ -4,9 +4,8 @@ import { Text } from './ds/components/Text/Text.jsx';
 import { SegmentedControl } from './ds/components/SegmentedControl/SegmentedControl.jsx';
 import { Input } from './ds/components/Input/Input.jsx';
 import { Select } from './ds/components/Select/Select.jsx';
-import { Combobox } from './ds/components/Combobox/Combobox.jsx';
+import { CascadeField } from './ds/components/CascadeField/CascadeField.jsx';
 import { Button } from './ds/components/Button/Button.jsx';
-import { IconButton } from './ds/components/IconButton/IconButton.jsx';
 import { Badge } from './ds/components/Badge/Badge.jsx';
 import { Modal } from './ds/components/Modal/Modal.jsx';
 import { Pagination } from './ds/components/Pagination/Pagination.jsx';
@@ -17,7 +16,6 @@ import { NetworkChip } from './ds/components/NetworkChip/NetworkChip.jsx';
 import { PageBackground } from './ds/components/PageBackground/PageBackground.jsx';
 import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/offers.js';
 import logoUrl from './assets/logo.svg';
-import swapIcon from './assets/icons/swap.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
 
@@ -83,6 +81,21 @@ export default function App() {
   const buyOptions = uniq(OFFERS.map((o) => o.buy_currency));
   const sellOptions = uniq(OFFERS.map((o) => o.sell_currency));
 
+  // Cascadas reales derivadas de las ofertas: las redes dependen de la
+  // moneda crypto elegida y las monedas de venta del método elegido.
+  const chainsForCurrency = (cur) => {
+    const chains = cur === 'all'
+      ? chainOptions
+      : uniq(OFFERS.filter((o) => o.buy_currency === cur).flatMap((o) => o.blockchains));
+    return chains.map((c) => ({ value: c, label: c }));
+  };
+  const currenciesForMethod = (method) => {
+    const curs = method === 'all'
+      ? sellOptions
+      : uniq(OFFERS.filter((o) => o.payment_methods.includes(method)).map((o) => o.sell_currency));
+    return curs.map((c) => ({ value: c, label: c }));
+  };
+
   // Misma lógica de filtrado que MarketOffers del repo original.
   const parsedAmount = Number.parseFloat(amount);
   const filtered = OFFERS.filter((o) => {
@@ -108,10 +121,6 @@ export default function App() {
   const clearFilters = () => {
     setBuyCurrency('all'); setAmount(''); setPayment('all'); setSellCurrency('all'); setChain('all'); setPage(1);
   };
-  const swapCurrencies = () => {
-    setBuyCurrency(sellCurrency); setSellCurrency(buyCurrency); setPage(1);
-  };
-
   const verb = side === 'buy' ? 'Comprar' : 'Vender';
   const openModal = (o) => {
     setSelected(o); setModalAmount(''); setModalChain(o.blockchains[0] || ''); setOrderDone(false);
@@ -170,35 +179,27 @@ export default function App() {
               onChange={updEvent(setAmount, (v) => v.replace(/[^0-9.]/g, ''))}
               className="filter-amount"
             />
-            <Select
-              aria-label="Moneda a comprar"
-              value={buyCurrency}
-              onChange={updEvent(setBuyCurrency)}
+            <CascadeField
+              className="filter-cascade"
+              firstPlaceholder="Moneda"
+              secondPlaceholder="Cualquier blockchain"
+              firstAriaLabel="Moneda a comprar"
+              secondAriaLabel="Red blockchain"
               options={[{ value: 'all', label: 'Comprar' }, ...buyOptions.map((c) => ({ value: c, label: c }))]}
-              className="filter-currency"
+              optionsFor={chainsForCurrency}
+              value={{ first: buyCurrency, second: chain === 'all' ? null : chain }}
+              onChange={({ first, second }) => { setBuyCurrency(first ?? 'all'); setChain(second ?? 'all'); setPage(1); }}
             />
-            <Combobox
-              value={chain}
-              onChange={upd(setChain)}
-              options={[{ value: 'all', label: 'Cualquier blockchain' }, ...chainOptions.map((c) => ({ value: c, label: c }))]}
-              placeholder="Cualquier blockchain"
-              className="combo"
-            />
-            <IconButton label="Intercambiar monedas" onClick={swapCurrencies}><img src={swapIcon} alt="" className="ui-icon" /></IconButton>
-            <Combobox
-              value={payment}
-              onChange={upd(setPayment)}
+            <CascadeField
+              className="filter-cascade"
+              firstPlaceholder="Método"
+              secondPlaceholder="Vender"
+              firstAriaLabel="Método de pago"
+              secondAriaLabel="Moneda a vender"
               options={[{ value: 'all', label: 'Cualquier método' }, ...paymentOptions.map((c) => ({ value: c, label: c }))]}
-              placeholder="Cualquier método"
-              searchPlaceholder="Escribe para buscar método…"
-              className="combo"
-            />
-            <Select
-              aria-label="Moneda a vender"
-              value={sellCurrency}
-              onChange={updEvent(setSellCurrency)}
-              options={[{ value: 'all', label: 'Vender' }, ...sellOptions.map((c) => ({ value: c, label: c }))]}
-              className="filter-currency"
+              optionsFor={currenciesForMethod}
+              value={{ first: payment, second: sellCurrency === 'all' ? null : sellCurrency }}
+              onChange={({ first, second }) => { setPayment(first ?? 'all'); setSellCurrency(second ?? 'all'); setPage(1); }}
             />
             <Button variant="outline" onClick={clearFilters} className="filter-clear">Eliminar filtros</Button>
           </div>

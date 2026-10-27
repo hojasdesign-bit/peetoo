@@ -50,9 +50,17 @@ body {
 }
 .filters .filter-seg { flex: 0 0 210px; }
 .filters .filter-amount { flex: 0 0 118px; }
-.filters .filter-currency { flex: 0 0 118px; }
-.filters .combo { min-width: 145px; flex: 1 1 145px; }
+.filters .filter-cascade { flex: 1 1 260px; min-width: 240px; }
 .filters .filter-clear { flex: 0 0 auto; white-space: nowrap; }
+
+/* Fila de filtros igualada tomando el CascadeField como referencia
+   (alto 50px, radio 16px): el segmentado, la cantidad y el botón se
+   ponen a su misma altura y radio. El prefijo .market da especificidad
+   suficiente para imponerse a las reglas del DS. */
+.market .filters .filter-seg { height: 50px; border-radius: 16px; }
+.market .filters .filter-seg > * { height: 42px; border-radius: 12px; }
+.market .filters .filter-amount input { height: 50px; border-radius: 16px; }
+.market .filters .filter-clear { height: 50px; }
 
 .table-wrap { overflow-x: auto; }
 .market-table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 14px; }

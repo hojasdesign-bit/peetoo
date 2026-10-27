@@ -13,9 +13,11 @@ producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
 
 ## Qué incluye (v2)
 
-- Mercado Crypto: título, barra de filtros (Comprar/Vender, cantidad +
-  moneda a comprar, blockchain, intercambiar monedas, método + moneda a
-  vender, eliminar filtros) con la misma lógica de filtrado del original.
+- Mercado Crypto: título, barra de filtros (Comprar/Vender, cantidad,
+  moneda crypto + red unidas en un CascadeField, método + moneda de venta
+  unidos en otro CascadeField, eliminar filtros) con la misma lógica de
+  filtrado del original; las opciones del segundo campo dependen del
+  primero (redes por moneda, monedas por método).
 - Tabla densa en escritorio (Das/Recibes, Disponible/Min-Max, Precio, Red
   blockchain, Anunciante, acción) y tarjetas en móvil.
 - Paginación de 6 por página con resumen «Mostrando X - Y de Z items».
@@ -41,6 +43,10 @@ Los componentes del Crypto DS están vendorizados en `src/ds/` (snapshot de
 del DS sigue siendo el proyecto `crypto-design-system`; para actualizar el
 snapshot, volver a copiar su `src/` aquí excluyendo `*.stories.jsx`,
 `App.jsx`, `main.jsx` y los SVG de plantilla sin uso en `assets/`.
+OJO: `src/ds/components/CascadeField/CascadeField.jsx` lleva un FIX LOCAL
+(el panel también se abre con `onClick`, no solo con `onFocus`, porque tras
+elegir una opción el input conserva el foco y el panel no reabría) que un
+snapshot fresco sobrescribiría: hay que subir ese fix al DS primero.
 
 ## Desarrollo
 
