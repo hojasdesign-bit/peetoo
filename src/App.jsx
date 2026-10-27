@@ -81,13 +81,13 @@ export default function App() {
   const buyOptions = uniq(OFFERS.map((o) => o.buy_currency));
   const sellOptions = uniq(OFFERS.map((o) => o.sell_currency));
 
-  // Cascadas reales derivadas de las ofertas: las redes dependen de la
-  // moneda crypto elegida y las monedas de venta del método elegido.
-  const chainsForCurrency = (cur) => {
-    const chains = cur === 'all'
-      ? chainOptions
-      : uniq(OFFERS.filter((o) => o.buy_currency === cur).flatMap((o) => o.blockchains));
-    return chains.map((c) => ({ value: c, label: c }));
+  // Cascadas reales derivadas de las ofertas: las monedas crypto
+  // dependen de la red elegida y las monedas de venta del método elegido.
+  const currenciesForChain = (ch) => {
+    const curs = ch === 'all'
+      ? buyOptions
+      : uniq(OFFERS.filter((o) => o.blockchains.includes(ch)).map((o) => o.buy_currency));
+    return curs.map((c) => ({ value: c, label: c }));
   };
   const currenciesForMethod = (method) => {
     const curs = method === 'all'
@@ -181,14 +181,14 @@ export default function App() {
             />
             <CascadeField
               className="filter-cascade"
-              firstPlaceholder="Moneda"
-              secondPlaceholder="Cualquier blockchain"
-              firstAriaLabel="Moneda a comprar"
-              secondAriaLabel="Red blockchain"
-              options={[{ value: 'all', label: 'Comprar' }, ...buyOptions.map((c) => ({ value: c, label: c }))]}
-              optionsFor={chainsForCurrency}
-              value={{ first: buyCurrency, second: chain === 'all' ? null : chain }}
-              onChange={({ first, second }) => { setBuyCurrency(first ?? 'all'); setChain(second ?? 'all'); setPage(1); }}
+              firstPlaceholder="Blockchain"
+              secondPlaceholder="Comprar"
+              firstAriaLabel="Red blockchain"
+              secondAriaLabel="Moneda a comprar"
+              options={[{ value: 'all', label: 'Cualquier blockchain' }, ...chainOptions.map((c) => ({ value: c, label: c }))]}
+              optionsFor={currenciesForChain}
+              value={{ first: chain, second: buyCurrency === 'all' ? null : buyCurrency }}
+              onChange={({ first, second }) => { setChain(first ?? 'all'); setBuyCurrency(second ?? 'all'); setPage(1); }}
             />
             <CascadeField
               className="filter-cascade"

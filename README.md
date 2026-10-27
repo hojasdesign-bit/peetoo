@@ -14,8 +14,9 @@ producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
 ## Qué incluye (v2)
 
 - Mercado Crypto: título, barra de filtros (Comprar/Vender, cantidad,
-  moneda crypto + red unidas en un CascadeField, método + moneda de venta
-  unidos en otro CascadeField, eliminar filtros) con la misma lógica de
+  red + moneda crypto unidas en un CascadeField (primero la red, segundo
+  las monedas de esa red), método + moneda de venta unidos en otro
+  CascadeField, eliminar filtros) con la misma lógica de
   filtrado del original; las opciones del segundo campo dependen del
   primero (redes por moneda, monedas por método).
 - Tabla densa en escritorio (Das/Recibes, Disponible/Min-Max, Precio, Red
