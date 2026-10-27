@@ -22,6 +22,46 @@ body {
 .brand { display: flex; align-items: center; }
 .logo-img { height: 28px; width: auto; display: block; }
 .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+/* Desplegable «Comprar crypto» del header (panel pequeño propio: el
+   DropdownMenu del DS es el mega-panel de 1100px de la réplica de
+   swapped, no una lista simple). */
+.buy-menu { position: relative; }
+.buy-menu-btn {
+  display: flex; align-items: center; gap: 6px;
+  font: inherit; font-size: 15px; font-weight: 600;
+  color: var(--cds-ink); background: transparent;
+  border: 1px solid transparent; border-radius: 12px;
+  padding: 8px 12px; cursor: pointer;
+}
+.buy-menu-btn:hover { background: var(--cds-surface-2); }
+.buy-menu-chevron { transition: transform 0.15s ease; flex: none; }
+.buy-menu-btn[aria-expanded="true"] .buy-menu-chevron { transform: rotate(180deg); }
+.buy-menu-panel {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 60;
+  min-width: 200px; display: flex; flex-direction: column; gap: 2px;
+  padding: 6px; background: var(--cds-surface-raised);
+  border: 1px solid var(--cds-border); border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+.buy-menu-item {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 10px 12px;
+  font: inherit; font-size: 15px; font-weight: 500; text-align: left;
+  color: var(--cds-ink); background: transparent;
+  border: 0; border-radius: 10px; cursor: pointer;
+}
+.buy-menu-item:hover { background: var(--cds-surface-2); }
+.buy-menu-item[data-active] { font-weight: 700; }
+
+/* El header es sticky: que el mercado no quede tapado al desplazarlo */
+.market { scroll-margin-top: 72px; }
+
+/* En móvil el botón del desplegable + la insignia no caben junto al
+   logo: se oculta la insignia (informativa) y queda logo + desplegable. */
+@media (max-width: 640px) {
+  .topbar-demo { display: none; }
+}
 .ui-icon { width: 18px; height: 18px; display: block; }
 .ui-icon-sm { width: 16px; height: 16px; display: block; }
 .ui-icon-lg { width: 56px; height: 56px; display: block; color: var(--cds-success); }

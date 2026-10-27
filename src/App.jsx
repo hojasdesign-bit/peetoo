@@ -59,6 +59,30 @@ export default function App() {
   const [orderDone, setOrderDone] = React.useState(false);
   const [theme, setTheme] = React.useState('oscuro');
 
+  // Desplegable «Comprar crypto» del header: al elegir una stablecoin,
+  // el mercado pasa a Comprar esa moneda sin filtro de red.
+  const BUY_COINS = ['PYUSD', 'USDC', 'USDT', 'ZLUSD', 'OUSD'];
+  const [buyMenuOpen, setBuyMenuOpen] = React.useState(false);
+  const buyMenuRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!buyMenuOpen) return undefined;
+    const onPointerDown = (e) => {
+      if (buyMenuRef.current && !buyMenuRef.current.contains(e.target)) setBuyMenuOpen(false);
+    };
+    const onKey = (e) => { if (e.key === 'Escape') setBuyMenuOpen(false); };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [buyMenuOpen]);
+  const buyCoin = (code) => {
+    setSide('buy'); setBuyCurrency(code); setChain('all'); setPage(1);
+    setBuyMenuOpen(false);
+    document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   // Tema como en el footer de la app original: Oscuro / Claro / Sistema
   // (Sistema sigue la preferencia del sistema operativo).
   React.useEffect(() => {
@@ -87,6 +111,10 @@ export default function App() {
     const curs = ch === 'all'
       ? buyOptions
       : uniq(OFFERS.filter((o) => o.blockchains.includes(ch)).map((o) => o.buy_currency));
+    // La moneda elegida desde el header puede no tener ofertas (PYUSD,
+    // ZLUSD, OUSD): si está seleccionada, se añade para que el segundo
+    // campo pueda mostrarla aunque la lista derive de las ofertas.
+    if (buyCurrency !== 'all' && !curs.includes(buyCurrency)) curs.push(buyCurrency);
     return curs.map((c) => ({ value: c, label: c }));
   };
   const currenciesForMethod = (method) => {
@@ -154,7 +182,41 @@ export default function App() {
           <img src={logoUrl} alt="Zeroo" className="logo-img" />
         </span>
         <span className="topbar-right">
-          <Badge variant="lavender">Demo · datos de muestra</Badge>
+          <span className="buy-menu" ref={buyMenuRef}>
+            <button
+              type="button"
+              className="buy-menu-btn"
+              aria-haspopup="menu"
+              aria-expanded={buyMenuOpen}
+              onClick={() => setBuyMenuOpen((o) => !o)}
+            >
+              Comprar crypto
+              <svg className="buy-menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            {buyMenuOpen && (
+              <span className="buy-menu-panel" role="menu">
+                {BUY_COINS.map((code) => {
+                  const active = side === 'buy' && buyCurrency === code;
+                  return (
+                    <button
+                      key={code}
+                      type="button"
+                      role="menuitem"
+                      className="buy-menu-item"
+                      data-active={active || undefined}
+                      onClick={() => buyCoin(code)}
+                    >
+                      <span>{code}</span>
+                      {active && <img src={checkIcon} alt="" className="ui-icon-sm" />}
+                    </button>
+                  );
+                })}
+              </span>
+            )}
+          </span>
+          <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
         </span>
       </header>
 
