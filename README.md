@@ -20,8 +20,11 @@ producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
   filtrado del original; las opciones del segundo campo dependen del
   primero (redes por moneda, monedas por método). Entre los dos
   CascadeFields, un botón de intercambio (50×50, icono de flechas) que
-  invierte Comprar/Vender y mantiene todo lo demás (cantidad, red,
-  moneda crypto, método, moneda fiat y filtros del menú).
+  invierte el orden de los campos y con ello la moneda en la que se
+  busca la cantidad: por defecto [crypto, fiat] y la cantidad se busca
+  en fiat (rango mín-máx); intercambiados [fiat, crypto] y la cantidad
+  se busca en crypto (convertida por el precio de cada oferta). No
+  cambia el lado Comprar/Vender ni ningún valor.
 - Tabla densa en escritorio (Das/Recibes, Disponible/Min-Max, Precio, Red
   blockchain, Anunciante, acción) y tarjetas en móvil.
 - Paginación de 6 por página con resumen «Mostrando X - Y de Z items».

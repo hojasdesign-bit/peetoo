@@ -64,6 +64,10 @@ export default function App() {
   const [chain, setChain] = React.useState('all');
   const [sellCurrency, setSellCurrency] = React.useState('all');
   const [page, setPage] = React.useState(1);
+  // Orden de los CascadeField: false = [crypto, fiat] (cantidad en fiat),
+  // true = [fiat, crypto] (cantidad en crypto). El botón de intercambio
+  // invierte este orden; el lado Comprar/Vender NO cambia.
+  const [cascadesSwapped, setCascadesSwapped] = React.useState(false);
   const [selected, setSelected] = React.useState(null);
   const [modalAmount, setModalAmount] = React.useState('');
   const [modalChain, setModalChain] = React.useState('');
@@ -315,7 +319,14 @@ export default function App() {
     if (chain !== 'all' && !o.blockchains.includes(chain)) return false;
     if (sellCurrency !== 'all' && o.sell_currency !== sellCurrency) return false;
     if (!Number.isNaN(parsedAmount) && parsedAmount > 0) {
-      if (parsedAmount < o.min_amount || parsedAmount > o.max_amount) return false;
+      // La cantidad se busca en la moneda del SEGUNDO CascadeField: con
+      // el orden por defecto [crypto, fiat] es fiat y se compara directa
+      // con el rango mín-máx; con los campos intercambiados [fiat,
+      // crypto] es crypto y se convierte por el precio de la oferta
+      // (misma conversión que PriceCell: precio × cantidad) antes de
+      // comparar con el rango.
+      const fiatAmount = cascadesSwapped ? parsedAmount * o.price : parsedAmount;
+      if (fiatAmount < o.min_amount || fiatAmount > o.max_amount) return false;
     }
     return true;
   }).sort((a, b) => a.price - b.price);
@@ -331,13 +342,14 @@ export default function App() {
   const clearFilters = () => {
     setBuyCurrency('all'); setAmount(''); setPayment('all'); setSellCurrency('all'); setChain('all'); setPage(1);
   };
-  // Intercambiar dirección: invierte Comprar/Vender y MANTIENE todo lo
-  // demás (cantidad, red, moneda crypto, método, moneda fiat y filtros
-  // del menú). No intercambia la moneda crypto con la fíat: eso dejaba
-  // valores inválidos con los pares unidos (por eso se quitó en v2.3).
-  // Solo cambia el lado, así la tabla muestra las ofertas del sentido
-  // contrario para el mismo par.
-  const swapDirection = () => { setSide(side === 'buy' ? 'sell' : 'buy'); setPage(1); };
+  // Intercambiar los CascadeField: invierte su orden en la barra y con
+  // ello la moneda en la que se busca la cantidad (segundo campo: fiat
+  // por defecto, crypto tras intercambiar). NO cambia el lado
+  // Comprar/Vender ni ningún valor (cantidad, red, moneda crypto,
+  // método, moneda fiat y filtros del menú se mantienen). Tampoco
+  // intercambia la moneda crypto con la fíat: eso dejaba valores
+  // inválidos con los pares unidos (por eso se quitó en v2.3).
+  const swapCascadesOrder = () => { setCascadesSwapped((v) => !v); setPage(1); };
   const verb = side === 'buy' ? 'Comprar' : 'Vender';
   const openModal = (o) => {
     setSelected(o); setModalAmount(''); setModalChain(o.blockchains[0] || ''); setOrderDone(false);
@@ -361,6 +373,48 @@ export default function App() {
       maxVisible={2}
       renderItem={(c) => <NetworkChip name={c} symbol={CHAIN_SHORT[c]} color={CHAIN_COLORS[c]} src={CHAIN_SRC[c]} />}
     />
+  );
+
+  // Los dos CascadeField y el botón de intercambio, como variables para
+  // poder invertir su orden sin duplicar el JSX. Cada campo sigue ligado
+  // a su dominio (crypto: red+moneda; fiat: método+moneda); solo cambia
+  // el orden en la barra y con él la moneda de la cantidad.
+  const cryptoCascade = (
+    <CascadeField
+      className="filter-cascade"
+      firstPlaceholder="Blockchain"
+      secondPlaceholder="Comprar"
+      firstAriaLabel="Red blockchain"
+      secondAriaLabel="Moneda a comprar"
+      options={[{ value: 'all', label: 'Cualquier blockchain' }, ...chainOptions.map((c) => ({ value: c, label: c }))]}
+      optionsFor={currenciesForChain}
+      value={{ first: chain, second: buyCurrency === 'all' ? null : buyCurrency }}
+      onChange={({ first, second }) => { setChain(first ?? 'all'); setBuyCurrency(second ?? 'all'); setPage(1); }}
+    />
+  );
+  const fiatCascade = (
+    <CascadeField
+      className="filter-cascade"
+      firstPlaceholder="Método"
+      secondPlaceholder="Vender"
+      firstAriaLabel="Método de pago"
+      secondAriaLabel="Moneda a vender"
+      options={[{ value: 'all', label: 'Cualquier método' }, ...paymentOptions.map((c) => ({ value: c, label: c }))]}
+      optionsFor={currenciesForMethod}
+      value={{ first: payment, second: sellCurrency === 'all' ? null : sellCurrency }}
+      onChange={({ first, second }) => { setPayment(first ?? 'all'); setSellCurrency(second ?? 'all'); setPage(1); }}
+    />
+  );
+  const swapButton = (
+    <Button
+      variant="outline"
+      onClick={swapCascadesOrder}
+      className="filter-swap"
+      aria-label="Alternar la cantidad entre fiat y crypto"
+      title="Alternar la cantidad entre fiat y crypto"
+    >
+      <img src={swapIcon} alt="" aria-hidden="true" />
+    </Button>
   );
 
   return (
@@ -439,37 +493,7 @@ export default function App() {
               onChange={updEvent(setAmount, (v) => v.replace(/[^0-9.]/g, ''))}
               className="filter-amount"
             />
-            <CascadeField
-              className="filter-cascade"
-              firstPlaceholder="Blockchain"
-              secondPlaceholder="Comprar"
-              firstAriaLabel="Red blockchain"
-              secondAriaLabel="Moneda a comprar"
-              options={[{ value: 'all', label: 'Cualquier blockchain' }, ...chainOptions.map((c) => ({ value: c, label: c }))]}
-              optionsFor={currenciesForChain}
-              value={{ first: chain, second: buyCurrency === 'all' ? null : buyCurrency }}
-              onChange={({ first, second }) => { setChain(first ?? 'all'); setBuyCurrency(second ?? 'all'); setPage(1); }}
-            />
-            <Button
-              variant="outline"
-              onClick={swapDirection}
-              className="filter-swap"
-              aria-label="Intercambiar dirección de la búsqueda"
-              title="Intercambiar dirección"
-            >
-              <img src={swapIcon} alt="" aria-hidden="true" />
-            </Button>
-            <CascadeField
-              className="filter-cascade"
-              firstPlaceholder="Método"
-              secondPlaceholder="Vender"
-              firstAriaLabel="Método de pago"
-              secondAriaLabel="Moneda a vender"
-              options={[{ value: 'all', label: 'Cualquier método' }, ...paymentOptions.map((c) => ({ value: c, label: c }))]}
-              optionsFor={currenciesForMethod}
-              value={{ first: payment, second: sellCurrency === 'all' ? null : sellCurrency }}
-              onChange={({ first, second }) => { setPayment(first ?? 'all'); setSellCurrency(second ?? 'all'); setPage(1); }}
-            />
+            {cascadesSwapped ? (<>{fiatCascade}{swapButton}{cryptoCascade}</>) : (<>{cryptoCascade}{swapButton}{fiatCascade}</>)}
             <Button variant="outline" onClick={clearFilters} className="filter-clear">Eliminar filtros</Button>
           </div>
 
