@@ -147,6 +147,7 @@ export default function App() {
     };
   }, [buyMenuOpen, fiatMenuOpen]);
   const buyCoin = (code) => {
+    clearFilters();
     setSide('buy'); setBuyCurrency(code); setChain('all'); setPage(1);
     setBuyMenuOpen(false);
     document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -169,11 +170,11 @@ export default function App() {
     const label = el.textContent.trim();
     const scrollToMarket = () => document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (label.includes('Vender crypto')) {
-      setSide('sell'); setPage(1); scrollToMarket();
+      clearFilters(); setSide('sell'); scrollToMarket();
     } else if (label.includes('Todas las ofertas')) {
       clearFilters(); scrollToMarket();
     } else if (label.includes('Otras monedas')) {
-      setSide('buy'); clearFilters(); scrollToMarket();
+      clearFilters(); setSide('buy'); scrollToMarket();
     }
   };
 
@@ -228,6 +229,7 @@ export default function App() {
     // cash) y método abierto. Pendiente de que aclare ticker, nombre
     // y logo de los nuevos métodos/monedas.
     const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP' };
+    clearFilters();
     setSide('sell');
     setPayment(coin.method || 'all');
     setSellCurrency(coin.currency ?? (cashToCurrency[code] || code));
@@ -251,7 +253,7 @@ export default function App() {
     const label = el.textContent.trim();
     const scrollToMarket = () => document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (label.includes('Todas las fiat')) {
-      setSide('sell'); setSellCurrency('all'); setPayment('all'); setPage(1); scrollToMarket();
+      clearFilters(); setSide('sell'); scrollToMarket();
     } else if (label.includes('Todas las ofertas')) {
       clearFilters(); scrollToMarket();
     }
