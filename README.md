@@ -23,8 +23,12 @@ producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
   invierte el orden de los campos y con ello la moneda en la que se
   busca la cantidad: por defecto [crypto, fiat] y la cantidad se busca
   en fiat (rango mín-máx); intercambiados [fiat, crypto] y la cantidad
-  se busca en crypto (convertida por el precio de cada oferta). No
-  cambia el lado Comprar/Vender ni ningún valor.
+  se busca en crypto (convertida por el precio de cada oferta). Los
+  labels Comprar (izquierda) y Vender (derecha) quedan fijos en su
+  posición; solo los pares cambian de lado. La dirección de la
+  búsqueda también se invierte (lo que se compraba pasa a venderse y
+  viceversa), así que los resultados cambian de ofertas de compra a
+  ofertas de venta. Ningún valor cambia.
 - Tabla densa en escritorio (Das/Recibes, Disponible/Min-Max, Precio, Red
   blockchain, Anunciante, acción) y tarjetas en móvil.
 - Paginación de 6 por página con resumen «Mostrando X - Y de Z items».
