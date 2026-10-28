@@ -24,7 +24,7 @@ import usdtIcon from './assets/coins/usdt.svg';
 import pyusdIcon from './assets/coins/pyusd.svg';
 import ousdIcon from './assets/coins/ousd.svg';
 import eurcIcon from './assets/coins/eurc.svg';
-import placeholderIcon from './assets/coins/placeholder.svg';
+import zelleIcon from './assets/coins/zelle.svg';
 import placeholderGenericIcon from './assets/coins/placeholder-generic.svg';
 
 /**
@@ -82,7 +82,9 @@ export default function App() {
       { symbol: 'P', color: '#003087', label: 'Comprar PYUSD', code: 'PYUSD', src: pyusdIcon },
       { symbol: '$', color: '#2775ca', label: 'Comprar USDC', code: 'USDC', src: usdcIcon },
       { symbol: '₮', color: '#26a17b', label: 'Comprar USDT', code: 'USDT', src: usdtIcon },
-      { symbol: 'Z', color: '#3a3a44', label: 'Comprar ZLUSD', code: 'ZLUSD', src: placeholderIcon },
+      // ZLUSD: marca Zelle (Simple Icons, CC0) en morado #6d1ed4; aún no
+      // hay logo propio del token publicado.
+      { symbol: 'Z', color: '#6d1ed4', label: 'Comprar ZLUSD', code: 'ZLUSD', src: zelleIcon },
       { symbol: 'O', color: '#3a3a44', label: 'Comprar OUSD', code: 'OUSD', src: ousdIcon },
       // Tether (MXNT), Circle (EURC) y pagos internacionales (RLUSD de
       // Ripple). MXNT y RLUSD no tienen logo público en las fuentes
