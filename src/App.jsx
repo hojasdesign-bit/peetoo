@@ -19,6 +19,7 @@ import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/off
 import logoUrl from './assets/logo.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
+import swapIcon from './assets/icons/arrow-left-right.svg';
 import usdcIcon from './assets/coins/usdc.svg';
 import usdtIcon from './assets/coins/usdt.svg';
 import pyusdIcon from './assets/coins/pyusd.svg';
@@ -330,6 +331,13 @@ export default function App() {
   const clearFilters = () => {
     setBuyCurrency('all'); setAmount(''); setPayment('all'); setSellCurrency('all'); setChain('all'); setPage(1);
   };
+  // Intercambiar dirección: invierte Comprar/Vender y MANTIENE todo lo
+  // demás (cantidad, red, moneda crypto, método, moneda fiat y filtros
+  // del menú). No intercambia la moneda crypto con la fíat: eso dejaba
+  // valores inválidos con los pares unidos (por eso se quitó en v2.3).
+  // Solo cambia el lado, así la tabla muestra las ofertas del sentido
+  // contrario para el mismo par.
+  const swapDirection = () => { setSide(side === 'buy' ? 'sell' : 'buy'); setPage(1); };
   const verb = side === 'buy' ? 'Comprar' : 'Vender';
   const openModal = (o) => {
     setSelected(o); setModalAmount(''); setModalChain(o.blockchains[0] || ''); setOrderDone(false);
@@ -442,6 +450,15 @@ export default function App() {
               value={{ first: chain, second: buyCurrency === 'all' ? null : buyCurrency }}
               onChange={({ first, second }) => { setChain(first ?? 'all'); setBuyCurrency(second ?? 'all'); setPage(1); }}
             />
+            <Button
+              variant="outline"
+              onClick={swapDirection}
+              className="filter-swap"
+              aria-label="Intercambiar dirección de la búsqueda"
+              title="Intercambiar dirección"
+            >
+              <img src={swapIcon} alt="" aria-hidden="true" />
+            </Button>
             <CascadeField
               className="filter-cascade"
               firstPlaceholder="Método"

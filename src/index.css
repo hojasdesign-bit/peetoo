@@ -89,6 +89,8 @@ body {
 .market .filters .filter-seg > * { height: 42px; border-radius: 12px; }
 .market .filters .filter-amount input { height: 50px; border-radius: 16px; }
 .market .filters .filter-clear { height: 50px; }
+.market .filters .filter-swap { flex: 0 0 auto; height: 50px; width: 50px; padding: 0; border-radius: 16px; }
+.market .filters .filter-swap img { width: 24px; height: 24px; display: block; }
 
 .table-wrap { overflow-x: auto; }
 .market-table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 14px; }
