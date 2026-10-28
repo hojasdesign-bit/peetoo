@@ -34,6 +34,14 @@ body {
   border: 0; padding: 8px 6px; cursor: pointer;
 }
 .buy-menu-btn:hover, .buy-menu-btn-open, .fiat-menu-btn:hover, .fiat-menu-btn-open { color: var(--cds-accent-hover); }
+
+/* Enlace del header a la página del widget de Swapped: mismo tratamiento
+   que los disparadores de menú (16px/500, hover violeta). */
+.topbar-link {
+  font-size: 16px; font-weight: 500; line-height: 22px;
+  color: var(--cds-ink); text-decoration: none; padding: 8px 6px; white-space: nowrap;
+}
+.topbar-link:hover { color: var(--cds-accent-hover); }
 .buy-menu-chev, .fiat-menu-chev {
   width: 7px; height: 7px; flex: none;
   border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor;

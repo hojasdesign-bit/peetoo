@@ -1,7 +1,9 @@
 # peetoo · App P2P
 
 La app P2P de peetoo, construida con el sistema de diseño Crypto DS. Sin
-homepage: al entrar caes directo en el mercado Crypto.
+homepage: al entrar caes directo en el mercado Crypto. El header enlaza a
+`/swapped`, página con el iframe real de Swapped (400px de ancho, centrado
+como en el clon de swapped.com/trade; el alto deja ver el widget entero).
 
 ## Referencia (importante)
 

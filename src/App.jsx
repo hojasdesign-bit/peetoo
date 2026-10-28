@@ -499,6 +499,7 @@ export default function App() {
                 <span className="fiat-menu-chev" aria-hidden="true" />
               </button>
             </span>
+            <a className="topbar-link" href="/swapped">Comprar con Swapped</a>
             <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
           </span>
         </div>
