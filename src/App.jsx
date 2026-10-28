@@ -90,6 +90,10 @@ export default function App() {
       { symbol: 'M', color: '#26a17b', label: 'Comprar MXNT', code: 'MXNT', src: placeholderGenericIcon },
       { symbol: '€', color: '#2775ca', label: 'Comprar EURC', code: 'EURC', src: eurcIcon },
       { symbol: 'R', color: '#3a3a44', label: 'Comprar RLUSD', code: 'RLUSD', src: placeholderGenericIcon },
+      // USAT: el dólar regulado de Tether para EE. UU. (GENIUS Act,
+      // emitido por Anchorage Digital Bank; token distinto de USDT).
+      // Sin logo público en las fuentes consultadas → placeholder.
+      { symbol: 'U', color: '#26a17b', label: 'Comprar USAT', code: 'USAT', src: placeholderGenericIcon },
     ],
     links: [
       { label: 'Vender crypto' },
