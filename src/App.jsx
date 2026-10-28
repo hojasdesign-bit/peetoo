@@ -178,20 +178,20 @@ export default function App() {
   };
 
 
-  // Submenú «Fiat» del header: mismo DropdownMenu del DS que el de
-  // crypto, pero filtra ESTA tabla por fiat (sell_currency): la moneda
-  // que pagas al comprar o la que recibes al vender. No cambia el lado:
-  // es un filtro, no una navegación. Al fijar la fiat se reinicia el
-  // método de pago (primer campo de la cascada de venta, del que
+  // Submenú «Comprar fiat» del header: mismo DropdownMenu del DS que
+  // el de crypto. Comprar una fiat = ofertas de venta en las que la
+  // recibes (vendes crypto y te pagan en esa fiat): fija el lado venta
+  // y el filtro de fiat (sell_currency). Al fijar la fiat se reinicia
+  // el método de pago (primer campo de la cascada de venta, del que
   // depende la segunda), igual que el menú crypto reinicia la red.
   const fiatDropdown = {
     intro: {
-      title: 'Fiat',
-      description: 'Filtra las ofertas por la moneda fiat: la que pagas al comprar o la que recibes al vender.',
+      title: 'Comprar fiat',
+      description: 'Elige una fiat y verás las ofertas para comprarla vendiendo crypto.',
     },
     coins: [
-      { symbol: '$', color: '#D64545', label: 'Peso cubano', code: 'CUP', src: cupPng },
-      { symbol: '$', color: '#2E7D32', label: 'Dólar', code: 'USD', src: usdPng },
+      { symbol: '$', color: '#D64545', label: 'Comprar CUP', code: 'CUP', src: cupPng },
+      { symbol: '$', color: '#2E7D32', label: 'Comprar USD', code: 'USD', src: usdPng },
       // Último tile: quita solo el filtro de fiat (código vacío → rama
       // de etiqueta en onFiatMenuNavigate), sin tocar el resto.
       { symbol: '+', color: '#3a3a44', label: 'Todas las fiat', code: '' },
@@ -215,7 +215,7 @@ export default function App() {
     cancelFiatMenuClose(); setFiatMenuOpen(true); setBuyMenuOpen(false);
   };
   const fiatFilter = (code) => {
-    setSellCurrency(code); setPayment('all'); setPage(1);
+    setSide('sell'); setSellCurrency(code); setPayment('all'); setPage(1);
     setFiatMenuOpen(false);
     document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -235,7 +235,7 @@ export default function App() {
     const label = el.textContent.trim();
     const scrollToMarket = () => document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (label.includes('Todas las fiat')) {
-      setSellCurrency('all'); setPayment('all'); setPage(1); scrollToMarket();
+      setSide('sell'); setSellCurrency('all'); setPayment('all'); setPage(1); scrollToMarket();
     } else if (label.includes('Todas las ofertas')) {
       clearFilters(); scrollToMarket();
     }
@@ -366,7 +366,7 @@ export default function App() {
                 aria-expanded={fiatMenuOpen}
                 onClick={() => { setFiatMenuOpen((o) => !o); setBuyMenuOpen(false); }}
               >
-                Fiat
+                Comprar fiat
                 <span className="fiat-menu-chev" aria-hidden="true" />
               </button>
             </span>
