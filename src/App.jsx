@@ -190,8 +190,8 @@ export default function App() {
       description: 'Elige una fiat y verás las ofertas para comprarla vendiendo crypto.',
     },
     coins: [
-      { symbol: '$', color: '#D64545', label: 'Comprar CuPcash', code: 'CuPcash', src: cupPng },
-      { symbol: '$', color: '#2E7D32', label: 'Comprar USDcash', code: 'USDcash', src: usdPng },
+      { symbol: '$', color: '#D64545', label: 'Comprar CUP', code: 'CuPcash', src: cupPng },
+      { symbol: '$', color: '#2E7D32', label: 'Comprar USD', code: 'USDcash', src: usdPng },
       { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'ZELLE' },
       { symbol: '$', color: '#006847', label: 'Comprar MXN', code: 'MXN' },
       { symbol: '€', color: '#003399', label: 'Comprar EUR', code: 'EUR' },
