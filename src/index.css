@@ -24,23 +24,23 @@ body {
 .logo-img { height: 28px; width: auto; display: block; }
 .topbar-right { display: flex; align-items: center; gap: 12px; }
 
-/* Disparador del submenú «Comprar crypto»: como el navLink del Header
+/* Disparadores de los submenús «Comprar crypto» y «Fiat»: como el navLink del Header
    del DS (16px/500, hover violeta, chevron en triángulo CSS). El panel
    lo renderiza el propio DropdownMenu del DS, no hay CSS propio. */
-.buy-menu-btn {
+.buy-menu-btn, .fiat-menu-btn {
   display: inline-flex; align-items: center; gap: 8px;
   font: inherit; font-size: 16px; font-weight: 500; line-height: 22px;
   color: var(--cds-ink); background: transparent;
   border: 0; padding: 8px 6px; cursor: pointer;
 }
-.buy-menu-btn:hover, .buy-menu-btn-open { color: var(--cds-accent-hover); }
-.buy-menu-chev {
+.buy-menu-btn:hover, .buy-menu-btn-open, .fiat-menu-btn:hover, .fiat-menu-btn-open { color: var(--cds-accent-hover); }
+.buy-menu-chev, .fiat-menu-chev {
   width: 7px; height: 7px; flex: none;
   border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor;
   transform: rotate(45deg); margin-bottom: 3px;
   transition: transform 0.22s ease, margin 0.22s ease;
 }
-.buy-menu-btn-open .buy-menu-chev { transform: rotate(225deg); margin-bottom: -1px; }
+.buy-menu-btn-open .buy-menu-chev, .fiat-menu-btn-open .fiat-menu-chev { transform: rotate(225deg); margin-bottom: -1px; }
 
 /* El header es sticky: que el mercado no quede tapado al desplazarlo */
 .market { scroll-margin-top: 72px; }

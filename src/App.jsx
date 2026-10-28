@@ -26,6 +26,7 @@ import ousdIcon from './assets/coins/ousd.svg';
 import eurcIcon from './assets/coins/eurc.svg';
 import zelleIcon from './assets/coins/zelle.svg';
 import usatIcon from './assets/coins/usat.svg';
+import { cupPng, usdPng } from './assets/coins/fiat-images.js';
 import placeholderGenericIcon from './assets/coins/placeholder-generic.svg';
 
 /**
@@ -104,6 +105,10 @@ export default function App() {
     ],
   };
   const [buyMenuOpen, setBuyMenuOpen] = React.useState(false);
+  // Declarado aquí (no en el bloque fiat) porque el efecto de cierre
+  // por clic fuera evalúa fiatMenuOpen en su array de dependencias
+  // durante el render; declararlo después rompería con TDZ.
+  const [fiatMenuOpen, setFiatMenuOpen] = React.useState(false);
   const buyMenuRef = React.useRef(null);
   const buyMenuTimer = React.useRef(null);
   const cancelBuyMenuClose = () => {
@@ -118,9 +123,9 @@ export default function App() {
   // escritorio, clic en móvil), el hover solo abre fuera de móvil.
   const openBuyMenu = () => {
     if (isNarrow) return;
-    cancelBuyMenuClose(); setBuyMenuOpen(true);
+    cancelBuyMenuClose(); setBuyMenuOpen(true); setFiatMenuOpen(false);
   };
-  React.useEffect(() => () => cancelBuyMenuClose(), []);
+  React.useEffect(() => () => { cancelBuyMenuClose(); cancelFiatMenuClose(); }, []);
   const [isNarrow, setIsNarrow] = React.useState(() => window.matchMedia('(max-width: 720px)').matches);
   React.useEffect(() => {
     const mq = window.matchMedia('(max-width: 720px)');
@@ -129,18 +134,18 @@ export default function App() {
     return () => mq.removeEventListener('change', fn);
   }, []);
   React.useEffect(() => {
-    if (!buyMenuOpen) return undefined;
+    if (!buyMenuOpen && !fiatMenuOpen) return undefined;
     const onPointerDown = (e) => {
-      if (buyMenuRef.current && !buyMenuRef.current.contains(e.target)) setBuyMenuOpen(false);
+      if (buyMenuRef.current && !buyMenuRef.current.contains(e.target)) { setBuyMenuOpen(false); setFiatMenuOpen(false); }
     };
-    const onKey = (e) => { if (e.key === 'Escape') setBuyMenuOpen(false); };
+    const onKey = (e) => { if (e.key === 'Escape') { setBuyMenuOpen(false); setFiatMenuOpen(false); } };
     document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKey);
     return () => {
       document.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('keydown', onKey);
     };
-  }, [buyMenuOpen]);
+  }, [buyMenuOpen, fiatMenuOpen]);
   const buyCoin = (code) => {
     setSide('buy'); setBuyCurrency(code); setChain('all'); setPage(1);
     setBuyMenuOpen(false);
@@ -163,12 +168,76 @@ export default function App() {
     }
     const label = el.textContent.trim();
     const scrollToMarket = () => document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    if (label === 'Vender crypto') {
+    if (label.includes('Vender crypto')) {
       setSide('sell'); setPage(1); scrollToMarket();
-    } else if (label === 'Todas las ofertas') {
+    } else if (label.includes('Todas las ofertas')) {
       clearFilters(); scrollToMarket();
-    } else if (label === 'Otras monedas') {
+    } else if (label.includes('Otras monedas')) {
       setSide('buy'); clearFilters(); scrollToMarket();
+    }
+  };
+
+
+  // Submenú «Fiat» del header: mismo DropdownMenu del DS que el de
+  // crypto, pero filtra ESTA tabla por fiat (sell_currency): la moneda
+  // que pagas al comprar o la que recibes al vender. No cambia el lado:
+  // es un filtro, no una navegación. Al fijar la fiat se reinicia el
+  // método de pago (primer campo de la cascada de venta, del que
+  // depende la segunda), igual que el menú crypto reinicia la red.
+  const fiatDropdown = {
+    intro: {
+      title: 'Fiat',
+      description: 'Filtra las ofertas por la moneda fiat: la que pagas al comprar o la que recibes al vender.',
+    },
+    coins: [
+      { symbol: '$', color: '#D64545', label: 'Peso cubano', code: 'CUP', src: cupPng },
+      { symbol: '$', color: '#2E7D32', label: 'Dólar', code: 'USD', src: usdPng },
+      // Último tile: quita solo el filtro de fiat (código vacío → rama
+      // de etiqueta en onFiatMenuNavigate), sin tocar el resto.
+      { symbol: '+', color: '#3a3a44', label: 'Todas las fiat', code: '' },
+    ],
+    links: [
+      { label: 'Todas las ofertas' },
+    ],
+  };
+  const fiatMenuTimer = React.useRef(null);
+  const cancelFiatMenuClose = () => {
+    if (fiatMenuTimer.current) { clearTimeout(fiatMenuTimer.current); fiatMenuTimer.current = null; }
+  };
+  const scheduleFiatMenuClose = () => {
+    cancelFiatMenuClose();
+    fiatMenuTimer.current = setTimeout(() => setFiatMenuOpen(false), 150);
+  };
+  // En móvil no hay hover, igual que el menú crypto: el hover solo abre
+  // fuera de móvil. Abrir un menú cierra el otro.
+  const openFiatMenu = () => {
+    if (isNarrow) return;
+    cancelFiatMenuClose(); setFiatMenuOpen(true); setBuyMenuOpen(false);
+  };
+  const fiatFilter = (code) => {
+    setSellCurrency(code); setPayment('all'); setPage(1);
+    setFiatMenuOpen(false);
+    document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  // Igual que onBuyMenuNavigate: el código va en el tercer span del
+  // botón de moneda; el tile «Todas las fiat» lleva el código vacío y
+  // cae en la rama de etiqueta.
+  const onFiatMenuNavigate = (e) => {
+    e.preventDefault();
+    cancelFiatMenuClose();
+    setFiatMenuOpen(false);
+    const el = e.currentTarget;
+    const codeEl = el.children && el.children[2];
+    if (codeEl && codeEl.textContent) {
+      fiatFilter(codeEl.textContent.trim());
+      return;
+    }
+    const label = el.textContent.trim();
+    const scrollToMarket = () => document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (label.includes('Todas las fiat')) {
+      setSellCurrency('all'); setPayment('all'); setPage(1); scrollToMarket();
+    } else if (label.includes('Todas las ofertas')) {
+      clearFilters(); scrollToMarket();
     }
   };
 
@@ -269,8 +338,8 @@ export default function App() {
       <header
         className="topbar"
         ref={buyMenuRef}
-        onMouseEnter={cancelBuyMenuClose}
-        onMouseLeave={scheduleBuyMenuClose}
+        onMouseEnter={() => { cancelBuyMenuClose(); cancelFiatMenuClose(); }}
+        onMouseLeave={() => { scheduleBuyMenuClose(); scheduleFiatMenuClose(); }}
       >
         <div className="topbar-row">
           <span className="brand">
@@ -283,10 +352,22 @@ export default function App() {
                 className={`buy-menu-btn ${buyMenuOpen ? 'buy-menu-btn-open' : ''}`}
                 aria-haspopup="menu"
                 aria-expanded={buyMenuOpen}
-                onClick={() => setBuyMenuOpen((o) => !o)}
+                onClick={() => { setBuyMenuOpen((o) => !o); setFiatMenuOpen(false); }}
               >
                 Comprar crypto
                 <span className="buy-menu-chev" aria-hidden="true" />
+              </button>
+            </span>
+            <span className="fiat-menu" onMouseEnter={openFiatMenu}>
+              <button
+                type="button"
+                className={`fiat-menu-btn ${fiatMenuOpen ? 'fiat-menu-btn-open' : ''}`}
+                aria-haspopup="menu"
+                aria-expanded={fiatMenuOpen}
+                onClick={() => { setFiatMenuOpen((o) => !o); setBuyMenuOpen(false); }}
+              >
+                Fiat
+                <span className="fiat-menu-chev" aria-hidden="true" />
               </button>
             </span>
             <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
@@ -297,6 +378,12 @@ export default function App() {
         )}
         {buyMenuOpen && isNarrow && (
           <DropdownMenu dropdown={buyDropdown} mobile open={buyMenuOpen} onNavigate={onBuyMenuNavigate} />
+        )}
+        {fiatMenuOpen && !isNarrow && (
+          <DropdownMenu dropdown={fiatDropdown} onNavigate={onFiatMenuNavigate} />
+        )}
+        {fiatMenuOpen && isNarrow && (
+          <DropdownMenu dropdown={fiatDropdown} mobile open={fiatMenuOpen} onNavigate={onFiatMenuNavigate} />
         )}
       </header>
 
