@@ -190,8 +190,16 @@ export default function App() {
       description: 'Elige una fiat y verás las ofertas para comprarla vendiendo crypto.',
     },
     coins: [
-      { symbol: '$', color: '#D64545', label: 'Comprar CUP', code: 'CUP', src: cupPng },
-      { symbol: '$', color: '#2E7D32', label: 'Comprar USD', code: 'USD', src: usdPng },
+      { symbol: '$', color: '#D64545', label: 'Comprar CuPcash', code: 'CuPcash', src: cupPng },
+      { symbol: '$', color: '#2E7D32', label: 'Comprar USDcash', code: 'USDcash', src: usdPng },
+      { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'ZELLE' },
+      { symbol: '$', color: '#006847', label: 'Comprar MXN', code: 'MXN' },
+      { symbol: '€', color: '#003399', label: 'Comprar EUR', code: 'EUR' },
+      { symbol: 'T', color: '#3a3a44', label: 'Comprar Transferencia', code: 'TRANSF' },
+      { symbol: 'E', color: '#3a3a44', label: 'Comprar Etecsa', code: 'ETECSA' },
+      { symbol: '$', color: '#D80621', label: 'Comprar CAD', code: 'CAD' },
+      { symbol: 'C', color: '#3a3a44', label: 'Comprar Clásica', code: 'CLASICA' },
+      { symbol: '$', color: '#0F766E', label: 'Comprar MLC', code: 'MLC' },
       // Último tile: quita solo el filtro de fiat (código vacío → rama
       // de etiqueta en onFiatMenuNavigate), sin tocar el resto.
       { symbol: '+', color: '#3a3a44', label: 'Todas las fiat', code: '' },
@@ -215,7 +223,10 @@ export default function App() {
     cancelFiatMenuClose(); setFiatMenuOpen(true); setBuyMenuOpen(false);
   };
   const fiatFilter = (code) => {
-    setSide('sell'); setSellCurrency(code); setPayment('all'); setPage(1);
+    // Ticker mostrado -> moneda del dato (provisional: pendiente de que
+    // aclare ticker, nombre y logo de los nuevos métodos/monedas).
+    const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP' };
+    setSide('sell'); setSellCurrency(cashToCurrency[code] || code); setPayment('all'); setPage(1);
     setFiatMenuOpen(false);
     document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
