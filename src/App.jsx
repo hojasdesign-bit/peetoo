@@ -19,6 +19,11 @@ import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/off
 import logoUrl from './assets/logo.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
+import usdcIcon from './assets/coins/usdc.svg';
+import usdtIcon from './assets/coins/usdt.svg';
+import pyusdIcon from './assets/coins/pyusd.svg';
+import ousdIcon from './assets/coins/ousd.svg';
+import placeholderIcon from './assets/coins/placeholder.svg';
 
 /**
  * peetoo · Mercado Crypto.
@@ -72,11 +77,11 @@ export default function App() {
       description: 'Compra stablecoins directamente entre personas, con ofertas publicadas por otros usuarios.',
     },
     coins: [
-      { symbol: 'P', color: '#003087', label: 'Comprar PYUSD', code: 'PYUSD' },
-      { symbol: '$', color: '#2775ca', label: 'Comprar USDC', code: 'USDC' },
-      { symbol: '₮', color: '#26a17b', label: 'Comprar USDT', code: 'USDT' },
-      { symbol: 'Z', color: '#3a3a44', label: 'Comprar ZLUSD', code: 'ZLUSD' },
-      { symbol: 'O', color: '#3a3a44', label: 'Comprar OUSD', code: 'OUSD' },
+      { symbol: 'P', color: '#003087', label: 'Comprar PYUSD', code: 'PYUSD', src: pyusdIcon },
+      { symbol: '$', color: '#2775ca', label: 'Comprar USDC', code: 'USDC', src: usdcIcon },
+      { symbol: '₮', color: '#26a17b', label: 'Comprar USDT', code: 'USDT', src: usdtIcon },
+      { symbol: 'Z', color: '#3a3a44', label: 'Comprar ZLUSD', code: 'ZLUSD', src: placeholderIcon },
+      { symbol: 'O', color: '#3a3a44', label: 'Comprar OUSD', code: 'OUSD', src: ousdIcon },
     ],
     links: [
       { label: 'Vender crypto' },

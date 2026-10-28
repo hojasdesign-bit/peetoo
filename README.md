@@ -48,6 +48,9 @@ OJO: `src/ds/components/CascadeField/CascadeField.jsx` lleva un FIX LOCAL
 (el panel también se abre con `onClick`, no solo con `onFocus`, porque tras
 elegir una opción el input conserva el foco y el panel no reabría) que un
 snapshot fresco sobrescribiría: hay que subir ese fix al DS primero.
+Igual `src/ds/components/MenuCoinButton/` lleva una EXTENSIÓN LOCAL (prop
+`src` opcional: muestra el logo de la moneda dentro del círculo en vez de
+la letra), también pendiente de subir al DS.
 
 ## Desarrollo
 
