@@ -378,9 +378,15 @@ export default function App() {
   // Los dos CascadeField y el botón de intercambio, como variables para
   // poder invertir su orden sin duplicar el JSX. Cada campo sigue ligado
   // a su dominio (crypto: red+moneda; fiat: método+moneda); solo cambia
-  // el orden en la barra y con él la moneda de la cantidad.
+  // el orden en la barra y con él la moneda de la cantidad. Las claves
+  // estables son obligatorias: sin ellas React actualizaría los
+  // componentes en su sitio y el texto del primer campo (estado local
+  // del CascadeField, sincronizado solo cuando cambia value.first) no
+  // se movería cuando ambos valen 'all' — los segundos cambiaban y los
+  // primeros se quedaban, dejando los pares divorciados.
   const cryptoCascade = (
     <CascadeField
+      key="crypto"
       className="filter-cascade"
       firstPlaceholder="Blockchain"
       secondPlaceholder="Comprar"
@@ -394,6 +400,7 @@ export default function App() {
   );
   const fiatCascade = (
     <CascadeField
+      key="fiat"
       className="filter-cascade"
       firstPlaceholder="Método"
       secondPlaceholder="Vender"
