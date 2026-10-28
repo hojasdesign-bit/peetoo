@@ -14,15 +14,11 @@ import { TraderCell } from './ds/components/TraderCell/TraderCell.jsx';
 import { OverflowChips } from './ds/components/OverflowChips/OverflowChips.jsx';
 import { NetworkChip } from './ds/components/NetworkChip/NetworkChip.jsx';
 import { PageBackground } from './ds/components/PageBackground/PageBackground.jsx';
+import { DropdownMenu } from './ds/components/DropdownMenu/DropdownMenu.jsx';
 import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/offers.js';
 import logoUrl from './assets/logo.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
-import usdcIcon from './assets/coins/usdc.svg';
-import usdtIcon from './assets/coins/usdt.svg';
-import pyusdIcon from './assets/coins/pyusd.svg';
-import ousdIcon from './assets/coins/ousd.svg';
-import placeholderIcon from './assets/coins/placeholder.svg';
 
 /**
  * peetoo · Mercado Crypto.
@@ -64,19 +60,54 @@ export default function App() {
   const [orderDone, setOrderDone] = React.useState(false);
   const [theme, setTheme] = React.useState('oscuro');
 
-  // Desplegable «Comprar crypto» del header: al elegir una stablecoin,
-  // el mercado pasa a Comprar esa moneda sin filtro de red.
-  // Logos del repo original (pyusd, ousd, usdc, usdt); ZLUSD (ZelleUSD)
-  // no tiene logo público, así que usa un placeholder genérico.
-  const BUY_COINS = [
-    { code: 'PYUSD', label: 'PayPal USD', src: pyusdIcon },
-    { code: 'USDC', label: 'USD Coin', src: usdcIcon },
-    { code: 'USDT', label: 'Tether', src: usdtIcon },
-    { code: 'ZLUSD', label: 'ZelleUSD', src: placeholderIcon },
-    { code: 'OUSD', label: 'Origin Dollar', src: ousdIcon },
-  ];
+  // Submenú «Comprar crypto» del header: la versión planteada en el DS
+  // (Header v1.10 + DropdownMenu): mega-panel con intro, monedas y
+  // enlaces; apertura por hover (150ms de margen al salir) y clic
+  // como respaldo; en móvil (≤720px) la variante acordeón del propio
+  // DropdownMenu. Los botones de moneda son los MenuCoinButton del DS
+  // (símbolo en círculo de color + «Comprar X» + código).
+  const buyDropdown = {
+    intro: {
+      title: 'Comprar crypto',
+      description: 'Compra stablecoins directamente entre personas, con ofertas publicadas por otros usuarios.',
+    },
+    coins: [
+      { symbol: 'P', color: '#003087', label: 'Comprar PYUSD', code: 'PYUSD' },
+      { symbol: '$', color: '#2775ca', label: 'Comprar USDC', code: 'USDC' },
+      { symbol: '₮', color: '#26a17b', label: 'Comprar USDT', code: 'USDT' },
+      { symbol: 'Z', color: '#3a3a44', label: 'Comprar ZLUSD', code: 'ZLUSD' },
+      { symbol: 'O', color: '#3a3a44', label: 'Comprar OUSD', code: 'OUSD' },
+    ],
+    links: [
+      { label: 'Vender crypto' },
+      { label: 'Todas las ofertas' },
+    ],
+  };
   const [buyMenuOpen, setBuyMenuOpen] = React.useState(false);
   const buyMenuRef = React.useRef(null);
+  const buyMenuTimer = React.useRef(null);
+  const cancelBuyMenuClose = () => {
+    if (buyMenuTimer.current) { clearTimeout(buyMenuTimer.current); buyMenuTimer.current = null; }
+  };
+  const scheduleBuyMenuClose = () => {
+    cancelBuyMenuClose();
+    buyMenuTimer.current = setTimeout(() => setBuyMenuOpen(false), 150);
+  };
+  // En móvil no hay hover: el tap emula mouseenter + clic, y abrir por
+  // hover + alternar por clic se cancelarían. Como en el DS (hover en
+  // escritorio, clic en móvil), el hover solo abre fuera de móvil.
+  const openBuyMenu = () => {
+    if (isNarrow) return;
+    cancelBuyMenuClose(); setBuyMenuOpen(true);
+  };
+  React.useEffect(() => () => cancelBuyMenuClose(), []);
+  const [isNarrow, setIsNarrow] = React.useState(() => window.matchMedia('(max-width: 720px)').matches);
+  React.useEffect(() => {
+    const mq = window.matchMedia('(max-width: 720px)');
+    const fn = () => setIsNarrow(mq.matches);
+    mq.addEventListener('change', fn);
+    return () => mq.removeEventListener('change', fn);
+  }, []);
   React.useEffect(() => {
     if (!buyMenuOpen) return undefined;
     const onPointerDown = (e) => {
@@ -94,6 +125,27 @@ export default function App() {
     setSide('buy'); setBuyCurrency(code); setChain('all'); setPage(1);
     setBuyMenuOpen(false);
     document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  // El DropdownMenu entrega un único onNavigate con el evento: los
+  // botones de moneda llevan el código en su tercer span y los enlaces
+  // solo texto, así se distingue la acción sin tocar el componente.
+  const onBuyMenuNavigate = (e) => {
+    e.preventDefault();
+    cancelBuyMenuClose();
+    setBuyMenuOpen(false);
+    const el = e.currentTarget;
+    const codeEl = el.children && el.children[2];
+    if (codeEl && codeEl.textContent) {
+      buyCoin(codeEl.textContent.trim());
+      return;
+    }
+    const label = el.textContent.trim();
+    const scrollToMarket = () => document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (label === 'Vender crypto') {
+      setSide('sell'); setPage(1); scrollToMarket();
+    } else if (label === 'Todas las ofertas') {
+      clearFilters(); scrollToMarket();
+    }
   };
 
   // Tema como en el footer de la app original: Oscuro / Claro / Sistema
@@ -190,51 +242,38 @@ export default function App() {
   return (
     <div className="app">
       <PageBackground />
-      <header className="topbar">
-        <span className="brand">
-          <img src={logoUrl} alt="Zeroo" className="logo-img" />
-        </span>
-        <span className="topbar-right">
-          <span className="buy-menu" ref={buyMenuRef}>
-            <button
-              type="button"
-              className="buy-menu-btn"
-              aria-haspopup="menu"
-              aria-expanded={buyMenuOpen}
-              onClick={() => setBuyMenuOpen((o) => !o)}
-            >
-              Comprar crypto
-              <svg className="buy-menu-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-            {buyMenuOpen && (
-              <span className="buy-menu-panel" role="menu">
-                {BUY_COINS.map((coin) => {
-                  const active = side === 'buy' && buyCurrency === coin.code;
-                  return (
-                    <button
-                      key={coin.code}
-                      type="button"
-                      role="menuitem"
-                      className="buy-menu-item"
-                      data-active={active || undefined}
-                      onClick={() => buyCoin(coin.code)}
-                    >
-                      <span className="buy-menu-left">
-                        <img src={coin.src} alt="" className="buy-menu-coin" />
-                        <span className="buy-menu-label">{coin.label}</span>
-                        <span className="buy-menu-code">{coin.code}</span>
-                      </span>
-                      {active && <img src={checkIcon} alt="" className="ui-icon-sm" />}
-                    </button>
-                  );
-                })}
-              </span>
-            )}
+      <header
+        className="topbar"
+        ref={buyMenuRef}
+        onMouseEnter={cancelBuyMenuClose}
+        onMouseLeave={scheduleBuyMenuClose}
+      >
+        <div className="topbar-row">
+          <span className="brand">
+            <img src={logoUrl} alt="Zeroo" className="logo-img" />
           </span>
-          <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
-        </span>
+          <span className="topbar-right">
+            <span className="buy-menu" onMouseEnter={openBuyMenu}>
+              <button
+                type="button"
+                className={`buy-menu-btn ${buyMenuOpen ? 'buy-menu-btn-open' : ''}`}
+                aria-haspopup="menu"
+                aria-expanded={buyMenuOpen}
+                onClick={() => setBuyMenuOpen((o) => !o)}
+              >
+                Comprar crypto
+                <span className="buy-menu-chev" aria-hidden="true" />
+              </button>
+            </span>
+            <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
+          </span>
+        </div>
+        {buyMenuOpen && !isNarrow && (
+          <DropdownMenu dropdown={buyDropdown} onNavigate={onBuyMenuNavigate} />
+        )}
+        {buyMenuOpen && isNarrow && (
+          <DropdownMenu dropdown={buyDropdown} mobile open={buyMenuOpen} onNavigate={onBuyMenuNavigate} />
+        )}
       </header>
 
       <main className="shell">
