@@ -79,19 +79,21 @@ export default function App() {
       title: 'Comprar crypto',
       description: 'Compra stablecoins directamente entre personas, con ofertas publicadas por otros usuarios.',
     },
+    // Orden: agrupado por emisor y, dentro de cada emisor, por
+    // importancia (Tether, Circle, PayPal, Zelle, Origin). MXNT y RLUSD
+    // ocultas a petición (2026-10-28).
     coins: [
-      { symbol: 'P', color: '#003087', label: 'Comprar PYUSD', code: 'PYUSD', src: pyusdIcon },
-      { symbol: '$', color: '#2775ca', label: 'Comprar USDC', code: 'USDC', src: usdcIcon },
       { symbol: '₮', color: '#26a17b', label: 'Comprar USDT', code: 'USDT', src: usdtIcon },
+      // USAT: escudo oficial (Brandfetch) sobre azul marino #132A55, el
+      // color del propio escudo, para que las esquinas del círculo fundan.
+      { symbol: 'U', color: '#132A55', label: 'Comprar USAT', code: 'USAT', src: usatIcon },
+      { symbol: '$', color: '#2775ca', label: 'Comprar USDC', code: 'USDC', src: usdcIcon },
+      { symbol: '€', color: '#2775ca', label: 'Comprar EURC', code: 'EURC', src: eurcIcon },
+      { symbol: 'P', color: '#003087', label: 'Comprar PYUSD', code: 'PYUSD', src: pyusdIcon },
       // ZLUSD: marca Zelle (Simple Icons, CC0) en morado #6d1ed4; aún no
       // hay logo propio del token publicado.
       { symbol: 'Z', color: '#6d1ed4', label: 'Comprar ZLUSD', code: 'ZLUSD', src: zelleIcon },
       { symbol: 'O', color: '#3a3a44', label: 'Comprar OUSD', code: 'OUSD', src: ousdIcon },
-      // MXNT y RLUSD ocultas a petición (2026-10-28): no están en el submenú.
-      { symbol: '€', color: '#2775ca', label: 'Comprar EURC', code: 'EURC', src: eurcIcon },
-      // USAT: escudo oficial (Brandfetch) sobre azul marino #132A55, el
-      // color del propio escudo, para que las esquinas del círculo fundan.
-      { symbol: 'U', color: '#132A55', label: 'Comprar USAT', code: 'USAT', src: usatIcon },
       // Último tile: no es una moneda; abre el mercado de compra sin
       // filtro de moneda (código vacío → rama de etiqueta en onBuyMenuNavigate).
       { symbol: '+', color: '#3a3a44', label: 'Otras monedas', code: '' },
