@@ -86,16 +86,15 @@ export default function App() {
       // hay logo propio del token publicado.
       { symbol: 'Z', color: '#6d1ed4', label: 'Comprar ZLUSD', code: 'ZLUSD', src: zelleIcon },
       { symbol: 'O', color: '#3a3a44', label: 'Comprar OUSD', code: 'OUSD', src: ousdIcon },
-      // Tether (MXNT), Circle (EURC) y pagos internacionales (RLUSD de
-      // Ripple). MXNT y RLUSD no tienen logo público en las fuentes
-      // consultadas (web3icons, repo original) y usan placeholder.
-      { symbol: 'M', color: '#26a17b', label: 'Comprar MXNT', code: 'MXNT', src: placeholderGenericIcon },
+      // MXNT y RLUSD ocultas a petición (2026-10-28): no están en el submenú.
       { symbol: '€', color: '#2775ca', label: 'Comprar EURC', code: 'EURC', src: eurcIcon },
-      { symbol: 'R', color: '#3a3a44', label: 'Comprar RLUSD', code: 'RLUSD', src: placeholderGenericIcon },
       // USAT: el dólar regulado de Tether para EE. UU. (GENIUS Act,
       // emitido por Anchorage Digital Bank; token distinto de USDT).
       // Sin logo público en las fuentes consultadas → placeholder.
       { symbol: 'U', color: '#26a17b', label: 'Comprar USAT', code: 'USAT', src: placeholderGenericIcon },
+      // Último tile: no es una moneda; abre el mercado de compra sin
+      // filtro de moneda (código vacío → rama de etiqueta en onBuyMenuNavigate).
+      { symbol: '+', color: '#3a3a44', label: 'Otras monedas', code: '' },
     ],
     links: [
       { label: 'Vender crypto' },
@@ -148,6 +147,8 @@ export default function App() {
   // El DropdownMenu entrega un único onNavigate con el evento: los
   // botones de moneda llevan el código en su tercer span y los enlaces
   // solo texto, así se distingue la acción sin tocar el componente.
+  // El tile «Otras monedas» lleva el código vacío y cae en la rama de
+  // etiqueta: compra sin filtro de moneda.
   const onBuyMenuNavigate = (e) => {
     e.preventDefault();
     cancelBuyMenuClose();
@@ -164,6 +165,8 @@ export default function App() {
       setSide('sell'); setPage(1); scrollToMarket();
     } else if (label === 'Todas las ofertas') {
       clearFilters(); scrollToMarket();
+    } else if (label === 'Otras monedas') {
+      setSide('buy'); clearFilters(); scrollToMarket();
     }
   };
 
