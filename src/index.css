@@ -39,7 +39,7 @@ body {
 .buy-menu-btn[aria-expanded="true"] .buy-menu-chevron { transform: rotate(180deg); }
 .buy-menu-panel {
   position: absolute; top: calc(100% + 8px); right: 0; z-index: 60;
-  min-width: 200px; display: flex; flex-direction: column; gap: 2px;
+  min-width: 260px; display: flex; flex-direction: column; gap: 2px;
   padding: 6px; background: var(--cds-surface-raised);
   border: 1px solid var(--cds-border); border-radius: 16px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
@@ -51,8 +51,16 @@ body {
   color: var(--cds-ink); background: transparent;
   border: 0; border-radius: 10px; cursor: pointer;
 }
-.buy-menu-item:hover { background: var(--cds-surface-2); }
-.buy-menu-item[data-active] { font-weight: 700; }
+.buy-menu-item:hover { background: var(--cds-accent-hover); color: #fff; }
+.buy-menu-item:hover .buy-menu-code { color: #f5f5f5; }
+.buy-menu-item[data-active] .buy-menu-label { font-weight: 700; }
+.buy-menu-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.buy-menu-coin {
+  width: 32px; height: 32px; flex: none;
+  border-radius: 50%; object-fit: cover; display: block;
+}
+.buy-menu-label { white-space: nowrap; }
+.buy-menu-code { color: var(--cds-muted); white-space: nowrap; }
 
 /* El header es sticky: que el mercado no quede tapado al desplazarlo */
 .market { scroll-margin-top: 72px; }

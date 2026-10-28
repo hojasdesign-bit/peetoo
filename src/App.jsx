@@ -18,6 +18,11 @@ import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/off
 import logoUrl from './assets/logo.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
+import usdcIcon from './assets/coins/usdc.svg';
+import usdtIcon from './assets/coins/usdt.svg';
+import pyusdIcon from './assets/coins/pyusd.svg';
+import ousdIcon from './assets/coins/ousd.svg';
+import placeholderIcon from './assets/coins/placeholder.svg';
 
 /**
  * peetoo · Mercado Crypto.
@@ -61,7 +66,15 @@ export default function App() {
 
   // Desplegable «Comprar crypto» del header: al elegir una stablecoin,
   // el mercado pasa a Comprar esa moneda sin filtro de red.
-  const BUY_COINS = ['PYUSD', 'USDC', 'USDT', 'ZLUSD', 'OUSD'];
+  // Logos del repo original (pyusd, ousd, usdc, usdt); ZLUSD (ZelleUSD)
+  // no tiene logo público, así que usa un placeholder genérico.
+  const BUY_COINS = [
+    { code: 'PYUSD', label: 'PayPal USD', src: pyusdIcon },
+    { code: 'USDC', label: 'USD Coin', src: usdcIcon },
+    { code: 'USDT', label: 'Tether', src: usdtIcon },
+    { code: 'ZLUSD', label: 'ZelleUSD', src: placeholderIcon },
+    { code: 'OUSD', label: 'Origin Dollar', src: ousdIcon },
+  ];
   const [buyMenuOpen, setBuyMenuOpen] = React.useState(false);
   const buyMenuRef = React.useRef(null);
   React.useEffect(() => {
@@ -197,18 +210,22 @@ export default function App() {
             </button>
             {buyMenuOpen && (
               <span className="buy-menu-panel" role="menu">
-                {BUY_COINS.map((code) => {
-                  const active = side === 'buy' && buyCurrency === code;
+                {BUY_COINS.map((coin) => {
+                  const active = side === 'buy' && buyCurrency === coin.code;
                   return (
                     <button
-                      key={code}
+                      key={coin.code}
                       type="button"
                       role="menuitem"
                       className="buy-menu-item"
                       data-active={active || undefined}
-                      onClick={() => buyCoin(code)}
+                      onClick={() => buyCoin(coin.code)}
                     >
-                      <span>{code}</span>
+                      <span className="buy-menu-left">
+                        <img src={coin.src} alt="" className="buy-menu-coin" />
+                        <span className="buy-menu-label">{coin.label}</span>
+                        <span className="buy-menu-code">{coin.code}</span>
+                      </span>
                       {active && <img src={checkIcon} alt="" className="ui-icon-sm" />}
                     </button>
                   );
