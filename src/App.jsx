@@ -190,12 +190,12 @@ export default function App() {
       description: 'Elige una fiat y verás las ofertas para comprarla vendiendo crypto.',
     },
     coins: [
-      { symbol: '$', color: '#D64545', label: 'Comprar CUP', code: 'CuPcash', src: cupPng },
-      { symbol: '$', color: '#2E7D32', label: 'Comprar USD', code: 'USDcash', src: usdPng },
-      { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'ZELLE' },
+      { symbol: '$', color: '#D64545', label: 'Comprar CUP', code: 'CuPcash', src: cupPng, method: 'Efectivo', currency: 'CUP' },
+      { symbol: '$', color: '#2E7D32', label: 'Comprar USD', code: 'USDcash', src: usdPng, method: 'Efectivo', currency: 'USD' },
+      { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'ZELLE', method: 'Zelle', currency: 'USD' },
       { symbol: '$', color: '#006847', label: 'Comprar MXN', code: 'MXN' },
       { symbol: '€', color: '#003399', label: 'Comprar EUR', code: 'EUR' },
-      { symbol: 'T', color: '#3a3a44', label: 'Comprar Transferencia', code: 'TRANSF' },
+      { symbol: 'T', color: '#3a3a44', label: 'Comprar Transferencia', code: 'TRANSF', method: 'Transferencia Bancaria', currency: 'all' },
       { symbol: 'E', color: '#3a3a44', label: 'Comprar Etecsa', code: 'ETECSA' },
       { symbol: '$', color: '#D80621', label: 'Comprar CAD', code: 'CAD' },
       { symbol: 'C', color: '#3a3a44', label: 'Comprar Clásica', code: 'CLASICA' },
@@ -223,10 +223,15 @@ export default function App() {
     cancelFiatMenuClose(); setFiatMenuOpen(true); setBuyMenuOpen(false);
   };
   const fiatFilter = (code) => {
-    // Ticker mostrado -> moneda del dato (provisional: pendiente de que
-    // aclare ticker, nombre y logo de los nuevos métodos/monedas).
+    const coin = fiatDropdown.coins.find((c) => c.code === code) || {};
+    // Par del tile si lo trae; si no, moneda = ticker (o su moneda
+    // cash) y método abierto. Pendiente de que aclare ticker, nombre
+    // y logo de los nuevos métodos/monedas.
     const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP' };
-    setSide('sell'); setSellCurrency(cashToCurrency[code] || code); setPayment('all'); setPage(1);
+    setSide('sell');
+    setPayment(coin.method || 'all');
+    setSellCurrency(coin.currency ?? (cashToCurrency[code] || code));
+    setPage(1);
     setFiatMenuOpen(false);
     document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
