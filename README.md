@@ -44,10 +44,14 @@ producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
 
 ## Datos de muestra
 
-Todo lo que ves son **datos de solo muestra**: las 10 ofertas crypto del
-repo original, sin carteras ni datos personales (los anunciantes son
-ficticios). No hay login real, ni transacciones reales, ni conexión con
-Supabase u OpenFort en esta versión.
+Todo lo que ves son **datos de solo muestra**: 84 ofertas demo, una por
+cada par crypto×fiat (7 cryptos × 6 fiats) en compra y en venta, con los
+métodos de pago y las redes rotados para que cada método aparezca con
+cada fiat y cada red con cada crypto. Los anunciantes son ficticios, sin
+carteras ni datos personales, y los precios siguen la convención demo
+(~1,0x), no son tasas reales. Etecsa y Clásica no tienen ofertas: sus
+pares están pendientes de aclaración. No hay login real, ni transacciones
+reales, ni conexión con Supabase u OpenFort en esta versión.
 
 ## Stack
 
