@@ -23,7 +23,9 @@ import usdcIcon from './assets/coins/usdc.svg';
 import usdtIcon from './assets/coins/usdt.svg';
 import pyusdIcon from './assets/coins/pyusd.svg';
 import ousdIcon from './assets/coins/ousd.svg';
+import eurcIcon from './assets/coins/eurc.svg';
 import placeholderIcon from './assets/coins/placeholder.svg';
+import placeholderGenericIcon from './assets/coins/placeholder-generic.svg';
 
 /**
  * peetoo · Mercado Crypto.
@@ -82,6 +84,12 @@ export default function App() {
       { symbol: '₮', color: '#26a17b', label: 'Comprar USDT', code: 'USDT', src: usdtIcon },
       { symbol: 'Z', color: '#3a3a44', label: 'Comprar ZLUSD', code: 'ZLUSD', src: placeholderIcon },
       { symbol: 'O', color: '#3a3a44', label: 'Comprar OUSD', code: 'OUSD', src: ousdIcon },
+      // Tether (MXNT), Circle (EURC) y pagos internacionales (RLUSD de
+      // Ripple). MXNT y RLUSD no tienen logo público en las fuentes
+      // consultadas (web3icons, repo original) y usan placeholder.
+      { symbol: 'M', color: '#26a17b', label: 'Comprar MXNT', code: 'MXNT', src: placeholderGenericIcon },
+      { symbol: '€', color: '#2775ca', label: 'Comprar EURC', code: 'EURC', src: eurcIcon },
+      { symbol: 'R', color: '#3a3a44', label: 'Comprar RLUSD', code: 'RLUSD', src: placeholderGenericIcon },
     ],
     links: [
       { label: 'Vender crypto' },
