@@ -5,9 +5,9 @@ import { cn } from '../../utils.js';
 /**
  * Pagination — anterior/siguiente más números de página con elipsis.
  * Colapsa los rangos intermedios cuando hay muchas páginas. Dos formas:
- * `pill` (números sueltos, el seleccionado en píldora), `rounded`
- * (botones cuadrados con bordes redondeados y borde visible) y `soft`
- * (los mismos cuadrados con fondo suave, pero sin borde).
+ * `pill` (números sueltos, el seleccionado en cuadrado redondeado),
+ * `rounded` (botones cuadrados con bordes redondeados y borde visible)
+ * y `soft` (los mismos cuadrados con fondo suave, pero sin borde).
  */
 export function Pagination({ page = 1, totalPages = 1, onChange, shape = 'pill', className = '', ...rest }) {
   const go = (next) => {

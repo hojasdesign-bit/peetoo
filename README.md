@@ -71,6 +71,9 @@ snapshot fresco sobrescribiría: hay que subir ese fix al DS primero.
 Igual `src/ds/components/MenuCoinButton/` lleva una EXTENSIÓN LOCAL (prop
 `src` opcional: muestra el logo de la moneda dentro del círculo en vez de
 la letra), también pendiente de subir al DS.
+Igual `src/ds/components/Pagination/` lleva un CAMBIO LOCAL (la página
+actual va en cuadrado con bordes redondeados, `radius-md`, en vez de en
+píldora), también pendiente de subir al DS.
 
 ## Desarrollo
 

@@ -27,7 +27,7 @@
 .pageBtn:focus-visible { outline: none; box-shadow: var(--cds-focus-ring); }
 
 .current {
-  border-radius: 999px; /* el seleccionado va en píldora, mucho más redondeado */
+  border-radius: var(--cds-radius-md); /* el seleccionado va en cuadrado con bordes redondeados */
   background: var(--cds-accent);
   color: var(--cds-on-accent);
   box-shadow: var(--cds-glow-sm);
