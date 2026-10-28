@@ -68,6 +68,13 @@ export default function App() {
   // true = [fiat, crypto] (cantidad en crypto). El botón de intercambio
   // invierte este orden; el lado Comprar/Vender NO cambia.
   const [cascadesSwapped, setCascadesSwapped] = React.useState(false);
+  // Lado efectivo de los resultados: el toggle (side) es la elección
+  // explícita del usuario y el intercambio NO lo toca; pero al invertir
+  // los pares, la dirección efectiva se invierte (con los campos
+  // intercambiados se muestran las ofertas del lado contrario). Todo lo
+  // que describe resultados (filtro, verbo, dirección del par) usa
+  // effectiveSide; solo el SegmentedControl muestra side.
+  const effectiveSide = cascadesSwapped ? (side === 'buy' ? 'sell' : 'buy') : side;
   const [selected, setSelected] = React.useState(null);
   const [modalAmount, setModalAmount] = React.useState('');
   const [modalChain, setModalChain] = React.useState('');
@@ -313,7 +320,7 @@ export default function App() {
   // Misma lógica de filtrado que MarketOffers del repo original.
   const parsedAmount = Number.parseFloat(amount);
   const filtered = OFFERS.filter((o) => {
-    if (o.side !== side) return false;
+    if (o.side !== effectiveSide) return false;
     if (buyCurrency !== 'all' && o.buy_currency !== buyCurrency) return false;
     if (payment !== 'all' && !o.payment_methods.includes(payment)) return false;
     if (chain !== 'all' && !o.blockchains.includes(chain)) return false;
@@ -341,20 +348,25 @@ export default function App() {
   const updEvent = (setter, clean) => (e) => { setter(clean ? clean(e.target.value) : e.target.value); setPage(1); };
   const clearFilters = () => {
     setBuyCurrency('all'); setAmount(''); setPayment('all'); setSellCurrency('all'); setChain('all'); setPage(1);
+    // Restaurar el orden por defecto: las selecciones del menú y el
+    // botón Eliminar filtros parten de cero, y con el orden restaurado
+    // el lado efectivo vuelve a ser el del toggle (si no, el menú
+    // prometería una dirección y se mostraría la contraria).
+    setCascadesSwapped(false);
   };
   // Intercambiar los CascadeField: invierte su orden en la barra y con
   // ello la moneda en la que se busca la cantidad (segundo campo: fiat
-  // por defecto, crypto tras intercambiar) Y la dirección de la
-  // búsqueda: lo que se compraba pasa a venderse y viceversa, así que
-  // los resultados cambian de ofertas de compra a ofertas de venta (y
-  // al revés). El segmentado cambia como consecuencia de esa inversión
-  // completa, no como cambio aislado. Ningún valor cambia (cantidad,
-  // red, moneda crypto, método, moneda fiat y filtros del menú se
-  // mantienen). Tampoco intercambia la moneda crypto con la fíat: eso
-  // dejaba valores inválidos con los pares unidos (por eso se quitó
-  // en v2.3).
-  const swapCascadesOrder = () => { setCascadesSwapped((v) => !v); setSide((s) => (s === 'buy' ? 'sell' : 'buy')); setPage(1); };
-  const verb = side === 'buy' ? 'Comprar' : 'Vender';
+  // por defecto, crypto tras intercambiar) Y la dirección efectiva de
+  // los resultados: lo que se compraba pasa a venderse y viceversa, así
+  // que los resultados cambian de ofertas de compra a ofertas de venta
+  // (y al revés). El toggle NO se toca: su estado queda intacto y solo
+  // cambia el lado efectivo (effectiveSide). Ningún valor cambia
+  // (cantidad, red, moneda crypto, método, moneda fiat y filtros del
+  // menú se mantienen). Tampoco intercambia la moneda crypto con la
+  // fíat: eso dejaba valores inválidos con los pares unidos (por eso
+  // se quitó en v2.3).
+  const swapCascadesOrder = () => { setCascadesSwapped((v) => !v); setPage(1); };
+  const verb = effectiveSide === 'buy' ? 'Comprar' : 'Vender';
   const openModal = (o) => {
     setSelected(o); setModalAmount(''); setModalChain(o.blockchains[0] || ''); setOrderDone(false);
   };
@@ -533,7 +545,7 @@ export default function App() {
                   <tr><td colSpan={6} className="empty">No hay anuncios que coincidan con los filtros.</td></tr>
                 ) : pageOffers.map((o) => (
                   <tr key={o.id}>
-                    <td><AssetPair from={ASSETS[o.sell_currency]} to={ASSETS[o.buy_currency]} reverse={side === 'sell'} size={44} /></td>
+                    <td><AssetPair from={ASSETS[o.sell_currency]} to={ASSETS[o.buy_currency]} reverse={effectiveSide === 'sell'} size={44} /></td>
                     <td>
                       <div className="amount">{fmt(o.available)} {o.buy_currency} {o.deposit_made && DepositIcon}</div>
                       <div className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</div>
@@ -557,7 +569,7 @@ export default function App() {
             ) : pageOffers.map((o) => (
               <div key={o.id} className="card">
                 <div className="card-top">
-                  <AssetPair from={ASSETS[o.sell_currency]} to={ASSETS[o.buy_currency]} reverse={side === 'sell'} size={44} />
+                  <AssetPair from={ASSETS[o.sell_currency]} to={ASSETS[o.buy_currency]} reverse={effectiveSide === 'sell'} size={44} />
                   <div className="card-price">
                     <div className="price">{priceMain(o)}</div>
                     <div className="sub">{priceNote(o)}</div>
