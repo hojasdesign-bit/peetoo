@@ -26,7 +26,7 @@ import ousdIcon from './assets/coins/ousd.svg';
 import eurcIcon from './assets/coins/eurc.svg';
 import zelleIcon from './assets/coins/zelle.svg';
 import usatIcon from './assets/coins/usat.svg';
-import { cupPng, usdPng } from './assets/coins/fiat-images.js';
+import { cupPng, usdPng, eurPng, mxnPng, cadPng } from './assets/coins/fiat-images.js';
 import placeholderGenericIcon from './assets/coins/placeholder-generic.svg';
 
 /**
@@ -194,11 +194,11 @@ export default function App() {
       { symbol: '$', color: '#D64545', label: 'Comprar CUP', code: 'CuPcash', src: cupPng, method: 'Efectivo', currency: 'CUP' },
       { symbol: '$', color: '#2E7D32', label: 'Comprar USD', code: 'USDcash', src: usdPng, method: 'Efectivo', currency: 'USD' },
       { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'ZELLE', method: 'Zelle', currency: 'USD' },
-      { symbol: '$', color: '#006847', label: 'Comprar MXN', code: 'MXN' },
-      { symbol: '€', color: '#003399', label: 'Comprar EUR', code: 'EUR' },
+      { symbol: '$', color: '#006847', label: 'Comprar MXN', code: 'MXNcash', src: mxnPng },
+      { symbol: '€', color: '#003399', label: 'Comprar EUR', code: 'EURcash', src: eurPng },
       { symbol: 'T', color: '#3a3a44', label: 'Comprar Transferencia', code: 'TRANSF', method: 'Transferencia Bancaria', currency: 'all' },
       { symbol: 'E', color: '#3a3a44', label: 'Comprar Etecsa', code: 'ETECSA' },
-      { symbol: '$', color: '#D80621', label: 'Comprar CAD', code: 'CAD' },
+      { symbol: '$', color: '#D80621', label: 'Comprar CAD', code: 'CADcash', src: cadPng },
       { symbol: 'C', color: '#3a3a44', label: 'Comprar Clásica', code: 'CLASICA' },
       { symbol: '$', color: '#0F766E', label: 'Comprar MLC', code: 'MLC' },
       // Último tile: quita solo el filtro de fiat (código vacío → rama
@@ -228,7 +228,7 @@ export default function App() {
     // Par del tile si lo trae; si no, moneda = ticker (o su moneda
     // cash) y método abierto. Pendiente de que aclare ticker, nombre
     // y logo de los nuevos métodos/monedas.
-    const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP' };
+    const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP', EURcash: 'EUR', MXNcash: 'MXN', CADcash: 'CAD' };
     clearFilters();
     setSide('sell');
     setPayment(coin.method || 'all');
@@ -297,6 +297,11 @@ export default function App() {
     const curs = method === 'all'
       ? sellOptions
       : uniq(OFFERS.filter((o) => o.payment_methods.includes(method)).map((o) => o.sell_currency));
+    // Como en currenciesForChain: la moneda elegida desde el header puede
+    // no tener ofertas (EURcash, MXNcash, CADcash): si está seleccionada,
+    // se añade para que el segundo campo pueda mostrarla aunque la lista
+    // derive de las ofertas.
+    if (sellCurrency !== 'all' && !curs.includes(sellCurrency)) curs.push(sellCurrency);
     return curs.map((c) => ({ value: c, label: c }));
   };
 
