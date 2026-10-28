@@ -24,15 +24,17 @@ producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
   busca la cantidad: por defecto [crypto, fiat] y la cantidad se busca
   en fiat (rango mín-máx); intercambiados [fiat, crypto] y la cantidad
   se busca en crypto (convertida por el precio de cada oferta). Los
-  labels Comprar (izquierda) y Vender (derecha) quedan fijos en su
-  posición; solo los pares cambian de lado. La dirección EFECTIVA de
-  los resultados también se invierte (lo que se compraba pasa a
-  venderse y viceversa), así que los resultados cambian de ofertas de
-  compra a ofertas de venta, PERO el toggle Comprar/Vender NO se toca:
-  su estado queda intacto (el lado efectivo es el contrario del toggle
-  solo mientras los campos están intercambiados). Las selecciones del
-  menú y Eliminar filtros restauran el orden por defecto, así el lado
-  efectivo vuelve a ser el del toggle. Ningún valor cambia.
+  los labels siguen al toggle: el de la izquierda es el valor del
+  toggle (Comprar o Vender) y el de la derecha el contrario; el
+  intercambio NO cambia los labels, solo los pares. La dirección
+  EFECTIVA de los resultados también se invierte (lo que se compraba
+  pasa a venderse y viceversa), así que los resultados cambian de
+  ofertas de compra a ofertas de venta, PERO el toggle Comprar/Vender
+  NO se toca con el intercambio: su estado queda intacto (el lado
+  efectivo es el contrario del toggle solo mientras los campos están
+  intercambiados). Las selecciones del menú y Eliminar filtros
+  restauran el orden por defecto, así el lado efectivo vuelve a ser el
+  del toggle. Ningún valor cambia.
 - Tabla densa en escritorio (Das/Recibes, Disponible/Min-Max, Precio, Red
   blockchain, Anunciante, acción) y tarjetas en móvil.
 - Paginación de 6 por página con resumen «Mostrando X - Y de Z items».

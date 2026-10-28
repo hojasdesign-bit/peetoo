@@ -193,10 +193,13 @@ export default function App() {
 
   // Submenú «Comprar fiat» del header: mismo DropdownMenu del DS que
   // el de crypto. Comprar una fiat = ofertas de venta en las que la
-  // recibes (vendes crypto y te pagan en esa fiat): fija el lado venta
-  // y el filtro de fiat (sell_currency). Al fijar la fiat se reinicia
-  // el método de pago (primer campo de la cascada de venta, del que
-  // depende la segunda), igual que el menú crypto reinicia la red.
+  // recibes (vendes crypto y te pagan en esa fiat). Como el enlace dice
+  // Comprar, el par fiat va en el lado Comprar (izquierda): con los
+  // campos intercambiados y el toggle en Comprar, el lado efectivo es
+  // venta y los resultados son los mismos de antes, solo cambia la
+  // posición del par. Al fijar la fiat se reinicia el método de pago
+  // (primer campo de la cascada fiat, del que depende la segunda),
+  // igual que el menú crypto reinicia la red.
   const fiatDropdown = {
     intro: {
       title: 'Comprar fiat',
@@ -242,7 +245,10 @@ export default function App() {
     // y logo de los nuevos métodos/monedas.
     const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP', EURcash: 'EUR', MXNcash: 'MXN', CADcash: 'CAD' };
     clearFilters();
-    setSide('sell');
+    // La fiat comprada va en el lado Comprar: campos intercambiados y
+    // toggle en Comprar → lado efectivo venta → mismos resultados.
+    setCascadesSwapped(true);
+    setSide('buy');
     setPayment(coin.method || 'all');
     setSellCurrency(coin.currency ?? (cashToCurrency[code] || code));
     setPage(1);
@@ -265,7 +271,9 @@ export default function App() {
     const label = el.textContent.trim();
     const scrollToMarket = () => document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (label.includes('Todas las fiat')) {
-      clearFilters(); setSide('sell'); scrollToMarket();
+      // Igual que los demás tiles del menú Comprar fiat: sin filtro de
+      // fiat, pero en el lado Comprar y con ofertas de venta.
+      clearFilters(); setCascadesSwapped(true); setSide('buy'); scrollToMarket();
     } else if (label.includes('Todas las ofertas')) {
       clearFilters(); scrollToMarket();
     }
@@ -393,13 +401,18 @@ export default function App() {
 
   // Los dos pares del filtro, como objetos de props: cada par sigue
   // ligado a su dominio (crypto: red+moneda; fiat: método+moneda) y los
-  // pares son lo que intercambia de sitio. Los labels de compra y venta
-  // NO viajan con los pares: quedan fijos a la posición (izquierda
-  // siempre Comprar, derecha siempre Vender). Las claves ligadas al par
-  // son obligatorias: al cambiar de sitio el componente se vuelve a
-  // montar con las props del par, y así el texto del primer campo
-  // (estado local del CascadeField, sincronizado solo cuando cambia
-  // value.first) arranca correcto incluso cuando ambos valen 'all'.
+  // pares son lo que intercambia de sitio (solo el botón de intercambio
+  // y el menú fiat los mueven). Los labels de compra y venta NO viajan
+  // con los pares: van ligados al toggle (izquierda = valor del toggle,
+  // derecha = el contrario). Así el intercambio no cambia los labels y
+  // el toggle los invierte: con el toggle en Vender, el primero es
+  // Vender y el último Comprar, y el label de la izquierda siempre
+  // describe el papel del par que ocupa esa posición en la búsqueda
+  // efectiva. Las claves ligadas al par son obligatorias: al cambiar de
+  // sitio el componente se vuelve a montar con las props del par, y así
+  // el texto del primer campo (estado local del CascadeField,
+  // sincronizado solo cuando cambia value.first) arranca correcto
+  // incluso cuando ambos valen 'all'.
   const cryptoPair = {
     firstPlaceholder: 'Blockchain',
     firstAriaLabel: 'Red blockchain',
@@ -422,8 +435,8 @@ export default function App() {
     <CascadeField
       key={cascadesSwapped ? 'fiat' : 'crypto'}
       className="filter-cascade"
-      secondPlaceholder="Comprar"
-      secondAriaLabel="Moneda a comprar"
+      secondPlaceholder={side === 'buy' ? 'Comprar' : 'Vender'}
+      secondAriaLabel={side === 'buy' ? 'Moneda a comprar' : 'Moneda a vender'}
       {...leftPair}
     />
   );
@@ -431,8 +444,8 @@ export default function App() {
     <CascadeField
       key={cascadesSwapped ? 'crypto' : 'fiat'}
       className="filter-cascade"
-      secondPlaceholder="Vender"
-      secondAriaLabel="Moneda a vender"
+      secondPlaceholder={side === 'buy' ? 'Vender' : 'Comprar'}
+      secondAriaLabel={side === 'buy' ? 'Moneda a vender' : 'Moneda a comprar'}
       {...rightPair}
     />
   );
