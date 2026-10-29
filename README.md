@@ -8,13 +8,19 @@ título 18 y descripción 16, medidos de ese menú); las tarjetas llevan
 a `/swapped`, una sola página con un toggle Comprar/Vender y el mismo
 contenido de las páginas de comprar/vender de Swapped pero genérico,
 sin énfasis a ninguna moneda: hero (título + descripción), 3 pasos y
-métodos de pago populares. Comprar muestra el iframe real de Swapped
-(400×484, moneda BTC por defecto, cambiable dentro del widget) con el
-header y el footer de la app; Vender muestra el aviso de Swapped (las
-ventas están desactivadas temporalmente), porque hoy no hay widget de
-venta que incrustar. El bloque editorial sobre USDC de esas páginas no
-entra: es contenido de USDC, no de la página. Los menús del mercado
-desde esa vista vuelven al mercado con su filtro.
+métodos de pago populares. El layout está medido de esas páginas a
+1440 (contenido 1072: texto 670 + 20 + widget 382; título 60/70,
+descripción 16/22, pasos 215×171 con título 20/700 y texto 20/26,
+métodos 22/600, aviso 382×500 con degradado violeta). Comprar muestra
+el iframe real de Swapped (382×500, moneda BTC por defecto, cambiable
+dentro del widget) con el header y el footer de la app; Vender muestra
+el aviso de Swapped (las ventas están desactivadas temporalmente),
+porque hoy no hay widget de venta que incrustar. Sin chip de moneda
+sobre el título (genérico) y sin copiar ilustraciones ni logos de
+Swapped: los visuales de los pasos son degradados propios con número
+y los métodos son chips de texto. El bloque editorial sobre USDC de
+esas páginas no entra: es contenido de USDC, no de la página. Los
+menús del mercado desde esa vista vuelven al mercado con su filtro.
 
 ## Referencia (importante)
 
