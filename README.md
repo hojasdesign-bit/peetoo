@@ -22,10 +22,12 @@ compra, lista de monedas, métodos de pago, envío, billetera y banco
 con check), los métodos son tarjetas solo con el nombre y las criptos
 llevan un disco de color con la inicial. El fondo de /swapped es #101010
 con el resplandor violeta de la página de Swapped bajo el widget (div
-absoluto 775×276 con ::before #4608e3 extendido 225px y difuminado por
+775×276 con ::before #4608e3 extendido 225px y difuminado por
 máscara de 4 degradados; el elipse de PageBackground del resto de la
-app sigue apagado aquí) y el widget o el aviso quedan fijos al
-desplazar (sticky bajo el header) durante toda la columna izquierda.
+app sigue apagado aquí). El resplandor queda fijo detrás del widget
+al desplazar (sticky en el área del widget, siempre 76px bajo su
+borde), igual que el widget o el aviso (sticky bajo el header)
+durante toda la columna izquierda.
 El header
 y el footer son los de peetoo, no los
 corporativos de Swapped; las cifras de mercado son la foto del

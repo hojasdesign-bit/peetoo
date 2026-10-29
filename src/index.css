@@ -110,7 +110,11 @@ body {
    cuyo ::before es violeta sólido #4608e3 extendido 225px por lado
    y difuminado por una máscara de 4 degradados. El contenido va
    por encima (z-1) y el desborde horizontal se recorta aquí. */
-.swapped-glow { position: absolute; z-index: 0; right: -298px; top: 76px; width: 775px; height: 276px; pointer-events: none; }
+/* El resplandor es un item más del área del widget y queda FIJO al
+   desplazar, igual que el widget: en reposo el margen superior de
+   76px lo deja 76px bajo el borde del widget, y al fijarse queda a
+   163px (87 + 76), así que la separación de 76px no cambia nunca. */
+.swapped-glow { position: sticky; top: 163px; grid-area: widget; align-self: start; justify-self: start; margin: 76px 0 0 -95px; width: 775px; height: 276px; z-index: 0; pointer-events: none; }
 .swapped-glow::before {
   content: ""; position: absolute; inset: -225px; background: #4608e3; pointer-events: none;
   --glow-stops: rgba(0, 0, 0, 0) calc(5.7% - 25.65px), rgba(0, 0, 0, 0.008) calc(5.7% + 11.85px), rgba(0, 0, 0, 0.024) calc(5.7% + 49.35px), rgba(0, 0, 0, 0.067) calc(5.7% + 86.85px), rgba(0, 0, 0, 0.157) calc(5.7% + 124.35px), rgba(0, 0, 0, 0.31) calc(5.7% + 161.85px), rgba(0, 0, 0, 0.5) calc(5.7% + 199.35px), rgba(0, 0, 0, 0.69) calc(5.7% + 236.85px), rgba(0, 0, 0, 0.843) calc(5.7% + 274.35px), rgba(0, 0, 0, 0.933) calc(5.7% + 311.85px), rgba(0, 0, 0, 0.976) calc(5.7% + 349.35px), rgba(0, 0, 0, 0.992) calc(5.7% + 386.85px), rgb(0, 0, 0) calc(5.7% + 424.35px);
@@ -269,7 +273,11 @@ body {
   .swapped-steps-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 800px) {
-  .swapped-glow { right: 0; top: 587px; width: 390px; height: 227px; }
+  /* En móvil el widget no es fijo (taparía la pantalla), así que el
+     resplandor tampoco: vuelve a absoluto, pegado al widget. OJO: el
+     bloque contenedor del absoluto es el área del widget (la fila
+     del widget), así que el top es la misma regla de 76px. */
+  .swapped-glow { position: absolute; right: 0; top: 76px; width: 390px; height: 227px; margin: 0; }
   .swapped-layout { grid-template-columns: 1fr; grid-template-areas: "text" "widget" "rest"; justify-items: center; }
   .swapped-hero-text, .swapped-rest { width: 100%; }
   .swapped-layout > iframe, .swapped-layout > .swapped-sell { position: static; }
