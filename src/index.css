@@ -93,19 +93,19 @@ body {
 .swapped-panel {
   position: absolute; top: 100%; left: 50%; z-index: 50;
   transform: translate(-50%, 0);
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-  width: min(680px, calc(100vw - 40px));
-  background: #101010; border-radius: 16px; padding: 12px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  width: min(1100px, calc(100vw - 40px));
+  background: #101010; border-radius: 16px; padding: 16px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 .swapped-card {
   display: flex; flex-direction: column; gap: 8px; text-align: left;
   font: inherit; color: var(--cds-ink); background: #181818;
-  border: 0; border-radius: 12px; padding: 20px; cursor: pointer;
+  border: 0; border-radius: 16px; padding: 24px; cursor: pointer;
 }
 .swapped-card:hover { background: #1f1f1f; }
-.swapped-card-title { font-size: 16px; font-weight: 600; line-height: 22px; }
-.swapped-card-desc { font-size: 14px; line-height: 20px; color: #c5c5c5; }
+.swapped-card-title { font-size: 18px; font-weight: 700; line-height: 22px; }
+.swapped-card-desc { font-size: 16px; line-height: 22px; color: #c5c5c5; }
 [data-theme="claro"] .swapped-panel { background: #f3f4f9; box-shadow: 0 24px 60px rgba(30, 27, 80, 0.12); }
 [data-theme="claro"] .swapped-card { background: #ffffff; }
 [data-theme="claro"] .swapped-card:hover { background: #eceef6; }
