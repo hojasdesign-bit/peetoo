@@ -81,12 +81,25 @@ export default function App() {
   // URL para que /swapped abra directo en el widget.
   const isSwappedPath = () => window.location.pathname.replace(/\.html$/, '') === '/swapped';
   const [view, setView] = React.useState(isSwappedPath() ? 'swapped' : 'market');
+  // Lado de la página de Swapped (toggle Comprar/Vender): lo fija la
+  // tarjeta del menú Swapped; por defecto Comprar. La moneda es USDC,
+  // la de los ejemplos de Swapped (/buy/usdc, /sell/usdc); dentro del
+  // widget el usuario puede cambiarla.
+  const [swappedSide, setSwappedSide] = React.useState('buy');
   const pendingMarketScroll = React.useRef(false);
   const goSwapped = (e) => {
     if (e) e.preventDefault();
     if (view === 'swapped') return;
     window.history.pushState(null, '', '/swapped');
     setView('swapped');
+  };
+  // Tarjetas del menú Swapped: llevan a la misma página (/swapped) con
+  // el lado ya elegido; el toggle de la página solo cambia el lado.
+  const goSwappedSide = (side) => {
+    setSwappedSide(side);
+    setSwappedMenuOpen(false);
+    setHamburgerOpen(false);
+    goSwapped();
   };
   // Ir al mercado y desplazarlo a la vista: desde la vista del widget
   // primero navega; el mercado se renderiza tras el cambio de estado y
@@ -157,6 +170,22 @@ export default function App() {
   // por clic fuera evalúa fiatMenuOpen en su array de dependencias
   // durante el render; declararlo después rompería con TDZ.
   const [fiatMenuOpen, setFiatMenuOpen] = React.useState(false);
+  // Menú Swapped del header: dos tarjetas (Comprar / Vender), como el
+  // menú Productos de swapped.com. Mismo patrón que los otros menús:
+  // hover en escritorio (150ms de margen), clic como respaldo.
+  const [swappedMenuOpen, setSwappedMenuOpen] = React.useState(false);
+  const swappedMenuTimer = React.useRef(null);
+  const cancelSwappedMenuClose = () => {
+    if (swappedMenuTimer.current) { clearTimeout(swappedMenuTimer.current); swappedMenuTimer.current = null; }
+  };
+  const scheduleSwappedMenuClose = () => {
+    cancelSwappedMenuClose();
+    swappedMenuTimer.current = setTimeout(() => setSwappedMenuOpen(false), 150);
+  };
+  const openSwappedMenu = () => {
+    if (isNarrow) return;
+    cancelSwappedMenuClose(); setSwappedMenuOpen(true); setBuyMenuOpen(false); setFiatMenuOpen(false);
+  };
   // Menú hamburguesa (móvil ≤720px, como en swapped.com/es/): el botón
   // va en la fila del header y el panel contiene las dos secciones
   // desplegables + el enlace a Swapped + la insignia Demo.
@@ -175,9 +204,9 @@ export default function App() {
   // escritorio, clic en móvil), el hover solo abre fuera de móvil.
   const openBuyMenu = () => {
     if (isNarrow) return;
-    cancelBuyMenuClose(); setBuyMenuOpen(true); setFiatMenuOpen(false);
+    cancelBuyMenuClose(); setBuyMenuOpen(true); setFiatMenuOpen(false); setSwappedMenuOpen(false);
   };
-  React.useEffect(() => () => { cancelBuyMenuClose(); cancelFiatMenuClose(); }, []);
+  React.useEffect(() => () => { cancelBuyMenuClose(); cancelFiatMenuClose(); cancelSwappedMenuClose(); }, []);
   const [isNarrow, setIsNarrow] = React.useState(() => window.matchMedia('(max-width: 720px)').matches);
   React.useEffect(() => {
     const mq = window.matchMedia('(max-width: 720px)');
@@ -186,18 +215,18 @@ export default function App() {
     return () => mq.removeEventListener('change', fn);
   }, []);
   React.useEffect(() => {
-    if (!buyMenuOpen && !fiatMenuOpen && !hamburgerOpen) return undefined;
+    if (!buyMenuOpen && !fiatMenuOpen && !hamburgerOpen && !swappedMenuOpen) return undefined;
     const onPointerDown = (e) => {
-      if (buyMenuRef.current && !buyMenuRef.current.contains(e.target)) { setBuyMenuOpen(false); setFiatMenuOpen(false); setHamburgerOpen(false); }
+      if (buyMenuRef.current && !buyMenuRef.current.contains(e.target)) { setBuyMenuOpen(false); setFiatMenuOpen(false); setHamburgerOpen(false); setSwappedMenuOpen(false); }
     };
-    const onKey = (e) => { if (e.key === 'Escape') { setBuyMenuOpen(false); setFiatMenuOpen(false); setHamburgerOpen(false); } };
+    const onKey = (e) => { if (e.key === 'Escape') { setBuyMenuOpen(false); setFiatMenuOpen(false); setHamburgerOpen(false); setSwappedMenuOpen(false); } };
     document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKey);
     return () => {
       document.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('keydown', onKey);
     };
-  }, [buyMenuOpen, fiatMenuOpen, hamburgerOpen]);
+  }, [buyMenuOpen, fiatMenuOpen, hamburgerOpen, swappedMenuOpen]);
   const buyCoin = (code) => {
     clearFilters();
     setSide('buy'); setBuyCurrency(code); setChain('all'); setPage(1);
@@ -275,7 +304,7 @@ export default function App() {
   // fuera de móvil. Abrir un menú cierra el otro.
   const openFiatMenu = () => {
     if (isNarrow) return;
-    cancelFiatMenuClose(); setFiatMenuOpen(true); setBuyMenuOpen(false);
+    cancelFiatMenuClose(); setFiatMenuOpen(true); setBuyMenuOpen(false); setSwappedMenuOpen(false);
   };
   const fiatFilter = (code) => {
     const coin = fiatDropdown.coins.find((c) => c.code === code) || {};
@@ -505,8 +534,8 @@ export default function App() {
       <header
         className="topbar"
         ref={buyMenuRef}
-        onMouseEnter={() => { cancelBuyMenuClose(); cancelFiatMenuClose(); }}
-        onMouseLeave={() => { scheduleBuyMenuClose(); scheduleFiatMenuClose(); }}
+        onMouseEnter={() => { cancelBuyMenuClose(); cancelFiatMenuClose(); cancelSwappedMenuClose(); }}
+        onMouseLeave={() => { scheduleBuyMenuClose(); scheduleFiatMenuClose(); scheduleSwappedMenuClose(); }}
       >
         <div className="topbar-row">
           <span className="brand">
@@ -519,7 +548,7 @@ export default function App() {
                 className={`buy-menu-btn ${buyMenuOpen ? 'buy-menu-btn-open' : ''}`}
                 aria-haspopup="menu"
                 aria-expanded={buyMenuOpen}
-                onClick={() => { setBuyMenuOpen((o) => !o); setFiatMenuOpen(false); }}
+                onClick={() => { setBuyMenuOpen((o) => !o); setFiatMenuOpen(false); setSwappedMenuOpen(false); }}
               >
                 Comprar crypto
                 <span className="buy-menu-chev" aria-hidden="true" />
@@ -531,13 +560,24 @@ export default function App() {
                 className={`fiat-menu-btn ${fiatMenuOpen ? 'fiat-menu-btn-open' : ''}`}
                 aria-haspopup="menu"
                 aria-expanded={fiatMenuOpen}
-                onClick={() => { setFiatMenuOpen((o) => !o); setBuyMenuOpen(false); }}
+                onClick={() => { setFiatMenuOpen((o) => !o); setBuyMenuOpen(false); setSwappedMenuOpen(false); }}
               >
                 Comprar fiat
                 <span className="fiat-menu-chev" aria-hidden="true" />
               </button>
             </span>
-            <a className="topbar-link" href="/swapped" onClick={goSwapped}>Comprar con Swapped</a>
+            <span className="swapped-menu" onMouseEnter={openSwappedMenu}>
+              <button
+                type="button"
+                className={`swapped-menu-btn ${swappedMenuOpen ? 'swapped-menu-btn-open' : ''}`}
+                aria-haspopup="menu"
+                aria-expanded={swappedMenuOpen}
+                onClick={() => { setSwappedMenuOpen((o) => !o); setBuyMenuOpen(false); setFiatMenuOpen(false); }}
+              >
+                Swapped
+                <span className="swapped-menu-chev" aria-hidden="true" />
+              </button>
+            </span>
             <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
           </span>
           <button
@@ -545,7 +585,7 @@ export default function App() {
             className={`topbar-burger ${hamburgerOpen ? 'topbar-burger-open' : ''}`}
             aria-label={hamburgerOpen ? 'Cerrar menú' : 'Abrir menú'}
             aria-expanded={hamburgerOpen}
-            onClick={() => { if (hamburgerOpen) { setBuyMenuOpen(false); setFiatMenuOpen(false); } setHamburgerOpen((o) => !o); }}
+            onClick={() => { if (hamburgerOpen) { setBuyMenuOpen(false); setFiatMenuOpen(false); setSwappedMenuOpen(false); } setHamburgerOpen((o) => !o); }}
           >
             <span aria-hidden="true" />
             <span aria-hidden="true" />
@@ -558,13 +598,25 @@ export default function App() {
         {fiatMenuOpen && !isNarrow && (
           <DropdownMenu dropdown={fiatDropdown} onNavigate={onFiatMenuNavigate} />
         )}
+        {swappedMenuOpen && !isNarrow && (
+          <div className="swapped-panel" role="menu" aria-label="Swapped">
+            <button type="button" className="swapped-card" role="menuitem" onClick={() => goSwappedSide('buy')}>
+              <span className="swapped-card-title">Comprar</span>
+              <span className="swapped-card-desc">Compra cripto al instante con tarjeta, transferencia, Apple Pay, Google Pay y más.</span>
+            </button>
+            <button type="button" className="swapped-card" role="menuitem" onClick={() => goSwappedSide('sell')}>
+              <span className="swapped-card-title">Vender</span>
+              <span className="swapped-card-desc">Vende tu cripto y recibe el dinero con tu método de pago preferido.</span>
+            </button>
+          </div>
+        )}
         {hamburgerOpen && isNarrow && (
           <nav className="topbar-drawer" aria-label="Menú">
             <button
               type="button"
               className="drawer-section"
               aria-expanded={buyMenuOpen}
-              onClick={() => { setBuyMenuOpen((o) => !o); setFiatMenuOpen(false); }}
+              onClick={() => { setBuyMenuOpen((o) => !o); setFiatMenuOpen(false); setSwappedMenuOpen(false); }}
             >
               Comprar crypto
               <span className={`drawer-chev ${buyMenuOpen ? 'drawer-chev-open' : ''}`} aria-hidden="true" />
@@ -576,7 +628,7 @@ export default function App() {
               type="button"
               className="drawer-section"
               aria-expanded={fiatMenuOpen}
-              onClick={() => { setFiatMenuOpen((o) => !o); setBuyMenuOpen(false); }}
+              onClick={() => { setFiatMenuOpen((o) => !o); setBuyMenuOpen(false); setSwappedMenuOpen(false); }}
             >
               Comprar fiat
               <span className={`drawer-chev ${fiatMenuOpen ? 'drawer-chev-open' : ''}`} aria-hidden="true" />
@@ -584,7 +636,27 @@ export default function App() {
             {fiatMenuOpen && (
               <DropdownMenu dropdown={fiatDropdown} mobile open={fiatMenuOpen} onNavigate={onFiatMenuNavigate} />
             )}
-            <a className="drawer-link" href="/swapped" onClick={(e) => { goSwapped(e); setHamburgerOpen(false); }}>Comprar con Swapped</a>
+            <button
+              type="button"
+              className="drawer-section"
+              aria-expanded={swappedMenuOpen}
+              onClick={() => { setSwappedMenuOpen((o) => !o); setBuyMenuOpen(false); setFiatMenuOpen(false); }}
+            >
+              Swapped
+              <span className={`drawer-chev ${swappedMenuOpen ? 'drawer-chev-open' : ''}`} aria-hidden="true" />
+            </button>
+            {swappedMenuOpen && (
+              <div className="swapped-drawer-cards">
+                <button type="button" className="swapped-card" onClick={() => goSwappedSide('buy')}>
+                  <span className="swapped-card-title">Comprar</span>
+                  <span className="swapped-card-desc">Compra cripto al instante con tarjeta, transferencia, Apple Pay, Google Pay y más.</span>
+                </button>
+                <button type="button" className="swapped-card" onClick={() => goSwappedSide('sell')}>
+                  <span className="swapped-card-title">Vender</span>
+                  <span className="swapped-card-desc">Vende tu cripto y recibe el dinero con tu método de pago preferido.</span>
+                </button>
+              </div>
+            )}
             <span className="drawer-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
           </nav>
         )}
@@ -592,7 +664,25 @@ export default function App() {
 
       {view === 'swapped' ? (
         <main className="swapped-stage">
-          <iframe src="https://widget.swapped.com/?currencyCode=BTC" title="Widget de Swapped" allow="clipboard-write" />
+          <SegmentedControl
+            ariaLabel="Comprar o vender"
+            options={[{ value: 'buy', label: 'Comprar' }, { value: 'sell', label: 'Vender' }]}
+            value={swappedSide}
+            onChange={setSwappedSide}
+            className="swapped-toggle"
+          />
+          {swappedSide === 'buy' ? (
+            <iframe src="https://widget.swapped.com/?currencyCode=USDC" title="Widget de Swapped" allow="clipboard-write" />
+          ) : (
+            // Sin widget de venta que incrustar: la propia página de
+            // Swapped (/sell/usdc) muestra este mismo aviso — las
+            // ventas están desactivadas temporalmente.
+            <section className="swapped-sell" aria-label="Ventas desactivadas">
+              <h2 className="swapped-sell-title">Las ventas están desactivadas temporalmente</h2>
+              <p className="swapped-sell-text">Swapped está trabajando para recuperar esta función en un plazo de dos semanas. Mientras tanto, puedes comprar criptomonedas al instante con tu método de pago preferido.</p>
+              <a className="swapped-sell-link" href="https://swapped.com/es/sell/usdc" target="_blank" rel="noreferrer">Ver en Swapped</a>
+            </section>
+          )}
         </main>
       ) : (
       <main className="shell">

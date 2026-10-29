@@ -27,13 +27,13 @@ body {
 /* Disparadores de los submenús «Comprar crypto» y «Fiat»: como el navLink del Header
    del DS (16px/500, hover violeta, chevron en triángulo CSS). El panel
    lo renderiza el propio DropdownMenu del DS, no hay CSS propio. */
-.buy-menu-btn, .fiat-menu-btn {
+.buy-menu-btn, .fiat-menu-btn, .swapped-menu-btn {
   display: inline-flex; align-items: center; gap: 8px;
   font: inherit; font-size: 16px; font-weight: 500; line-height: 22px;
   color: var(--cds-ink); background: transparent;
   border: 0; padding: 8px 6px; cursor: pointer;
 }
-.buy-menu-btn:hover, .buy-menu-btn-open, .fiat-menu-btn:hover, .fiat-menu-btn-open { color: var(--cds-accent-hover); }
+.buy-menu-btn:hover, .buy-menu-btn-open, .fiat-menu-btn:hover, .fiat-menu-btn-open, .swapped-menu-btn:hover, .swapped-menu-btn-open { color: var(--cds-accent-hover); }
 
 /* Enlace del header a la página del widget de Swapped: mismo tratamiento
    que los disparadores de menú (16px/500, hover violeta). */
@@ -80,9 +80,48 @@ body {
    también anula el estirado, así que llevan ancho definido (con el
    max-width 1200 + centrado intactos en escritorio). */
 .topbar, .shell, .swapped-stage, .app-footer { min-width: 0; width: 100%; }
-.swapped-stage { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; padding: 40px 20px 60px; }
+.swapped-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 40px 20px 60px; }
 .swapped-stage iframe { width: 400px; max-width: 100%; height: 484px; border: 0; border-radius: 28px; background: #fff; }
-.buy-menu-chev, .fiat-menu-chev {
+/* El toggle de la página hereda el ancho del widget; el selector con
+   dos clases vence al ancho 100% del módulo del SegmentedControl. */
+.swapped-stage .swapped-toggle { width: 400px; max-width: 100%; }
+
+/* Panel del menú Swapped: como el mega-panel del DS pero con dos
+   tarjetas lado a lado, como el menú Productos de swapped.com
+   (Swapped Ramp / Swapped Connect). Posición absoluta centrada bajo
+   el header, igual que el DropdownMenu. */
+.swapped-panel {
+  position: absolute; top: 100%; left: 50%; z-index: 50;
+  transform: translate(-50%, 0);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  width: min(680px, calc(100vw - 40px));
+  background: #101010; border-radius: 16px; padding: 12px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+.swapped-card {
+  display: flex; flex-direction: column; gap: 8px; text-align: left;
+  font: inherit; color: var(--cds-ink); background: #181818;
+  border: 0; border-radius: 12px; padding: 20px; cursor: pointer;
+}
+.swapped-card:hover { background: #1f1f1f; }
+.swapped-card-title { font-size: 16px; font-weight: 600; line-height: 22px; }
+.swapped-card-desc { font-size: 14px; line-height: 20px; color: #c5c5c5; }
+[data-theme="claro"] .swapped-panel { background: #f3f4f9; box-shadow: 0 24px 60px rgba(30, 27, 80, 0.12); }
+[data-theme="claro"] .swapped-card { background: #ffffff; }
+[data-theme="claro"] .swapped-card:hover { background: #eceef6; }
+[data-theme="claro"] .swapped-card-desc { color: #4a4d59; }
+/* En el cajón móvil las tarjetas van apiladas, no en panel absoluto. */
+.swapped-drawer-cards { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 8px 10px; }
+
+/* Aviso del lado Vender: mismo espejo que la página de Swapped
+   (/sell/usdc), que hoy no ofrece widget de venta. */
+.swapped-sell { width: 400px; max-width: 100%; background: #181818; border-radius: 28px; padding: 28px; }
+.swapped-sell-title { font-size: 20px; font-weight: 700; line-height: 26px; margin: 0 0 12px; color: var(--cds-ink); }
+.swapped-sell-text { font-size: 15px; line-height: 22px; color: #c5c5c5; margin: 0 0 16px; }
+.swapped-sell-link { font-size: 15px; font-weight: 600; color: var(--cds-accent-hover); text-decoration: none; }
+[data-theme="claro"] .swapped-sell { background: #ffffff; }
+[data-theme="claro"] .swapped-sell-text { color: #4a4d59; }
+.buy-menu-chev, .fiat-menu-chev, .swapped-menu-chev {
   width: 7px; height: 7px; flex: none;
   border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor;
   transform: rotate(45deg); margin-bottom: 3px;
