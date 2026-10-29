@@ -3,12 +3,17 @@
 La app P2P de peetoo, construida con el sistema de diseño Crypto DS. Sin
 homepage: al entrar caes directo en el mercado Crypto. El header tiene
 un menú Swapped con dos tarjetas (Comprar / Vender), como el menú
-Productos de swapped.com; las tarjetas llevan a `/swapped`, una sola
-página con un toggle Comprar/Vender. Comprar muestra el iframe real de
-Swapped (400×484, centrado como en el clon de swapped.com/trade, moneda
-USDC por defecto) con el header y el footer de la app; Vender muestra
-el aviso de Swapped (las ventas están desactivadas temporalmente),
-porque hoy no hay widget de venta que incrustar. Los menús del mercado
+Productos de swapped.com (panel de 1100px, tarjetas con padding 24,
+título 18 y descripción 16, medidos de ese menú); las tarjetas llevan
+a `/swapped`, una sola página con un toggle Comprar/Vender y el mismo
+contenido de las páginas de comprar/vender de Swapped pero genérico,
+sin énfasis a ninguna moneda: hero (título + descripción), 3 pasos y
+métodos de pago populares. Comprar muestra el iframe real de Swapped
+(400×484, moneda BTC por defecto, cambiable dentro del widget) con el
+header y el footer de la app; Vender muestra el aviso de Swapped (las
+ventas están desactivadas temporalmente), porque hoy no hay widget de
+venta que incrustar. El bloque editorial sobre USDC de esas páginas no
+entra: es contenido de USDC, no de la página. Los menús del mercado
 desde esa vista vuelven al mercado con su filtro.
 
 ## Referencia (importante)

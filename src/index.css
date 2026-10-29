@@ -80,11 +80,35 @@ body {
    también anula el estirado, así que llevan ancho definido (con el
    max-width 1200 + centrado intactos en escritorio). */
 .topbar, .shell, .swapped-stage, .app-footer { min-width: 0; width: 100%; }
-.swapped-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 40px 20px 60px; }
+.swapped-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 48px; max-width: 1200px; margin: 0 auto; padding: 40px 24px 60px; }
 .swapped-stage iframe { width: 400px; max-width: 100%; height: 484px; border: 0; border-radius: 28px; background: #fff; }
 /* El toggle de la página hereda el ancho del widget; el selector con
    dos clases vence al ancho 100% del módulo del SegmentedControl. */
 .swapped-stage .swapped-toggle { width: 400px; max-width: 100%; }
+/* Hero de la página de Swapped: texto a la izquierda y widget (o
+   aviso) a la derecha, como en las páginas de comprar/vender de
+   swapped.com; en angosto se apila con el widget centrado. */
+.swapped-hero { display: grid; grid-template-columns: 1fr 400px; gap: 48px; align-items: start; width: 100%; }
+.swapped-hero-text { display: flex; flex-direction: column; gap: 16px; }
+@media (max-width: 900px) {
+  .swapped-hero { grid-template-columns: 1fr; justify-items: center; }
+  .swapped-hero-text { width: 100%; }
+}
+/* Pasos y métodos: mismo lenguaje de tarjetas que el menú Swapped
+   (fondo, radio 16, padding 24, título 18/700, texto 16/22). */
+.swapped-steps, .swapped-methods { width: 100%; display: flex; flex-direction: column; gap: 20px; }
+.swapped-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 900px) {
+  .swapped-steps-grid { grid-template-columns: 1fr; }
+}
+.swapped-step { display: flex; flex-direction: column; gap: 8px; background: #181818; border-radius: 16px; padding: 24px; }
+.swapped-step-title { font-size: 18px; font-weight: 700; line-height: 22px; margin: 0; color: var(--cds-ink); }
+.swapped-step-text { font-size: 16px; line-height: 22px; color: #c5c5c5; margin: 0; }
+[data-theme="claro"] .swapped-step { background: #ffffff; }
+[data-theme="claro"] .swapped-step-text { color: #4a4d59; }
+.swapped-methods-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.swapped-method { padding: 10px 16px; border: 1px solid var(--cds-border); border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--cds-ink); }
+.swapped-method-more { color: var(--cds-muted); }
 
 /* Panel del menú Swapped: como el mega-panel del DS pero con dos
    tarjetas lado a lado, como el menú Productos de swapped.com
@@ -118,7 +142,6 @@ body {
 .swapped-sell { width: 400px; max-width: 100%; background: #181818; border-radius: 28px; padding: 28px; }
 .swapped-sell-title { font-size: 20px; font-weight: 700; line-height: 26px; margin: 0 0 12px; color: var(--cds-ink); }
 .swapped-sell-text { font-size: 15px; line-height: 22px; color: #c5c5c5; margin: 0 0 16px; }
-.swapped-sell-link { font-size: 15px; font-weight: 600; color: var(--cds-accent-hover); text-decoration: none; }
 [data-theme="claro"] .swapped-sell { background: #ffffff; }
 [data-theme="claro"] .swapped-sell-text { color: #4a4d59; }
 .buy-menu-chev, .fiat-menu-chev, .swapped-menu-chev {

@@ -82,9 +82,9 @@ export default function App() {
   const isSwappedPath = () => window.location.pathname.replace(/\.html$/, '') === '/swapped';
   const [view, setView] = React.useState(isSwappedPath() ? 'swapped' : 'market');
   // Lado de la página de Swapped (toggle Comprar/Vender): lo fija la
-  // tarjeta del menú Swapped; por defecto Comprar. La moneda es USDC,
-  // la de los ejemplos de Swapped (/buy/usdc, /sell/usdc); dentro del
-  // widget el usuario puede cambiarla.
+  // tarjeta del menú Swapped; por defecto Comprar. La página es
+  // genérica, sin énfasis a ninguna moneda: el widget arranca en BTC
+  // (su moneda por defecto) y dentro de él se puede cambiar.
   const [swappedSide, setSwappedSide] = React.useState('buy');
   const pendingMarketScroll = React.useRef(false);
   const goSwapped = (e) => {
@@ -528,6 +528,30 @@ export default function App() {
     </Button>
   );
 
+  // Contenido de la página de Swapped: el mismo de las páginas de
+  // Swapped (/buy/usdc y /sell/usdc) pero genérico, sin énfasis a
+  // ninguna moneda. El bloque editorial sobre USDC (qué es, precio,
+  // estadísticas, FAQ) no entra: es contenido de USDC, no de la página.
+  const swappedContent = swappedSide === 'buy' ? {
+    title: 'Comprar cripto hecho simple',
+    description: 'Compra cripto de forma rápida y fácil con tarjeta de crédito o débito, transferencia bancaria, Apple Pay, Google Pay y más.',
+    stepsTitle: 'Cómo comprar cripto en 3 pasos sencillos',
+    steps: [
+      { title: 'Seleccionar', text: 'Ingresa cuánta cripto quieres comprar.' },
+      { title: 'Pagar', text: 'Paga usando uno de 40+ métodos de pago.' },
+      { title: 'Recibir', text: 'Recibe la cripto en tu billetera.' },
+    ],
+  } : {
+    title: 'Vender cripto hecho simple',
+    description: 'Vende cripto de forma rápida y fácil con tarjeta de crédito o débito, transferencia bancaria, Apple Pay, Google Pay y más.',
+    stepsTitle: 'Cómo vender cripto en 3 pasos sencillos',
+    steps: [
+      { title: 'Seleccionar', text: 'Selecciona la moneda que quieres recibir.' },
+      { title: 'Enviar', text: 'Envía tu cripto a la dirección de depósito.' },
+      { title: 'Recibir', text: 'Recibe el dinero en tu cuenta bancaria.' },
+    ],
+  };
+
   return (
     <div className="app">
       <PageBackground />
@@ -671,18 +695,44 @@ export default function App() {
             onChange={setSwappedSide}
             className="swapped-toggle"
           />
-          {swappedSide === 'buy' ? (
-            <iframe src="https://widget.swapped.com/?currencyCode=USDC" title="Widget de Swapped" allow="clipboard-write" />
-          ) : (
-            // Sin widget de venta que incrustar: la propia página de
-            // Swapped (/sell/usdc) muestra este mismo aviso — las
-            // ventas están desactivadas temporalmente.
-            <section className="swapped-sell" aria-label="Ventas desactivadas">
-              <h2 className="swapped-sell-title">Las ventas están desactivadas temporalmente</h2>
-              <p className="swapped-sell-text">Swapped está trabajando para recuperar esta función en un plazo de dos semanas. Mientras tanto, puedes comprar criptomonedas al instante con tu método de pago preferido.</p>
-              <a className="swapped-sell-link" href="https://swapped.com/es/sell/usdc" target="_blank" rel="noreferrer">Ver en Swapped</a>
-            </section>
-          )}
+          <section className="swapped-hero">
+            <div className="swapped-hero-text">
+              <Heading level="h1">{swappedContent.title}</Heading>
+              <Text tone="muted">{swappedContent.description}</Text>
+            </div>
+            {swappedSide === 'buy' ? (
+              <iframe src="https://widget.swapped.com/?currencyCode=BTC" title="Widget de Swapped" allow="clipboard-write" />
+            ) : (
+              // Sin widget de venta que incrustar: la propia página de
+              // Swapped (/sell/usdc) muestra este mismo aviso — las
+              // ventas están desactivadas temporalmente.
+              <section className="swapped-sell" aria-label="Ventas desactivadas">
+                <h2 className="swapped-sell-title">Las ventas están desactivadas temporalmente</h2>
+                <p className="swapped-sell-text">Swapped está trabajando para recuperar esta función en un plazo de dos semanas. Mientras tanto, puedes comprar criptomonedas al instante con tu método de pago preferido.</p>
+                <Button variant="outline" onClick={() => setSwappedSide('buy')}>Comprar cripto</Button>
+              </section>
+            )}
+          </section>
+          <section className="swapped-steps" aria-label={swappedContent.stepsTitle}>
+            <Heading level="h2">{swappedContent.stepsTitle}</Heading>
+            <div className="swapped-steps-grid">
+              {swappedContent.steps.map((s) => (
+                <article className="swapped-step" key={s.title}>
+                  <h3 className="swapped-step-title">{s.title}</h3>
+                  <p className="swapped-step-text">{s.text}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+          <section className="swapped-methods" aria-label="Métodos de pago populares">
+            <Heading level="h2">Métodos de pago populares</Heading>
+            <div className="swapped-methods-list">
+              {['Apple Pay', 'Google Pay', 'Tarjeta de crédito', 'Tarjeta de débito', 'Transferencia bancaria'].map((m) => (
+                <span className="swapped-method" key={m}>{m}</span>
+              ))}
+              <span className="swapped-method swapped-method-more">+24 más</span>
+            </div>
+          </section>
         </main>
       ) : (
       <main className="shell">
