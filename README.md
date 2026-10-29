@@ -12,8 +12,14 @@ Comprar/Vender sobre el título (400px, alineado a la izquierda, en
 el lugar del chip USDC — eliminado por redundante: símbolo y nombre
 decían lo mismo), título 60/70 y descripción, widget real (382×500,
 moneda USDC) o aviso de ventas desactivadas (382×500 con degradado
-violeta), 3 pasos con visual 215×171, métodos como tarjetas 156×100
-en 4 columnas, bloque
+violeta), 3 pasos con tarjeta 215×316 (visual 215×171 sobre
+degradado violeta con grano + bloque de texto fondo blanco 6%,
+radio inferior 20, padding 20, alto 145, título 20/700, texto 16/22
+#e2e2e2; en venta: You sell USDC / You receive EUR con flecha,
+billetera → USDC → depósito y billetera → EUR → banco), métodos
+como tarjetas 156×100 en 4 columnas (icono genérico 35px + nombre
+14px; lista exacta: Apple Pay, Card, Google Pay, PaySafeCard, Bank
+Transfer, Skrill, Rapid Transfer, +24 more), bloque
 editorial sobre USDC (columna 635: intro + 6 secciones), tarjeta de
 estadísticas de mercado (670, celdas 297×92), tarjetas de precio y
 recursos, preguntas frecuentes (acordeón, primera abierta) y rejilla

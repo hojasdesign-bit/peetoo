@@ -151,23 +151,33 @@ body {
    con visual 215×171, título 20/700 y texto 20/26, como en la
    referencia. El visual es propio (degradado violeta + número),
    no la ilustración de Swapped. */
+/* Tarjetas de pasos, como en la referencia: visual 215×171 pegado a un
+   bloque de texto (fondo blanco 6%, radio inferior 20, padding 20,
+   alto 145, hueco 12; título 20/700, texto 16/22 #e2e2e2). La tarjeta
+   entera recorta a radio 20: el visual no lleva radio propio. */
 .swapped-steps { display: flex; flex-direction: column; gap: 12px; }
 .swapped-steps h2 { font-size: 24px; line-height: 32px; font-weight: 600; margin: 0; }
 .swapped-steps-grid { display: grid; grid-template-columns: repeat(3, 215px); gap: 12px; }
-.swapped-step { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
-.swapped-step-visual { aspect-ratio: 215 / 171; border-radius: 16px; background: #1c1c38; overflow: hidden; }
+.swapped-step { display: flex; flex-direction: column; min-width: 0; border-radius: 20px; overflow: hidden; }
+.swapped-step-visual { aspect-ratio: 215 / 171; background: #1c1c38; overflow: hidden; }
 .swapped-step-visual svg { width: 100%; height: 100%; display: block; }
-.swapped-step-title { font-size: 20px; font-weight: 700; line-height: 26px; margin: 0; padding: 0 20px; color: #ffffff; }
-.swapped-step-text { font-size: 20px; line-height: 26px; margin: 0; padding: 0 20px; color: #ffffff; }
+.swapped-step-body { background: rgba(255, 255, 255, 0.06); padding: 20px; height: 145px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; }
+.swapped-step-title { font-size: 20px; font-weight: 700; line-height: 26px; margin: 0; color: #ffffff; }
+.swapped-step-text { font-size: 16px; line-height: 22px; margin: 0; color: #e2e2e2; }
+[data-theme="claro"] .swapped-step-body { background: rgba(0, 0, 0, 0.05); }
 [data-theme="claro"] .swapped-step-title { color: #101010; }
 [data-theme="claro"] .swapped-step-text { color: #4a4d59; }
 /* Métodos: título 22/600 y tarjetas 156×100 en 4 columnas (fondo
-   blanco 6%, borde blanco 10%, radio 12, texto centrado), como en la
-   referencia pero sin los logos de marca: solo el nombre. */
+   blanco 6%, borde blanco 10%, radio 12, padding 20; icono genérico
+   de 35px arriba y nombre 14px abajo, como en la referencia pero sin
+   los logos de marca). La tarjeta «+24 more» es solo texto 16/600. */
 .swapped-methods { display: flex; flex-direction: column; gap: 24px; }
 .swapped-methods h2 { font-size: 22px; line-height: 30px; font-weight: 600; margin: 0; }
 .swapped-methods-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.swapped-method-card { height: 100px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 14px; font-weight: 500; color: #ffffff; box-sizing: border-box; }
+.swapped-method-card { height: 100px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; font-size: 14px; font-weight: 500; color: #ffffff; box-sizing: border-box; }
+.swapped-method-icon { display: flex; align-items: center; justify-content: center; height: 32px; }
+.swapped-method-icon svg { height: 35px; width: auto; display: block; }
+.swapped-method-more { font-size: 16px; font-weight: 600; }
 [data-theme="claro"] .swapped-method-card { background: #ffffff; border-color: var(--cds-border); color: #101010; }
 /* Secciones inferiores de la página de Swapped, medidas en vivo:
    editorial en columna de 635, estadísticas y tarjetas en 670, todo

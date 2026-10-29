@@ -120,4 +120,4 @@ export const SWAPPED_MORE_CRYPTOS = [
   { name: 'USDH', ticker: 'USDH', color: '#2e8b57' },
 ];
 
-export const SWAPPED_METHODS = ['Apple Pay', 'Card', 'Google Pay', 'PaySafeCard', 'Bank Transfer', 'Skrill', 'Rapid Transfer', '+24 más'];
+export const SWAPPED_METHODS = ['Apple Pay', 'Card', 'Google Pay', 'PaySafeCard', 'Bank Transfer', 'Skrill', 'Rapid Transfer', '+24 more'];

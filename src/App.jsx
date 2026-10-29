@@ -18,6 +18,7 @@ import { DropdownMenu } from './ds/components/DropdownMenu/DropdownMenu.jsx';
 import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/offers.js';
 import { SWAPPED_EDITORIAL_INTRO, SWAPPED_EDITORIAL, SWAPPED_STATS, SWAPPED_PRECIO_TEXT, SWAPPED_RESOURCES_TEXT, SWAPPED_RESOURCES_LINKS, SWAPPED_FAQS, SWAPPED_MORE_CRYPTOS, SWAPPED_METHODS } from './data/swappedPage.js';
 import { SwappedStepVisual } from './components/SwappedStepVisuals.jsx';
+import { SwappedMethodIcon } from './components/SwappedMethodIcon.jsx';
 import logoUrl from './assets/logo.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
@@ -733,8 +734,10 @@ export default function App() {
                 {swappedContent.steps.map((s) => (
                   <article className="swapped-step" key={s.title}>
                     <div className="swapped-step-visual"><SwappedStepVisual variant={s.visual} /></div>
-                    <h3 className="swapped-step-title">{s.title}</h3>
-                    <p className="swapped-step-text">{s.text}</p>
+                    <div className="swapped-step-body">
+                      <h3 className="swapped-step-title">{s.title}</h3>
+                      <p className="swapped-step-text">{s.text}</p>
+                    </div>
                   </article>
                 ))}
               </div>
@@ -743,7 +746,12 @@ export default function App() {
               <Heading level="h2">Métodos de pago populares</Heading>
               <div className="swapped-methods-grid">
                 {SWAPPED_METHODS.map((m) => (
-                  <span className="swapped-method-card" key={m}>{m}</span>
+                  <span className={`swapped-method-card${m.startsWith('+') ? ' swapped-method-more' : ''}`} key={m}>
+                    {!m.startsWith('+') && (
+                      <span className="swapped-method-icon"><SwappedMethodIcon method={m} /></span>
+                    )}
+                    <span className="swapped-method-name">{m}</span>
+                  </span>
                 ))}
               </div>
             </section>
