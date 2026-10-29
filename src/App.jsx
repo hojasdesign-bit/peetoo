@@ -695,19 +695,21 @@ export default function App() {
 
       {view === 'swapped' ? (
         <main className="swapped-stage">
-          <SegmentedControl
-            ariaLabel="Comprar o vender"
-            options={[{ value: 'buy', label: 'Comprar' }, { value: 'sell', label: 'Vender' }]}
-            value={swappedSide}
-            onChange={setSwappedSide}
-            className="swapped-toggle"
-          />
           <div className="swapped-layout">
             {/* Resplandor violeta de la página de Swapped: un div
                 absoluto detrás del contenido, como su .glow. */}
             <div className="swapped-glow" aria-hidden="true" />
             <div className="swapped-hero-text">
-              <span className="swapped-hero-chip"><strong>USDC</strong><span>USDC</span></span>
+              {/* El toggle Comprar/Vender va aquí, sobre el título,
+                  en el lugar del chip USDC (símbolo y nombre repetidos,
+                  sin sentido): el chip queda eliminado. */}
+              <SegmentedControl
+                ariaLabel="Comprar o vender"
+                options={[{ value: 'buy', label: 'Comprar' }, { value: 'sell', label: 'Vender' }]}
+                value={swappedSide}
+                onChange={setSwappedSide}
+                className="swapped-toggle"
+              />
               <div className="swapped-hero-copy">
                 <Heading level="h1">{swappedContent.title}</Heading>
                 <Text tone="muted">{swappedContent.description}</Text>

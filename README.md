@@ -7,10 +7,13 @@ Productos de swapped.com (panel de 1100px, tarjetas con padding 24,
 título 18 y descripción 16, medidos de ese menú); las tarjetas llevan
 a `/swapped`, una sola página con un toggle Comprar/Vender y el
 contenido completo de las páginas de comprar/vender de Swapped tal
-cual (USDC, a petición suya «por ahora»): hero con chip USDC, título
-60/70 y descripción, widget real (382×500, moneda USDC) o aviso de
-ventas desactivadas (382×500 con degradado violeta), 3 pasos con
-visual 215×171, métodos como tarjetas 156×100 en 4 columnas, bloque
+cual (USDC, a petición suya «por ahora»): hero con el toggle
+Comprar/Vender sobre el título (400px, alineado a la izquierda, en
+el lugar del chip USDC — eliminado por redundante: símbolo y nombre
+decían lo mismo), título 60/70 y descripción, widget real (382×500,
+moneda USDC) o aviso de ventas desactivadas (382×500 con degradado
+violeta), 3 pasos con visual 215×171, métodos como tarjetas 156×100
+en 4 columnas, bloque
 editorial sobre USDC (columna 635: intro + 6 secciones), tarjeta de
 estadísticas de mercado (670, celdas 297×92), tarjetas de precio y
 recursos, preguntas frecuentes (acordeón, primera abierta) y rejilla

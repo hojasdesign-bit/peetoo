@@ -132,13 +132,9 @@ body {
 [data-theme="claro"] .swapped-glow::before { opacity: 0.28; }
 .swapped-hero-text { grid-area: text; display: flex; flex-direction: column; gap: 23px; }
 .swapped-hero-copy { display: flex; flex-direction: column; gap: 40px; }
-/* Chip de moneda sobre el título, como en la referencia (píldora con
-   el símbolo en negrita y el nombre; sin el icono de la marca). */
-.swapped-hero-chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 999px; padding: 8px 12px; font-size: 14px; color: #c5c5c5; }
-.swapped-hero-chip strong { color: #ffffff; }
-[data-theme="claro"] .swapped-hero-chip { background: rgba(0, 0, 0, 0.05); border-color: rgba(0, 0, 0, 0.08); }
-[data-theme="claro"] .swapped-hero-chip strong { color: #101010; }
-[data-theme="claro"] .swapped-hero-chip { color: #4a4d59; }
+/* El toggle Comprar/Vender va sobre el título, alineado a la
+   izquierda de la columna (en el lugar del chip USDC, eliminado). */
+.swapped-hero-text .swapped-toggle { align-self: flex-start; }
 .swapped-layout > iframe, .swapped-layout > .swapped-sell { grid-area: widget; position: sticky; top: 87px; }
 .swapped-rest { grid-area: rest; display: flex; flex-direction: column; gap: 40px; min-width: 0; }
 /* Los hijos de la rejilla deben poder encogerse bajo su contenido
