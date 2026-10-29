@@ -17,9 +17,14 @@ recursos, preguntas frecuentes (acordeón, primera abierta) y rejilla
 de 32 criptos (tarjetas 330×60). El layout está medido de esas
 páginas a 1440 (contenido 1072: texto 670 + 20 + widget 382; huecos
 entre secciones 40). Sin copiar logos ni ilustraciones de marca: los
-visuales de los pasos son degradados propios con número, los métodos
-son tarjetas solo con el nombre y las criptos llevan un disco de
-color con la inicial. El header y el footer son los de peetoo, no los
+visuales de los pasos son mini-mockups propios en SVG (widget de
+compra, lista de monedas, métodos de pago, envío, billetera y banco
+con check), los métodos son tarjetas solo con el nombre y las criptos
+llevan un disco de color con la inicial. El fondo de /swapped es plano
+#101010 como en la página de Swapped (sin el resplandor violeta del
+resto de la app) y el widget o el aviso quedan fijos al desplazar
+(sticky bajo el header) durante toda la columna izquierda. El header
+y el footer son los de peetoo, no los
 corporativos de Swapped; las cifras de mercado son la foto del
 2026-10-29 (el precio en vivo cambia). Los menús del mercado desde
 esa vista vuelven al mercado con su filtro.
