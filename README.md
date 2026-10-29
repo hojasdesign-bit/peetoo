@@ -5,22 +5,24 @@ homepage: al entrar caes directo en el mercado Crypto. El header tiene
 un menú Swapped con dos tarjetas (Comprar / Vender), como el menú
 Productos de swapped.com (panel de 1100px, tarjetas con padding 24,
 título 18 y descripción 16, medidos de ese menú); las tarjetas llevan
-a `/swapped`, una sola página con un toggle Comprar/Vender y el mismo
-contenido de las páginas de comprar/vender de Swapped pero genérico,
-sin énfasis a ninguna moneda: hero (título + descripción), 3 pasos y
-métodos de pago populares. El layout está medido de esas páginas a
-1440 (contenido 1072: texto 670 + 20 + widget 382; título 60/70,
-descripción 16/22, pasos 215×171 con título 20/700 y texto 20/26,
-métodos 22/600, aviso 382×500 con degradado violeta). Comprar muestra
-el iframe real de Swapped (382×500, moneda BTC por defecto, cambiable
-dentro del widget) con el header y el footer de la app; Vender muestra
-el aviso de Swapped (las ventas están desactivadas temporalmente),
-porque hoy no hay widget de venta que incrustar. Sin chip de moneda
-sobre el título (genérico) y sin copiar ilustraciones ni logos de
-Swapped: los visuales de los pasos son degradados propios con número
-y los métodos son chips de texto. El bloque editorial sobre USDC de
-esas páginas no entra: es contenido de USDC, no de la página. Los
-menús del mercado desde esa vista vuelven al mercado con su filtro.
+a `/swapped`, una sola página con un toggle Comprar/Vender y el
+contenido completo de las páginas de comprar/vender de Swapped tal
+cual (USDC, a petición suya «por ahora»): hero con chip USDC, título
+60/70 y descripción, widget real (382×500, moneda USDC) o aviso de
+ventas desactivadas (382×500 con degradado violeta), 3 pasos con
+visual 215×171, métodos como tarjetas 156×100 en 4 columnas, bloque
+editorial sobre USDC (columna 635: intro + 6 secciones), tarjeta de
+estadísticas de mercado (670, celdas 297×92), tarjetas de precio y
+recursos, preguntas frecuentes (acordeón, primera abierta) y rejilla
+de 32 criptos (tarjetas 330×60). El layout está medido de esas
+páginas a 1440 (contenido 1072: texto 670 + 20 + widget 382; huecos
+entre secciones 40). Sin copiar logos ni ilustraciones de marca: los
+visuales de los pasos son degradados propios con número, los métodos
+son tarjetas solo con el nombre y las criptos llevan un disco de
+color con la inicial. El header y el footer son los de peetoo, no los
+corporativos de Swapped; las cifras de mercado son la foto del
+2026-10-29 (el precio en vivo cambia). Los menús del mercado desde
+esa vista vuelven al mercado con su filtro.
 
 ## Referencia (importante)
 

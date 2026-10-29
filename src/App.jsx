@@ -16,6 +16,7 @@ import { NetworkChip } from './ds/components/NetworkChip/NetworkChip.jsx';
 import { PageBackground } from './ds/components/PageBackground/PageBackground.jsx';
 import { DropdownMenu } from './ds/components/DropdownMenu/DropdownMenu.jsx';
 import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/offers.js';
+import { SWAPPED_EDITORIAL_INTRO, SWAPPED_EDITORIAL, SWAPPED_STATS, SWAPPED_PRECIO_TEXT, SWAPPED_RESOURCES_TEXT, SWAPPED_RESOURCES_LINKS, SWAPPED_FAQS, SWAPPED_MORE_CRYPTOS, SWAPPED_METHODS } from './data/swappedPage.js';
 import logoUrl from './assets/logo.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
@@ -86,6 +87,9 @@ export default function App() {
   // genérica, sin énfasis a ninguna moneda: el widget arranca en BTC
   // (su moneda por defecto) y dentro de él se puede cambiar.
   const [swappedSide, setSwappedSide] = React.useState('buy');
+  // FAQ de la página de Swapped: la primera abierta, como en la referencia.
+  const [swappedFaqOpen, setSwappedFaqOpen] = React.useState(0);
+  const swappedStatsRef = React.useRef(null);
   const pendingMarketScroll = React.useRef(false);
   const goSwapped = (e) => {
     if (e) e.preventDefault();
@@ -533,21 +537,21 @@ export default function App() {
   // ninguna moneda. El bloque editorial sobre USDC (qué es, precio,
   // estadísticas, FAQ) no entra: es contenido de USDC, no de la página.
   const swappedContent = swappedSide === 'buy' ? {
-    title: 'Comprar cripto hecho simple',
-    description: 'Compra cripto de forma rápida y fácil con tarjeta de crédito o débito, transferencia bancaria, Apple Pay, Google Pay y más.',
-    stepsTitle: 'Cómo comprar cripto en 3 pasos sencillos',
+    title: 'Comprar USDC hecho simple',
+    description: 'Swapped.com ofrece una forma rápida y fácil de comprar USDC (USDC) con tarjeta de crédito o débito, transferencia bancaria, Apple Pay, Google Pay y más.',
+    stepsTitle: 'Cómo comprar USDC en 3 pasos sencillos',
     steps: [
-      { title: 'Seleccionar', text: 'Ingresa cuánta cripto quieres comprar.' },
+      { title: 'Seleccionar', text: 'Ingresa cuánto USDC quieres comprar.' },
       { title: 'Pagar', text: 'Paga usando uno de 40+ métodos de pago.' },
-      { title: 'Recibir', text: 'Recibe la cripto en tu billetera.' },
+      { title: 'Recibir', text: 'Recibe el USDC en tu billetera.' },
     ],
   } : {
-    title: 'Vender cripto hecho simple',
-    description: 'Vende cripto de forma rápida y fácil con tarjeta de crédito o débito, transferencia bancaria, Apple Pay, Google Pay y más.',
-    stepsTitle: 'Cómo vender cripto en 3 pasos sencillos',
+    title: 'Vender USDC hecho simple',
+    description: 'Swapped.com ofrece una forma rápida y fácil de vender USDC (USDC) con tarjeta de crédito o débito, transferencia bancaria, Apple Pay, Google Pay y más.',
+    stepsTitle: 'Cómo vender USDC en 3 pasos sencillos',
     steps: [
       { title: 'Seleccionar', text: 'Selecciona la moneda que quieres recibir.' },
-      { title: 'Enviar', text: 'Envía tu cripto a la dirección de depósito.' },
+      { title: 'Enviar', text: 'Envía tu USDC a la dirección de depósito.' },
       { title: 'Recibir', text: 'Recibe el dinero en tu cuenta bancaria.' },
     ],
   };
@@ -697,11 +701,14 @@ export default function App() {
           />
           <div className="swapped-cols">
             <div className="swapped-hero-text">
-              <Heading level="h1">{swappedContent.title}</Heading>
-              <Text tone="muted">{swappedContent.description}</Text>
+              <span className="swapped-hero-chip"><strong>USDC</strong><span>USDC</span></span>
+              <div className="swapped-hero-copy">
+                <Heading level="h1">{swappedContent.title}</Heading>
+                <Text tone="muted">{swappedContent.description}</Text>
+              </div>
             </div>
             {swappedSide === 'buy' ? (
-              <iframe src="https://widget.swapped.com/?currencyCode=BTC" title="Widget de Swapped" allow="clipboard-write" />
+              <iframe src="https://widget.swapped.com/?currencyCode=USDC" title="Widget de Swapped" allow="clipboard-write" />
             ) : (
               // Sin widget de venta que incrustar: la propia página de
               // Swapped (/sell/usdc) muestra este mismo aviso — las
@@ -725,14 +732,88 @@ export default function App() {
             </section>
             <section className="swapped-methods" aria-label="Métodos de pago populares">
               <Heading level="h2">Métodos de pago populares</Heading>
-              <div className="swapped-methods-list">
-                {['Apple Pay', 'Google Pay', 'Tarjeta de crédito', 'Tarjeta de débito', 'Transferencia bancaria'].map((m) => (
-                  <span className="swapped-method" key={m}>{m}</span>
+              <div className="swapped-methods-grid">
+                {SWAPPED_METHODS.map((m) => (
+                  <span className="swapped-method-card" key={m}>{m}</span>
                 ))}
-                <span className="swapped-method swapped-method-more">+24 más</span>
               </div>
             </section>
           </div>
+          <section className="swapped-editorial" aria-label="Sobre USDC">
+            <div className="swapped-editorial-block">
+              <p className="swapped-editorial-text">{SWAPPED_EDITORIAL_INTRO}</p>
+              <h3 className="swapped-editorial-heading">{SWAPPED_EDITORIAL[0].heading}</h3>
+              <div className="swapped-editorial-paras">
+                {SWAPPED_EDITORIAL[0].paras.map((para, i) => (
+                  <p className="swapped-editorial-text" key={i}>{para}</p>
+                ))}
+              </div>
+            </div>
+            {SWAPPED_EDITORIAL.slice(1).map((s) => (
+              <div className="swapped-editorial-block" key={s.heading}>
+                <h3 className="swapped-editorial-heading">{s.heading}</h3>
+                <div className="swapped-editorial-paras">
+                  {s.paras.map((para, i) => (
+                    <p className="swapped-editorial-text" key={i}>{para}</p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </section>
+          <section className="swapped-stats" ref={swappedStatsRef} aria-label="Estadísticas de mercado de USDC">
+            <h3 className="swapped-stats-heading">USDC (USDC) market stats</h3>
+            <p className="swapped-stats-intro">{SWAPPED_STATS.intro}</p>
+            <div className="swapped-stats-grid">
+              {SWAPPED_STATS.cells.map((c) => (
+                <div className="swapped-stat-cell" key={c.label}>
+                  <span className="swapped-stat-label">{c.label}</span>
+                  <span className="swapped-stat-value">{c.value}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className="swapped-info-card" aria-label="Precio de USDC">
+            <h3 className="swapped-info-heading">Precio de USDC (USDC), gráficos y estadísticas</h3>
+            <p className="swapped-info-text">{SWAPPED_PRECIO_TEXT}</p>
+            <div className="swapped-info-links">
+              <button type="button" className="swapped-info-link" onClick={() => swappedStatsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Explorar ↗</button>
+              <button type="button" className="swapped-info-link" onClick={() => { setSwappedSide('sell'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Vender USDC ↗</button>
+            </div>
+          </section>
+          <section className="swapped-info-card" aria-label="Recursos sobre USDC">
+            <h3 className="swapped-info-heading">Relevant resources for USDC</h3>
+            <p className="swapped-info-text">{SWAPPED_RESOURCES_TEXT}</p>
+            <div className="swapped-info-links">
+              {SWAPPED_RESOURCES_LINKS.map((l) => (
+                <a className="swapped-info-link" key={l.label} href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>
+              ))}
+            </div>
+          </section>
+          <section className="swapped-faq" aria-label="Preguntas frecuentes sobre USDC">
+            <Heading level="h2">Preguntas frecuentes sobre USDC</Heading>
+            <div className="swapped-faq-list">
+              {SWAPPED_FAQS.map((f, i) => (
+                <article className="swapped-faq-card" key={f.q}>
+                  <button type="button" className="swapped-faq-question" aria-expanded={swappedFaqOpen === i} onClick={() => setSwappedFaqOpen(swappedFaqOpen === i ? -1 : i)}>
+                    <span>{f.q}</span>
+                    <span className="swapped-faq-chevron" aria-hidden="true" />
+                  </button>
+                  {swappedFaqOpen === i && <p className="swapped-faq-answer">{f.a}</p>}
+                </article>
+              ))}
+            </div>
+          </section>
+          <section className="swapped-more" aria-label="Más criptos que compran nuestros clientes">
+            <Heading level="h2">Más criptos que compran nuestros clientes</Heading>
+            <div className="swapped-more-grid">
+              {SWAPPED_MORE_CRYPTOS.map((c) => (
+                <span className="swapped-more-card" key={c.ticker}>
+                  <span className="swapped-more-disc" style={{ backgroundColor: c.color }}>{c.ticker[0]}</span>
+                  <span className="swapped-more-name">Comprar {c.name} ({c.ticker})</span>
+                </span>
+              ))}
+            </div>
+          </section>
         </main>
       ) : (
       <main className="shell">
