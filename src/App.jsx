@@ -75,6 +75,42 @@ export default function App() {
   // que describe resultados (filtro, verbo, dirección del par) usa
   // effectiveSide; solo el SegmentedControl muestra side.
   const effectiveSide = cascadesSwapped ? (side === 'buy' ? 'sell' : 'buy') : side;
+  // Vista: 'market' o 'swapped'. La página /swapped es una vista de la
+  // app (no una página estática): así mantiene el header y los enlaces
+  // se comportan igual que en el mercado. La vista inicial sale de la
+  // URL para que /swapped abra directo en el widget.
+  const isSwappedPath = () => window.location.pathname.replace(/\.html$/, '') === '/swapped';
+  const [view, setView] = React.useState(isSwappedPath() ? 'swapped' : 'market');
+  const pendingMarketScroll = React.useRef(false);
+  const goSwapped = (e) => {
+    if (e) e.preventDefault();
+    if (view === 'swapped') return;
+    window.history.pushState(null, '', '/swapped');
+    setView('swapped');
+  };
+  // Ir al mercado y desplazarlo a la vista: desde la vista del widget
+  // primero navega; el mercado se renderiza tras el cambio de estado y
+  // el desplazamiento lo hace el efecto de abajo.
+  const goToMarket = () => {
+    if (view === 'swapped') {
+      pendingMarketScroll.current = true;
+      window.history.pushState(null, '', '/');
+      setView('market');
+    } else {
+      document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+  React.useEffect(() => {
+    if (view === 'market' && pendingMarketScroll.current) {
+      pendingMarketScroll.current = false;
+      document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [view]);
+  React.useEffect(() => {
+    const onPop = () => setView(isSwappedPath() ? 'swapped' : 'market');
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
   const [selected, setSelected] = React.useState(null);
   const [modalAmount, setModalAmount] = React.useState('');
   const [modalChain, setModalChain] = React.useState('');
@@ -162,7 +198,7 @@ export default function App() {
     clearFilters();
     setSide('buy'); setBuyCurrency(code); setChain('all'); setPage(1);
     setBuyMenuOpen(false);
-    document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    goToMarket();
   };
   // El DropdownMenu entrega un único onNavigate con el evento: los
   // botones de moneda llevan el código en su tercer span y los enlaces
@@ -180,13 +216,12 @@ export default function App() {
       return;
     }
     const label = el.textContent.trim();
-    const scrollToMarket = () => document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (label.includes('Vender crypto')) {
-      clearFilters(); setSide('sell'); scrollToMarket();
+      clearFilters(); setSide('sell'); goToMarket();
     } else if (label.includes('Todas las ofertas')) {
-      clearFilters(); scrollToMarket();
+      clearFilters(); goToMarket();
     } else if (label.includes('Otras monedas')) {
-      clearFilters(); setSide('buy'); scrollToMarket();
+      clearFilters(); setSide('buy'); goToMarket();
     }
   };
 
@@ -253,7 +288,7 @@ export default function App() {
     setSellCurrency(coin.currency ?? (cashToCurrency[code] || code));
     setPage(1);
     setFiatMenuOpen(false);
-    document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    goToMarket();
   };
   // Igual que onBuyMenuNavigate: el código va en el tercer span del
   // botón de moneda; el tile «Todas las fiat» lleva el código vacío y
@@ -269,13 +304,12 @@ export default function App() {
       return;
     }
     const label = el.textContent.trim();
-    const scrollToMarket = () => document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (label.includes('Todas las fiat')) {
       // Igual que los demás tiles del menú Comprar fiat: sin filtro de
       // fiat, pero en el lado Comprar y con ofertas de venta.
-      clearFilters(); setCascadesSwapped(true); setSide('buy'); scrollToMarket();
+      clearFilters(); setCascadesSwapped(true); setSide('buy'); goToMarket();
     } else if (label.includes('Todas las ofertas')) {
-      clearFilters(); scrollToMarket();
+      clearFilters(); goToMarket();
     }
   };
 
@@ -499,7 +533,7 @@ export default function App() {
                 <span className="fiat-menu-chev" aria-hidden="true" />
               </button>
             </span>
-            <a className="topbar-link" href="/swapped">Comprar con Swapped</a>
+            <a className="topbar-link" href="/swapped" onClick={goSwapped}>Comprar con Swapped</a>
             <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
           </span>
         </div>
@@ -517,6 +551,11 @@ export default function App() {
         )}
       </header>
 
+      {view === 'swapped' ? (
+        <main className="swapped-stage">
+          <iframe src="https://widget.swapped.com/?currencyCode=BTC" title="Widget de Swapped" allow="clipboard-write" />
+        </main>
+      ) : (
       <main className="shell">
         <Heading level="h1">Crypto</Heading>
         <Text tone="muted">Compra y vende USDC y USDT directamente entre personas.</Text>
@@ -608,6 +647,7 @@ export default function App() {
           </div>
         </section>
       </main>
+      )}
 
       <footer className="app-footer">
         <div className="foot-inner">
