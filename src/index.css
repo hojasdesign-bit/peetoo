@@ -43,10 +43,43 @@ body {
 }
 .topbar-link:hover { color: var(--cds-accent-hover); }
 
+/* Menú hamburguesa (móvil ≤720px, como en swapped.com/es/): en móvil
+   la fila del header solo muestra logo + botón; el panel con las
+   secciones desplegables vive dentro del header, como ya hacían los
+   acordeones. En escritorio el botón no existe y la navegación va en
+   línea como antes. */
+.topbar-burger { display: none; }
+@media (max-width: 720px) {
+  .topbar-right { display: none; }
+  .topbar-burger {
+    display: inline-flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+    width: 40px; height: 40px; flex: none;
+    background: transparent; border: 0; cursor: pointer; padding: 0;
+  }
+  .topbar-burger span { display: block; width: 20px; height: 2px; background: var(--cds-ink); border-radius: 2px; transition: transform 0.2s ease, opacity 0.2s ease; }
+  .topbar-burger-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .topbar-burger-open span:nth-child(2) { opacity: 0; }
+  .topbar-burger-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .topbar-drawer { display: flex; flex-direction: column; gap: 4px; padding: 8px 0 16px; border-top: 1px solid var(--cds-border); }
+  .drawer-section { display: flex; align-items: center; justify-content: space-between; width: 100%; font: inherit; font-size: 16px; font-weight: 500; line-height: 22px; color: var(--cds-ink); background: transparent; border: 0; padding: 12px 6px; cursor: pointer; text-align: left; }
+  .drawer-chev { width: 7px; height: 7px; flex: none; border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; transform: rotate(45deg); transition: transform 0.22s ease; }
+  .drawer-chev-open { transform: rotate(225deg); }
+  .drawer-link { font-size: 16px; font-weight: 500; line-height: 22px; color: var(--cds-ink); text-decoration: none; padding: 12px 6px; }
+  .drawer-link:hover { color: var(--cds-accent-hover); }
+  .drawer-demo { padding: 12px 6px 4px; }
+}
+
 /* Vista del widget de Swapped: la app es columna a alto completo para
    que el escenario llene el espacio entre header y footer, como el
    stage del clon (widget 400×484 centrado, padding 40px 20px 60px). */
 .app { display: flex; flex-direction: column; min-height: 100vh; }
+/* Los hijos flexibles deben poder encogerse bajo el ancho de su
+   contenido: sin esto, la fila de filtros (nowrap) empujaba toda la
+   página a 1143px en móvil en vez de desplazar por dentro. El
+   min-width: 0 solo no bastó: el margin: 0 auto de .shell y .topbar
+   también anula el estirado, así que llevan ancho definido (con el
+   max-width 1200 + centrado intactos en escritorio). */
+.topbar, .shell, .swapped-stage, .app-footer { min-width: 0; width: 100%; }
 .swapped-stage { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; padding: 40px 20px 60px; }
 .swapped-stage iframe { width: 400px; max-width: 100%; height: 484px; border: 0; border-radius: 28px; background: #fff; }
 .buy-menu-chev, .fiat-menu-chev {

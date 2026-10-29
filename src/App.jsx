@@ -157,6 +157,10 @@ export default function App() {
   // por clic fuera evalúa fiatMenuOpen en su array de dependencias
   // durante el render; declararlo después rompería con TDZ.
   const [fiatMenuOpen, setFiatMenuOpen] = React.useState(false);
+  // Menú hamburguesa (móvil ≤720px, como en swapped.com/es/): el botón
+  // va en la fila del header y el panel contiene las dos secciones
+  // desplegables + el enlace a Swapped + la insignia Demo.
+  const [hamburgerOpen, setHamburgerOpen] = React.useState(false);
   const buyMenuRef = React.useRef(null);
   const buyMenuTimer = React.useRef(null);
   const cancelBuyMenuClose = () => {
@@ -182,18 +186,18 @@ export default function App() {
     return () => mq.removeEventListener('change', fn);
   }, []);
   React.useEffect(() => {
-    if (!buyMenuOpen && !fiatMenuOpen) return undefined;
+    if (!buyMenuOpen && !fiatMenuOpen && !hamburgerOpen) return undefined;
     const onPointerDown = (e) => {
-      if (buyMenuRef.current && !buyMenuRef.current.contains(e.target)) { setBuyMenuOpen(false); setFiatMenuOpen(false); }
+      if (buyMenuRef.current && !buyMenuRef.current.contains(e.target)) { setBuyMenuOpen(false); setFiatMenuOpen(false); setHamburgerOpen(false); }
     };
-    const onKey = (e) => { if (e.key === 'Escape') { setBuyMenuOpen(false); setFiatMenuOpen(false); } };
+    const onKey = (e) => { if (e.key === 'Escape') { setBuyMenuOpen(false); setFiatMenuOpen(false); setHamburgerOpen(false); } };
     document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKey);
     return () => {
       document.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('keydown', onKey);
     };
-  }, [buyMenuOpen, fiatMenuOpen]);
+  }, [buyMenuOpen, fiatMenuOpen, hamburgerOpen]);
   const buyCoin = (code) => {
     clearFilters();
     setSide('buy'); setBuyCurrency(code); setChain('all'); setPage(1);
@@ -208,7 +212,7 @@ export default function App() {
   const onBuyMenuNavigate = (e) => {
     e.preventDefault();
     cancelBuyMenuClose();
-    setBuyMenuOpen(false);
+    setBuyMenuOpen(false); setHamburgerOpen(false);
     const el = e.currentTarget;
     const codeEl = el.children && el.children[2];
     if (codeEl && codeEl.textContent) {
@@ -296,7 +300,7 @@ export default function App() {
   const onFiatMenuNavigate = (e) => {
     e.preventDefault();
     cancelFiatMenuClose();
-    setFiatMenuOpen(false);
+    setFiatMenuOpen(false); setHamburgerOpen(false);
     const el = e.currentTarget;
     const codeEl = el.children && el.children[2];
     if (codeEl && codeEl.textContent) {
@@ -536,18 +540,53 @@ export default function App() {
             <a className="topbar-link" href="/swapped" onClick={goSwapped}>Comprar con Swapped</a>
             <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
           </span>
+          <button
+            type="button"
+            className={`topbar-burger ${hamburgerOpen ? 'topbar-burger-open' : ''}`}
+            aria-label={hamburgerOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={hamburgerOpen}
+            onClick={() => { if (hamburgerOpen) { setBuyMenuOpen(false); setFiatMenuOpen(false); } setHamburgerOpen((o) => !o); }}
+          >
+            <span aria-hidden="true" />
+            <span aria-hidden="true" />
+            <span aria-hidden="true" />
+          </button>
         </div>
         {buyMenuOpen && !isNarrow && (
           <DropdownMenu dropdown={buyDropdown} onNavigate={onBuyMenuNavigate} />
         )}
-        {buyMenuOpen && isNarrow && (
-          <DropdownMenu dropdown={buyDropdown} mobile open={buyMenuOpen} onNavigate={onBuyMenuNavigate} />
-        )}
         {fiatMenuOpen && !isNarrow && (
           <DropdownMenu dropdown={fiatDropdown} onNavigate={onFiatMenuNavigate} />
         )}
-        {fiatMenuOpen && isNarrow && (
-          <DropdownMenu dropdown={fiatDropdown} mobile open={fiatMenuOpen} onNavigate={onFiatMenuNavigate} />
+        {hamburgerOpen && isNarrow && (
+          <nav className="topbar-drawer" aria-label="Menú">
+            <button
+              type="button"
+              className="drawer-section"
+              aria-expanded={buyMenuOpen}
+              onClick={() => { setBuyMenuOpen((o) => !o); setFiatMenuOpen(false); }}
+            >
+              Comprar crypto
+              <span className={`drawer-chev ${buyMenuOpen ? 'drawer-chev-open' : ''}`} aria-hidden="true" />
+            </button>
+            {buyMenuOpen && (
+              <DropdownMenu dropdown={buyDropdown} mobile open={buyMenuOpen} onNavigate={onBuyMenuNavigate} />
+            )}
+            <button
+              type="button"
+              className="drawer-section"
+              aria-expanded={fiatMenuOpen}
+              onClick={() => { setFiatMenuOpen((o) => !o); setBuyMenuOpen(false); }}
+            >
+              Comprar fiat
+              <span className={`drawer-chev ${fiatMenuOpen ? 'drawer-chev-open' : ''}`} aria-hidden="true" />
+            </button>
+            {fiatMenuOpen && (
+              <DropdownMenu dropdown={fiatDropdown} mobile open={fiatMenuOpen} onNavigate={onFiatMenuNavigate} />
+            )}
+            <a className="drawer-link" href="/swapped" onClick={(e) => { goSwapped(e); setHamburgerOpen(false); }}>Comprar con Swapped</a>
+            <span className="drawer-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
+          </nav>
         )}
       </header>
 
