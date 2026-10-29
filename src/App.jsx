@@ -695,7 +695,7 @@ export default function App() {
             onChange={setSwappedSide}
             className="swapped-toggle"
           />
-          <section className="swapped-hero">
+          <div className="swapped-cols">
             <div className="swapped-hero-text">
               <Heading level="h1">{swappedContent.title}</Heading>
               <Text tone="muted">{swappedContent.description}</Text>
@@ -707,32 +707,32 @@ export default function App() {
               // Swapped (/sell/usdc) muestra este mismo aviso — las
               // ventas están desactivadas temporalmente.
               <section className="swapped-sell" aria-label="Ventas desactivadas">
-                <h2 className="swapped-sell-title">Las ventas están desactivadas temporalmente</h2>
-                <p className="swapped-sell-text">Swapped está trabajando para recuperar esta función en un plazo de dos semanas. Mientras tanto, puedes comprar criptomonedas al instante con tu método de pago preferido.</p>
-                <Button variant="outline" onClick={() => setSwappedSide('buy')}>Comprar cripto</Button>
+                <h2 className="swapped-sell-title">Las ventas de criptomonedas están desactivadas temporalmente</h2>
+                <p className="swapped-sell-text">Estamos trabajando para recuperar esta función en un plazo de dos semanas. Aún puedes comprar criptomonedas al instante con tu método de pago preferido.</p>
               </section>
             )}
-          </section>
-          <section className="swapped-steps" aria-label={swappedContent.stepsTitle}>
-            <Heading level="h2">{swappedContent.stepsTitle}</Heading>
-            <div className="swapped-steps-grid">
-              {swappedContent.steps.map((s) => (
-                <article className="swapped-step" key={s.title}>
-                  <h3 className="swapped-step-title">{s.title}</h3>
-                  <p className="swapped-step-text">{s.text}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-          <section className="swapped-methods" aria-label="Métodos de pago populares">
-            <Heading level="h2">Métodos de pago populares</Heading>
-            <div className="swapped-methods-list">
-              {['Apple Pay', 'Google Pay', 'Tarjeta de crédito', 'Tarjeta de débito', 'Transferencia bancaria'].map((m) => (
-                <span className="swapped-method" key={m}>{m}</span>
-              ))}
-              <span className="swapped-method swapped-method-more">+24 más</span>
-            </div>
-          </section>
+            <section className="swapped-steps" aria-label={swappedContent.stepsTitle}>
+              <Heading level="h2">{swappedContent.stepsTitle}</Heading>
+              <div className="swapped-steps-grid">
+                {swappedContent.steps.map((s, i) => (
+                  <article className="swapped-step" key={s.title}>
+                    <div className="swapped-step-visual" aria-hidden="true">{i + 1}</div>
+                    <h3 className="swapped-step-title">{s.title}</h3>
+                    <p className="swapped-step-text">{s.text}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+            <section className="swapped-methods" aria-label="Métodos de pago populares">
+              <Heading level="h2">Métodos de pago populares</Heading>
+              <div className="swapped-methods-list">
+                {['Apple Pay', 'Google Pay', 'Tarjeta de crédito', 'Tarjeta de débito', 'Transferencia bancaria'].map((m) => (
+                  <span className="swapped-method" key={m}>{m}</span>
+                ))}
+                <span className="swapped-method swapped-method-more">+24 más</span>
+              </div>
+            </section>
+          </div>
         </main>
       ) : (
       <main className="shell">

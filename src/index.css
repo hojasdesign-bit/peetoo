@@ -80,33 +80,58 @@ body {
    también anula el estirado, así que llevan ancho definido (con el
    max-width 1200 + centrado intactos en escritorio). */
 .topbar, .shell, .swapped-stage, .app-footer { min-width: 0; width: 100%; }
-.swapped-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 48px; max-width: 1200px; margin: 0 auto; padding: 40px 24px 60px; }
-.swapped-stage iframe { width: 400px; max-width: 100%; height: 484px; border: 0; border-radius: 28px; background: #fff; }
+.swapped-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 40px; max-width: 1120px; margin: 0 auto; padding: 40px 24px 60px; }
+.swapped-stage iframe { width: 382px; max-width: 100%; height: 500px; border: 0; border-radius: 28px; background: #fff; }
 /* El toggle de la página hereda el ancho del widget; el selector con
    dos clases vence al ancho 100% del módulo del SegmentedControl. */
 .swapped-stage .swapped-toggle { width: 400px; max-width: 100%; }
-/* Hero de la página de Swapped: texto a la izquierda y widget (o
-   aviso) a la derecha, como en las páginas de comprar/vender de
-   swapped.com; en angosto se apila con el widget centrado. */
-.swapped-hero { display: grid; grid-template-columns: 1fr 400px; gap: 48px; align-items: start; width: 100%; }
-.swapped-hero-text { display: flex; flex-direction: column; gap: 16px; }
-@media (max-width: 900px) {
-  .swapped-hero { grid-template-columns: 1fr; justify-items: center; }
-  .swapped-hero-text { width: 100%; }
+/* Página de Swapped, medida de /buy/usdc y /sell/usdc a 1440:
+   contenido de 1072px en dos columnas (texto 670 + 20 + widget 382);
+   la columna izquierda lleva título, descripción, pasos y métodos;
+   el widget (o el aviso) ocupa la derecha de las dos primeras filas.
+   En móvil se apila en orden: texto, widget, pasos, métodos. */
+.swapped-cols {
+  display: grid; width: 100%;
+  grid-template-columns: 670px 382px; column-gap: 20px; row-gap: 40px;
+  grid-template-areas: "text widget" "steps widget" "methods .";
 }
-/* Pasos y métodos: mismo lenguaje de tarjetas que el menú Swapped
-   (fondo, radio 16, padding 24, título 18/700, texto 16/22). */
-.swapped-steps, .swapped-methods { width: 100%; display: flex; flex-direction: column; gap: 20px; }
-.swapped-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-@media (max-width: 900px) {
-  .swapped-steps-grid { grid-template-columns: 1fr; }
+.swapped-hero-text { grid-area: text; display: flex; flex-direction: column; gap: 40px; }
+.swapped-cols > iframe, .swapped-cols > .swapped-sell { grid-area: widget; }
+.swapped-steps { grid-area: steps; }
+.swapped-methods { grid-area: methods; }
+/* Los hijos de la rejilla deben poder encogerse bajo su contenido
+   mínimo, si no el ancho fijo de los pasos rompería el móvil. */
+.swapped-cols > * { min-width: 0; }
+/* Título y descripción del hero: 60/70 y 16/22, como en la referencia
+   (los selectores con dos clases vencen al módulo del DS). Sin chip
+   de moneda encima: la página es genérica, así que el título arranca
+   a la altura del widget, no 59px más abajo como en la de USDC. */
+.swapped-hero-text h1 { font-size: 60px; line-height: 70px; margin: 0; }
+.swapped-hero-text p { font-size: 16px; line-height: 22px; color: #f5f5f5; margin: 0; }
+[data-theme="claro"] .swapped-hero-text p { color: #4a4d59; }
+/* Pasos: título de sección 24/600; tarjetas en columna (sin fondo)
+   con visual 215×171, título 20/700 y texto 20/26, como en la
+   referencia. El visual es propio (degradado violeta + número),
+   no la ilustración de Swapped. */
+.swapped-steps { display: flex; flex-direction: column; gap: 12px; }
+.swapped-steps h2 { font-size: 24px; line-height: 32px; font-weight: 600; margin: 0; }
+.swapped-steps-grid { display: grid; grid-template-columns: repeat(3, 215px); gap: 12px; }
+.swapped-step { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.swapped-step-visual {
+  aspect-ratio: 215 / 171; border-radius: 16px;
+  background: linear-gradient(135deg, #2a1a5e, #4608e3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px; font-weight: 700; color: rgba(255, 255, 255, 0.9);
 }
-.swapped-step { display: flex; flex-direction: column; gap: 8px; background: #181818; border-radius: 16px; padding: 24px; }
-.swapped-step-title { font-size: 18px; font-weight: 700; line-height: 22px; margin: 0; color: var(--cds-ink); }
-.swapped-step-text { font-size: 16px; line-height: 22px; color: #c5c5c5; margin: 0; }
-[data-theme="claro"] .swapped-step { background: #ffffff; }
+.swapped-step-title { font-size: 20px; font-weight: 700; line-height: 26px; margin: 0; padding: 0 20px; color: #ffffff; }
+.swapped-step-text { font-size: 20px; line-height: 26px; margin: 0; padding: 0 20px; color: #ffffff; }
+[data-theme="claro"] .swapped-step-title { color: #101010; }
 [data-theme="claro"] .swapped-step-text { color: #4a4d59; }
-.swapped-methods-list { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Métodos: título 22/600 y fila de chips de texto (sin logos de
+   marca, que son de terceros). */
+.swapped-methods { display: flex; flex-direction: column; gap: 43px; }
+.swapped-methods h2 { font-size: 22px; line-height: 30px; font-weight: 600; margin: 0; }
+.swapped-methods-list { display: flex; flex-wrap: wrap; gap: 12px; }
 .swapped-method { padding: 10px 16px; border: 1px solid var(--cds-border); border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--cds-ink); }
 .swapped-method-more { color: var(--cds-muted); }
 
@@ -137,13 +162,33 @@ body {
 /* En el cajón móvil las tarjetas van apiladas, no en panel absoluto. */
 .swapped-drawer-cards { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 8px 10px; }
 
-/* Aviso del lado Vender: mismo espejo que la página de Swapped
-   (/sell/usdc), que hoy no ofrece widget de venta. */
-.swapped-sell { width: 400px; max-width: 100%; background: #181818; border-radius: 28px; padding: 28px; }
-.swapped-sell-title { font-size: 20px; font-weight: 700; line-height: 26px; margin: 0 0 12px; color: var(--cds-ink); }
-.swapped-sell-text { font-size: 15px; line-height: 22px; color: #c5c5c5; margin: 0 0 16px; }
-[data-theme="claro"] .swapped-sell { background: #ffffff; }
+/* Aviso del lado Vender: la tarjeta de /sell/usdc, 382×500, radio 28,
+   padding 56, texto centrado y degradado violeta radial sobre negro,
+   con el contenido centrado en vertical. */
+.swapped-sell {
+  width: 382px; max-width: 100%; height: 500px;
+  background: radial-gradient(109% 50% at 50% 48.6%, rgba(15, 7, 157, 0.72), rgba(0, 0, 0, 0) 70%), #000000;
+  border-radius: 28px; padding: 56px; text-align: center;
+  display: flex; flex-direction: column; justify-content: center; gap: 20px;
+  box-sizing: border-box;
+}
+.swapped-sell-title { font-size: 22px; font-weight: 700; line-height: 30px; margin: 0; color: #ffffff; }
+.swapped-sell-text { font-size: 14px; line-height: 22.4px; color: #c5c5c5; margin: 0; }
+[data-theme="claro"] .swapped-sell { background: radial-gradient(109% 50% at 50% 48.6%, rgba(94, 23, 235, 0.12), rgba(255, 255, 255, 0) 70%), #ffffff; }
+[data-theme="claro"] .swapped-sell-title { color: #101010; }
 [data-theme="claro"] .swapped-sell-text { color: #4a4d59; }
+/* Responsive de la página de Swapped: van AL FINAL del bloque para
+   que ninguna regla base posterior los anule (eso rompió el móvil:
+   la rejilla de pasos quedaba en 3×215px y empujaba la página). */
+@media (max-width: 1100px) {
+  .swapped-cols { grid-template-columns: minmax(0, 1fr) 382px; }
+  .swapped-steps-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 800px) {
+  .swapped-cols { grid-template-columns: 1fr; grid-template-areas: "text" "widget" "steps" "methods"; justify-items: center; }
+  .swapped-hero-text, .swapped-steps, .swapped-methods { width: 100%; }
+  .swapped-steps-grid { grid-template-columns: 1fr; }
+}
 .buy-menu-chev, .fiat-menu-chev, .swapped-menu-chev {
   width: 7px; height: 7px; flex: none;
   border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor;
