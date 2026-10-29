@@ -17,6 +17,7 @@ import { PageBackground } from './ds/components/PageBackground/PageBackground.js
 import { DropdownMenu } from './ds/components/DropdownMenu/DropdownMenu.jsx';
 import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/offers.js';
 import { SWAPPED_EDITORIAL_INTRO, SWAPPED_EDITORIAL, SWAPPED_STATS, SWAPPED_PRECIO_TEXT, SWAPPED_RESOURCES_TEXT, SWAPPED_RESOURCES_LINKS, SWAPPED_FAQS, SWAPPED_MORE_CRYPTOS, SWAPPED_METHODS } from './data/swappedPage.js';
+import { SwappedStepVisual } from './components/SwappedStepVisuals.jsx';
 import logoUrl from './assets/logo.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
@@ -541,24 +542,26 @@ export default function App() {
     description: 'Swapped.com ofrece una forma rápida y fácil de comprar USDC (USDC) con tarjeta de crédito o débito, transferencia bancaria, Apple Pay, Google Pay y más.',
     stepsTitle: 'Cómo comprar USDC en 3 pasos sencillos',
     steps: [
-      { title: 'Seleccionar', text: 'Ingresa cuánto USDC quieres comprar.' },
-      { title: 'Pagar', text: 'Paga usando uno de 40+ métodos de pago.' },
-      { title: 'Recibir', text: 'Recibe el USDC en tu billetera.' },
+      { title: 'Seleccionar', text: 'Ingresa cuánto USDC quieres comprar.', visual: 'buy-select' },
+      { title: 'Pagar', text: 'Paga usando uno de 40+ métodos de pago.', visual: 'pay' },
+      { title: 'Recibir', text: 'Recibe el USDC en tu billetera.', visual: 'receive-wallet' },
     ],
   } : {
     title: 'Vender USDC hecho simple',
     description: 'Swapped.com ofrece una forma rápida y fácil de vender USDC (USDC) con tarjeta de crédito o débito, transferencia bancaria, Apple Pay, Google Pay y más.',
     stepsTitle: 'Cómo vender USDC en 3 pasos sencillos',
     steps: [
-      { title: 'Seleccionar', text: 'Selecciona la moneda que quieres recibir.' },
-      { title: 'Enviar', text: 'Envía tu USDC a la dirección de depósito.' },
-      { title: 'Recibir', text: 'Recibe el dinero en tu cuenta bancaria.' },
+      { title: 'Seleccionar', text: 'Selecciona la moneda que quieres recibir.', visual: 'sell-select' },
+      { title: 'Enviar', text: 'Envía tu USDC a la dirección de depósito.', visual: 'send' },
+      { title: 'Recibir', text: 'Recibe el dinero en tu cuenta bancaria.', visual: 'receive-bank' },
     ],
   };
 
   return (
     <div className="app">
-      <PageBackground />
+      {/* En /swapped el fondo es plano como en la página de Swapped
+          (#101010 sin resplandor); en el resto sigue el PageBackground. */}
+      <PageBackground glow={view !== 'swapped'} />
       <header
         className="topbar"
         ref={buyMenuRef}
@@ -699,7 +702,7 @@ export default function App() {
             onChange={setSwappedSide}
             className="swapped-toggle"
           />
-          <div className="swapped-cols">
+          <div className="swapped-layout">
             <div className="swapped-hero-text">
               <span className="swapped-hero-chip"><strong>USDC</strong><span>USDC</span></span>
               <div className="swapped-hero-copy">
@@ -718,12 +721,13 @@ export default function App() {
                 <p className="swapped-sell-text">Estamos trabajando para recuperar esta función en un plazo de dos semanas. Aún puedes comprar criptomonedas al instante con tu método de pago preferido.</p>
               </section>
             )}
+            <div className="swapped-rest">
             <section className="swapped-steps" aria-label={swappedContent.stepsTitle}>
               <Heading level="h2">{swappedContent.stepsTitle}</Heading>
               <div className="swapped-steps-grid">
-                {swappedContent.steps.map((s, i) => (
+                {swappedContent.steps.map((s) => (
                   <article className="swapped-step" key={s.title}>
-                    <div className="swapped-step-visual" aria-hidden="true">{i + 1}</div>
+                    <div className="swapped-step-visual"><SwappedStepVisual variant={s.visual} /></div>
                     <h3 className="swapped-step-title">{s.title}</h3>
                     <p className="swapped-step-text">{s.text}</p>
                   </article>
@@ -738,7 +742,6 @@ export default function App() {
                 ))}
               </div>
             </section>
-          </div>
           <section className="swapped-editorial" aria-label="Sobre USDC">
             <div className="swapped-editorial-block">
               <p className="swapped-editorial-text">{SWAPPED_EDITORIAL_INTRO}</p>
@@ -803,6 +806,8 @@ export default function App() {
               ))}
             </div>
           </section>
+            </div>
+          </div>
           <section className="swapped-more" aria-label="Más criptos que compran nuestros clientes">
             <Heading level="h2">Más criptos que compran nuestros clientes</Heading>
             <div className="swapped-more-grid">
