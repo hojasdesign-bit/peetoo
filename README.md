@@ -67,10 +67,12 @@ Los componentes del Crypto DS están vendorizados en `src/ds/` (snapshot de
 del DS sigue siendo el proyecto `crypto-design-system`; para actualizar el
 snapshot, volver a copiar su `src/` aquí excluyendo `*.stories.jsx`,
 `App.jsx`, `main.jsx` y los SVG de plantilla sin uso en `assets/`.
-OJO: `src/ds/components/CascadeField/CascadeField.jsx` lleva un FIX LOCAL
+OJO: `src/ds/components/CascadeField/CascadeField.jsx` lleva dos FIXES LOCALES
 (el panel también se abre con `onClick`, no solo con `onFocus`, porque tras
-elegir una opción el input conserva el foco y el panel no reabría) que un
-snapshot fresco sobrescribiría: hay que subir ese fix al DS primero.
+elegir una opción el input conserva el foco y el panel no reabría; y el panel
+es `fixed` posicionado por JS, porque el absoluto quedaba recortado por el
+overflow-x: auto de la fila de filtros y las opciones caían bajo la tabla)
+que un snapshot fresco sobrescribiría: hay que subir esos fixes al DS primero.
 Igual `src/ds/components/MenuCoinButton/` lleva una EXTENSIÓN LOCAL (prop
 `src` opcional: muestra el logo de la moneda dentro del círculo en vez de
 la letra), también pendiente de subir al DS.

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import styles from './CascadeField.module.css';
 import { cn } from '../../utils.js';
 import { OptionRow } from '../OptionRow/OptionRow.jsx';
@@ -65,6 +65,40 @@ export function CascadeField({
       ? options
       : options.filter((o) => `${o.label} ${o.description || ''}`.toLowerCase().includes(q));
 
+  // FIX LOCAL peetoo-app (no está en el DS fuente): el panel es fixed y
+  // se posiciona por JS desde el rect del campo. El panel absoluto
+  // original quedaba recortado por el overflow-x: auto de la fila de
+  // filtros (solo se veían ~14px y el resto caía bajo la tabla).
+  // Con fixed escapa de ese recorte; se recoloca al desplazar la página
+  // o cambiar el tamaño, se sujeta al borde derecho y sube encima del
+  // campo cuando abajo no cabe. Subir este fix al DS.
+  const firstWrapRef = useRef(null);
+  const [panelPos, setPanelPos] = useState(null);
+  const updatePanelPos = () => {
+    const el = firstWrapRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const width = Math.max(r.width, 250);
+    const estHeight = Math.min(filtered.length * 48 + 24, 300);
+    const gap = 8;
+    let top = r.bottom + gap;
+    const spaceBelow = window.innerHeight - top;
+    if (spaceBelow < estHeight && r.top - gap > spaceBelow) {
+      top = Math.max(8, r.top - gap - estHeight);
+    }
+    const left = Math.max(8, Math.min(r.left, window.innerWidth - width - 8));
+    setPanelPos((prev) => (prev && prev.top === top && prev.left === left && prev.width === width ? prev : { top, left, width }));
+  };
+  useLayoutEffect(() => {
+    if (!open) return;
+    updatePanelPos();
+    let raf = 0;
+    const onMove = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(updatePanelPos); };
+    window.addEventListener('scroll', onMove, true);
+    window.addEventListener('resize', onMove);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onMove, true); window.removeEventListener('resize', onMove); };
+  }, [open, filtered.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const chooseFirst = (opt) => {
     setText(opt.label);
     setOpen(false);
@@ -118,7 +152,7 @@ export function CascadeField({
     <div className={cn(styles.root, className)} ref={rootRef}>
       {label && <span className={styles.label}>{label}</span>}
       <div className={cn(styles.joint, error && styles.hasError)}>
-        <div className={styles.firstWrap}>
+        <div className={styles.firstWrap} ref={firstWrapRef}>
           <input
             ref={inputRef}
             type="text"
@@ -141,7 +175,7 @@ export function CascadeField({
             onKeyDown={handleKeyDown}
           />
           {open && filtered.length > 0 && (
-            <ul className={styles.panel} role="listbox" aria-label={firstAriaLabel}>
+            <ul className={styles.panel} role="listbox" aria-label={firstAriaLabel} style={panelPos ? { top: panelPos.top, left: panelPos.left, width: panelPos.width } : undefined}>
               {filtered.map((opt, i) => (
                 <li key={opt.value}>
                   <OptionRow
