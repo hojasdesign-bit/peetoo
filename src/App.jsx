@@ -558,7 +558,7 @@ export default function App() {
   };
 
   return (
-    <div className="app">
+    <div className={`app${view === 'swapped' ? ' app-swapped' : ''}`}>
       {/* En /swapped el fondo es plano como en la página de Swapped
           (#101010 sin resplandor); en el resto sigue el PageBackground. */}
       <PageBackground glow={view !== 'swapped'} />
@@ -703,6 +703,9 @@ export default function App() {
             className="swapped-toggle"
           />
           <div className="swapped-layout">
+            {/* Resplandor violeta de la página de Swapped: un div
+                absoluto detrás del contenido, como su .glow. */}
+            <div className="swapped-glow" aria-hidden="true" />
             <div className="swapped-hero-text">
               <span className="swapped-hero-chip"><strong>USDC</strong><span>USDC</span></span>
               <div className="swapped-hero-copy">
