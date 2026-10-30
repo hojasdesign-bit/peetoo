@@ -560,13 +560,22 @@ const swapDasMax = effectiveSide === 'sell' ? (selected?.max_amount ?? 0) / (sel
     return `${valid ? amount : 1} ${o.buy_currency}`;
   };
 
-  const renderChains = (o) => (
-    <OverflowChips
-      items={o.blockchains}
-      maxVisible={2}
-      renderItem={(c) => <NetworkChip name={c} symbol={CHAIN_SHORT[c]} color={CHAIN_COLORS[c]} src={CHAIN_SRC[c]} />}
-    />
-  );
+  // Con filtro de red, la red filtrada va primera para que siempre quede
+  // visible en la tabla y no oculta en el +n; como solo se ven 2, otra
+  // de las redes pasa al +n (el +n sigue siendo 1). Sin filtro, el orden
+  // no cambia.
+  const renderChains = (o) => {
+    const items = chain !== 'all' && o.blockchains.includes(chain)
+      ? [chain, ...o.blockchains.filter((c) => c !== chain)]
+      : o.blockchains;
+    return (
+      <OverflowChips
+        items={items}
+        maxVisible={2}
+        renderItem={(c) => <NetworkChip name={c} symbol={CHAIN_SHORT[c]} color={CHAIN_COLORS[c]} src={CHAIN_SRC[c]} />}
+      />
+    );
+  };
 
   // Los dos pares del filtro, como objetos de props: cada par sigue
   // ligado a su dominio (crypto: red+moneda; fiat: método+moneda) y los
