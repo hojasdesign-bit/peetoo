@@ -562,3 +562,15 @@ body {
 .profile-stats { margin: 0 0 24px; }
 .profile-offers-title { margin: 0 0 16px; font-size: 20px; font-weight: 700; color: var(--cds-ink); }
 .profile-notfound { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 48px 0; text-align: center; }
+
+/* Mockup de mapa (imágenes estáticas, sin stack de mapas todavía). */
+.order-map { margin-top: 24px; }
+.order-map-img { width: 100%; height: auto; display: block; border-radius: 16px; border: 1px solid var(--cds-border); }
+.order-map-caption { margin: 8px 0 0; color: var(--cds-muted); font-size: var(--cds-text-body-sm); }
+.profile-maps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 0 0 24px; }
+.profile-map { margin: 0; }
+.profile-map-img { width: 100%; height: auto; display: block; border-radius: 16px; border: 1px solid var(--cds-border); }
+.profile-map-caption { margin-top: 8px; color: var(--cds-muted); font-size: var(--cds-text-body-sm); }
+@media (max-width: 720px) {
+  .profile-maps { grid-template-columns: 1fr; }
+}

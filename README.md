@@ -208,6 +208,19 @@ píldora), también pendiente de subir al DS.
   en efectivo (sin fila si no tiene ninguna).
 - La tabla no cambia: ahí siguen solo los nombres de los métodos.
 
+## Mockup de mapa (sin stack de mapas todavía)
+
+- Imágenes estáticas en `src/assets/maps/`: `map-pin.svg` (punto
+  exacto) y `map-zone.svg` (zona aproximada con círculo discontinuo).
+  El dibujo es genérico; la ciudad va en el pie de cada mapa.
+- `LOCATION_PRECISION` en `src/data/offers.js`: precisión por
+  anunciante (`exact` para criptoblue y habana_p2p, `city` para el
+  resto). Nunca se dibuja un pin exacto para quien solo compartió la
+  ciudad; por defecto (sin entrada) se muestra zona.
+- Modal: el mockup va bajo la información de la orden, solo en ofertas
+  en Efectivo. Perfil: un mockup por cada ciudad presencial (rejilla
+  de 2 columnas, 1 en móvil).
+
 ## Desarrollo
 
 ```bash

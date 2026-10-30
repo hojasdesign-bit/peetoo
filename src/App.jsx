@@ -19,11 +19,13 @@ import { OverflowChips } from './ds/components/OverflowChips/OverflowChips.jsx';
 import { NetworkChip } from './ds/components/NetworkChip/NetworkChip.jsx';
 import { PageBackground } from './ds/components/PageBackground/PageBackground.jsx';
 import { DropdownMenu } from './ds/components/DropdownMenu/DropdownMenu.jsx';
-import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC, PAYMENT_DETAILS } from './data/offers.js';
+import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC, PAYMENT_DETAILS, LOCATION_PRECISION } from './data/offers.js';
 import { SWAPPED_EDITORIAL_INTRO, SWAPPED_EDITORIAL, SWAPPED_STATS, SWAPPED_PRECIO_TEXT, SWAPPED_RESOURCES_TEXT, SWAPPED_RESOURCES_LINKS, SWAPPED_FAQS, SWAPPED_MORE_CRYPTOS, SWAPPED_METHODS } from './data/swappedPage.js';
 import { SwappedStepVisual } from './components/SwappedStepVisuals.jsx';
 import { SwappedMethodIcon } from './components/SwappedMethodIcon.jsx';
 import logoUrl from './assets/logo.svg';
+import mapPinImg from './assets/maps/map-pin.svg';
+import mapZoneImg from './assets/maps/map-zone.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
 import usdcIcon from './assets/coins/usdc.svg';
@@ -1052,6 +1054,16 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   ...(profileCashCities.length > 0 ? [{ label: 'Ubicaciones presenciales:', value: profileCashCities.join(', ') }] : []),
                 ]} />
               </div>
+              {profileCashCities.length > 0 && (
+                <div className="profile-maps">
+                  {profileCashCities.map((city) => (
+                    <figure key={city} className="profile-map">
+                      <img src={LOCATION_PRECISION[profileTrader.name] === 'exact' ? mapPinImg : mapZoneImg} alt={`Mapa de ${city}`} className="profile-map-img" />
+                      <figcaption className="profile-map-caption">{city} · {LOCATION_PRECISION[profileTrader.name] === 'exact' ? 'Punto exacto' : 'Zona aproximada'}</figcaption>
+                    </figure>
+                  ))}
+                </div>
+              )}
               <h2 className="profile-offers-title">Ofertas de {profileTrader.name}</h2>
               <div className="offer-list-wrap">
                 <div className="offer-list" role="table" aria-label={`Ofertas de ${profileTrader.name}`}>
@@ -1374,6 +1386,12 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   ]} />
                 </div>
               </div>
+              {selected.payment_methods.includes('Efectivo') && (
+                <div className="order-map">
+                  <img src={LOCATION_PRECISION[selected.advertiser_name] === 'exact' ? mapPinImg : mapZoneImg} alt={`Mapa de ${offerLocation(selected)}`} className="order-map-img" />
+                  <p className="order-map-caption">{offerLocation(selected)} · {LOCATION_PRECISION[selected.advertiser_name] === 'exact' ? 'Punto exacto configurado por el anunciante' : 'Zona aproximada: el anunciante solo compartió la ciudad'}</p>
+                </div>
+              )}
               <p className="legal">Al proceder, confirmas que leíste y aceptaste el aviso legal de intercambio.</p>
             </div>
             <div className="order-form">

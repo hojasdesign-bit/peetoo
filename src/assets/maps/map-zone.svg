@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="260" viewBox="0 0 400 260">
+  <title>Mapa</title>
+  <rect width="400" height="260" fill="#e9e6df"/>
+  <rect x="0" y="232" width="400" height="28" fill="#bfd9ef"/>
+  <rect x="-20" y="118" width="440" height="14" fill="#ffffff" transform="rotate(-8 200 125)"/>
+  <rect x="16" y="16" width="70" height="56" rx="4" fill="#ffffff"/>
+  <rect x="102" y="16" width="70" height="56" rx="4" fill="#ffffff"/>
+  <rect x="188" y="16" width="70" height="56" rx="4" fill="#ffffff"/>
+  <rect x="274" y="16" width="110" height="56" rx="4" fill="#ffffff"/>
+  <rect x="16" y="88" width="70" height="56" rx="4" fill="#ffffff"/>
+  <rect x="102" y="88" width="70" height="56" rx="4" fill="#cfe8c9"/>
+  <rect x="188" y="88" width="70" height="56" rx="4" fill="#ffffff"/>
+  <rect x="274" y="88" width="110" height="56" rx="4" fill="#ffffff"/>
+  <rect x="16" y="160" width="70" height="56" rx="4" fill="#ffffff"/>
+  <rect x="102" y="160" width="70" height="56" rx="4" fill="#ffffff"/>
+  <rect x="188" y="160" width="70" height="56" rx="4" fill="#cfe8c9"/>
+  <rect x="274" y="160" width="110" height="56" rx="4" fill="#ffffff"/>
+  <circle cx="200" cy="125" r="54" fill="#4608e3" fill-opacity="0.12" stroke="#4608e3" stroke-width="2" stroke-dasharray="7 5"/>
+</svg>

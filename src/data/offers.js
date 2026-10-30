@@ -216,3 +216,15 @@ export const PAYMENT_DETAILS = {
     'Wire': 'Transferencia SWIFT · Cuenta ****3456',
   },
 };
+
+// Precisión de ubicación por anunciante (mockup de mapa, sin stack de
+// mapas todavía): 'exact' muestra pin exacto, 'city' muestra zona
+// aproximada sobre la ciudad. Es la configuración de la persona: nunca
+// se dibuja un pin exacto para quien solo compartió la ciudad.
+export const LOCATION_PRECISION = {
+  criptoblue: 'exact',
+  habana_p2p: 'exact',
+  yosusenador: 'city',
+  tucambioalpoars: 'city',
+  caribe_crypto: 'city',
+};
