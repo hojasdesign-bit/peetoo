@@ -135,6 +135,19 @@ píldora), también pendiente de subir al DS.
 - La ubicación es un dato derivado del id de la oferta (no existe en los datos
   ni sale en la tabla): 6 ubicaciones ficticias, 7 compras + 7 ventas cada una.
 
+## Lista de ofertas: un solo elemento
+
+- La lista ya no se dibuja dos veces (tabla en escritorio + tarjetas en móvil):
+  es una sola estructura (`.offer-list` con `.offer-row` y `.offer-cell`).
+- En escritorio se comporta como tabla (`display: table`: mismo algoritmo de
+  columnas y mismo aspecto que la tabla anterior); los roles ARIA
+  (`table`/`row`/`cell`/`columnheader`) conservan la semántica de tabla.
+- En móvil (≤768px) cada fila es una tarjeta por rejilla (`grid-template-areas`):
+  fila 1 par + usuario, fila 2 disponible/min-max, fila 3 redes, fila 4 precio
+  en línea con el botón. El cabecero se oculta.
+- La tabla `<table>` y las tarjetas `.cards` anteriores se eliminaron; no queda
+  ningún resto en App.jsx ni en index.css.
+
 ## Desarrollo
 
 ```bash

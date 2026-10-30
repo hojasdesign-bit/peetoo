@@ -1150,64 +1150,36 @@ export default function App() {
             )}
           </div>
 
-          <div className="table-wrap">
-            <table className="market-table">
-              <thead>
-                <tr>
-                  <th>Das / Recibes</th>
-                  <th>Disponible / Min - Max</th>
-                  <th>Precio</th>
-                  <th>Red blockchain</th>
-                  <th>Anunciante</th>
-                  <th><span className="sr-only">Acciones</span></th>
-                </tr>
-              </thead>
-              <tbody>
-                {pageOffers.length === 0 ? (
-                  <tr><td colSpan={6} className="empty">No hay anuncios que coincidan con los filtros.</td></tr>
-                ) : pageOffers.map((o) => (
-                  <tr key={o.id}>
-                    <td><AssetPair from={ASSETS[o.sell_currency]} to={ASSETS[o.buy_currency]} reverse={effectiveSide === 'sell'} size={44} /></td>
-                    <td>
-                      <div className="amount">{fmt(o.available)} {o.buy_currency} {o.deposit_made && DepositIcon}</div>
-                      <div className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</div>
-                    </td>
-                    <td>
-                      <div className="price">{priceMain(o)}</div>
-                      <div className="sub">{priceNote(o)}</div>
-                    </td>
-                    <td>{renderChains(o)}</td>
-                    <td><TraderCell trader={toTrader(o)} /></td>
-                    <td className="actions"><Button size="md" onClick={() => openModal(o)}>{verb} {o.buy_currency}</Button></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="cards">
-            {pageOffers.length === 0 ? (
-              <div className="empty">No hay anuncios que coincidan con los filtros.</div>
-            ) : pageOffers.map((o) => (
-              <div key={o.id} className="card">
-                <div className="card-top">
-                  <AssetPair from={ASSETS[o.sell_currency]} to={ASSETS[o.buy_currency]} reverse={effectiveSide === 'sell'} size={44} />
-                  <div className="card-price">
+          <div className="offer-list-wrap">
+            <div className="offer-list" role="table" aria-label="Ofertas del mercado">
+              <div className="offer-head" role="row">
+                <div className="offer-cell" role="columnheader">Das / Recibes</div>
+                <div className="offer-cell" role="columnheader">Disponible / Min - Max</div>
+                <div className="offer-cell" role="columnheader">Precio</div>
+                <div className="offer-cell" role="columnheader">Red blockchain</div>
+                <div className="offer-cell" role="columnheader">Anunciante</div>
+                <div className="offer-cell" role="columnheader"><span className="sr-only">Acciones</span></div>
+              </div>
+              {pageOffers.map((o) => (
+                <div key={o.id} className="offer-row" role="row">
+                  <div className="offer-cell offer-pair" role="cell"><AssetPair from={ASSETS[o.sell_currency]} to={ASSETS[o.buy_currency]} reverse={effectiveSide === 'sell'} size={44} /></div>
+                  <div className="offer-cell offer-amounts" role="cell">
+                    <div className="amount">{fmt(o.available)} {o.buy_currency} {o.deposit_made && DepositIcon}</div>
+                    <div className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</div>
+                  </div>
+                  <div className="offer-cell offer-price" role="cell">
                     <div className="price">{priceMain(o)}</div>
                     <div className="sub">{priceNote(o)}</div>
                   </div>
+                  <div className="offer-cell offer-chains" role="cell">{renderChains(o)}</div>
+                  <div className="offer-cell offer-trader" role="cell"><TraderCell trader={toTrader(o)} /></div>
+                  <div className="offer-cell offer-actions" role="cell"><Button size="md" onClick={() => openModal(o)}>{verb} {o.buy_currency}</Button></div>
                 </div>
-                <div className="card-mid">
-                  <span className="amount">{fmt(o.available)} {o.buy_currency} {o.deposit_made && DepositIcon}</span>
-                  <span className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</span>
-                </div>
-                {renderChains(o)}
-                <div className="card-foot">
-                  <TraderCell trader={toTrader(o)} />
-                  <Button size="md" onClick={() => openModal(o)}>{verb} {o.buy_currency}</Button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            {pageOffers.length === 0 && (
+              <div className="empty">No hay anuncios que coincidan con los filtros.</div>
+            )}
           </div>
 
           <div className="pager">
