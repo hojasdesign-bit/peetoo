@@ -153,7 +153,7 @@ export default function App() {
   const [showAllCryptos, setShowAllCryptos] = React.useState(false);
   const [showAllFiats, setShowAllFiats] = React.useState(false);
   const [copiedMethod, setCopiedMethod] = React.useState(null);
-  const [qrOpen, setQrOpen] = React.useState(null);
+  const [qrModal, setQrModal] = React.useState(null);
   // Lado de la página de Swapped (toggle Comprar/Vender): lo fija la
   // tarjeta del menú Swapped; por defecto Comprar. La página es
   // genérica, sin énfasis a ninguna moneda: el widget arranca en BTC
@@ -185,6 +185,7 @@ export default function App() {
       pendingMarketScroll.current = true;
       window.history.pushState(null, '', '/');
       setView('market');
+      setQrModal(null);
     } else {
       document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -196,6 +197,7 @@ export default function App() {
     setOrderDone(false);
     setProfileName(name);
     setProfilePage(1);
+    setQrModal(null);
     window.history.pushState(null, '', `/perfil/${encodeURIComponent(name)}`);
     setView('profile');
     window.scrollTo(0, 0);
@@ -225,6 +227,7 @@ export default function App() {
       setView(p.view);
       setProfileName(p.profile);
       setProfilePage(1);
+      setQrModal(null);
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -550,7 +553,7 @@ export default function App() {
   const profileBuyCount = profileOffers.filter((o) => o.side === 'buy').length;
   const profileSellCount = profileOffers.length - profileBuyCount;
   const profileMethods = [...new Set(profileOffers.flatMap((o) => o.payment_methods))];
-  const profilePayMethods = profileTrader ? [...profileMethods, ...(PAYMENT_DETAILS[profileTrader.name]?.['Billetera Web3'] ? ['Billetera Web3'] : [])] : [];
+  const profilePayMethods = profileTrader ? [...profileMethods, ...['ETH', 'SOL', 'BTC'].filter((k) => PAYMENT_DETAILS[profileTrader.name]?.[k])] : [];
   const profileChains = [...new Set(profileOffers.flatMap((o) => o.blockchains))];
   const profileCashCities = [...new Set(profileOffers.filter((o) => o.payment_methods.includes('Efectivo')).map((o) => offerLocation(o)))];
   const countByCurrency = (key) => {
@@ -1118,7 +1121,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                                   <button type="button" className="profile-pay-btn" aria-label={copiedMethod === m ? '¡Copiado!' : `Copiar ${m}`} title={copiedMethod === m ? '¡Copiado!' : 'Copiar'} onClick={() => handleCopy(m, dest)}>
                                     {copiedMethod === m ? CheckIcon : CopyIcon}
                                   </button>
-                                  <button type="button" className="profile-pay-btn" aria-label={qrOpen === m ? `Ocultar QR de ${m}` : `Mostrar QR de ${m}`} title="Mostrar QR" aria-expanded={qrOpen === m} onClick={() => setQrOpen((o) => (o === m ? null : m))}>
+                                  <button type="button" className="profile-pay-btn" aria-label={`Mostrar QR de ${m}`} title="Mostrar QR" onClick={() => setQrModal(m)}>
                                     {QrIcon}
                                   </button>
                                   {copiedMethod === m && <span className="profile-pay-copied">Copiado</span>}
@@ -1126,11 +1129,6 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                               )}
                             </div>
                             <div className="profile-side-pay-dest">{dest}</div>
-                            {qrOpen === m && (
-                              <div className="profile-pay-qr">
-                                <QRCode value={dest} size={160} bgColor="#ffffff" fgColor="#000000" />
-                              </div>
-                            )}
                           </li>
                         );
                       })}
@@ -1257,6 +1255,19 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   </div>
                 </div>
               </div>
+              {qrModal && (
+                <Modal open={!!qrModal} onClose={() => setQrModal(null)} title={`QR de ${qrModal}`}>
+                  <div className="qr-modal-body">
+                    <div className="qr-modal-code">
+                      <QRCode value={PAYMENT_DETAILS[profileTrader.name]?.[qrModal] || qrModal} size={220} bgColor="#ffffff" fgColor="#000000" />
+                    </div>
+                    <p className="qr-modal-dest">{PAYMENT_DETAILS[profileTrader.name]?.[qrModal] || qrModal}</p>
+                    <Button size="md" onClick={() => handleCopy(qrModal, PAYMENT_DETAILS[profileTrader.name]?.[qrModal] || qrModal)}>
+                      {copiedMethod === qrModal ? '¡Copiado!' : 'Copiar destino'}
+                    </Button>
+                  </div>
+                </Modal>
+              )}
               <h2 id="profile-offers" className="profile-offers-title">Ofertas de {profileTrader.name}</h2>
               <div className="offer-list-wrap">
                 <div className="offer-list" role="table" aria-label={`Ofertas de ${profileTrader.name}`}>

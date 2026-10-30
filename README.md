@@ -183,10 +183,10 @@ píldora), también pendiente de subir al DS.
 - Lateral (tarjeta): franja violeta + avatar 80 con anillo de
   reputación (% completado), nombre e insignia de verificado/Premium;
   métodos de pago con su destino (a dónde pagar), botón de copiar y QR
-  por destino (SVG con fondo blanco, uno a la vez; Efectivo no lleva
-  botones), incluida la «Billetera Web3» (una dirección EVM ficticia por
-  anunciante, sirve para las 5 redes; es dato del perfil, no de las
-  ofertas, y no toca los filtros del mercado),
+  por destino (el QR sale en un modal, con fondo blanco; Efectivo no
+  lleva botones), incluidos los métodos web3 ETH, SOL y BTC (direcciones
+  ficticias por anunciante; son datos del perfil, no de las ofertas, y
+  no tocan los filtros del mercado),
   disponibilidad (Presencial / En línea),
   ubicaciones en tarjetas con scroll horizontal (mapa + ciudad +
   punto exacto/zona aproximada), listas de ofertas por moneda y por

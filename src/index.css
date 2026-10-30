@@ -578,8 +578,10 @@ body {
 .profile-side-pay-actions { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .profile-pay-btn { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background: var(--cds-surface-overlay); border: 1px solid var(--cds-border); border-radius: 8px; color: var(--cds-ink-2); cursor: pointer; padding: 0; }
 .profile-pay-copied { font-size: 12px; color: var(--cds-muted); font-weight: 600; }
-.profile-pay-qr { margin-top: 8px; background: #ffffff; border-radius: 12px; padding: 12px; display: flex; justify-content: center; }
-.profile-pay-qr svg { display: block; }
+.qr-modal-body { display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+.qr-modal-code { background: #ffffff; border-radius: 16px; padding: 16px; }
+.qr-modal-code svg { display: block; }
+.qr-modal-dest { margin: 0; color: var(--cds-muted); font-size: 14px; overflow-wrap: anywhere; }
 .profile-loc-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; }
 .profile-loc-card { flex: 0 0 220px; margin: 0; background: var(--cds-surface-overlay); border: 1px solid var(--cds-border); border-radius: 12px; overflow: hidden; scroll-snap-align: start; }
 .profile-loc-img { width: 100%; display: block; }
