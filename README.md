@@ -177,11 +177,19 @@ píldora), también pendiente de subir al DS.
 - Ruta `/perfil/:nombre` (p. ej. `/perfil/criptoblue`), vista de la app
   como /swapped: mantiene header y footer, entrada directa y navegación
   por historial; las celdas de anunciante (tabla y modal) enlazan a ella.
-- Cabecera: avatar con anillo de reputación (% completado), nombre,
-  insignia de verificado/Premium, operaciones y % completado (los mismos
-  iconos de la celda: exchange y pulgar de hugeicons).
-- Stats con MetadataList: ofertas activas, en compra, en venta, métodos
-  de pago y blockchains agregados de sus ofertas.
+- Estructura como la referencia de perfil de candidato, con contenido
+  P2P y estilos del Crypto DS (no sus colores ni su contenido): columna
+  lateral + columna principal + tabla debajo a ancho completo.
+- Lateral (tarjeta): franja violeta + avatar 80 con anillo de
+  reputación (% completado), nombre e insignia de verificado/Premium;
+  métodos de pago en chips, disponibilidad (Presencial / En línea),
+  ubicación, listas de ofertas por moneda y por fiat (3 + «Ver más») y
+  botones Comprar/Vender que bajan a las ofertas.
+- Principal: 6 tarjetas (operaciones, ofertas activas, en compra, en
+  venta, métodos, redes); medidor radial de reputación (% completado,
+  arco de 270°); tarjeta Resumen (verificado/Premium, ofertas, ciudades)
+  y Comparativa (su % frente a la media de los demás anunciantes).
+  Los mapas de ubicaciones van en esta columna.
 - Sus ofertas en la misma lista unificada del mercado (misma fila y mismo
   modal), paginada de 6 en 6 y ordenada por precio, sin filtros del
   mercado: el precio no hereda la cantidad del mercado ni la red

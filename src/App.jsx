@@ -10,7 +10,7 @@ import { Badge } from './ds/components/Badge/Badge.jsx';
 import { Modal } from './ds/components/Modal/Modal.jsx';
 import { Pagination } from './ds/components/Pagination/Pagination.jsx';
 import { AssetPair } from './ds/components/AssetPair/AssetPair.jsx';
-import { TraderCell, ThumbIcon, ExchangeIcon } from './ds/components/TraderCell/TraderCell.jsx';
+import { TraderCell, ExchangeIcon } from './ds/components/TraderCell/TraderCell.jsx';
 import { Avatar } from './ds/components/Avatar/Avatar.jsx';
 import { VerifiedBadge } from './ds/components/VerifiedBadge/VerifiedBadge.jsx';
 import { MetadataList } from './ds/components/MetadataList/MetadataList.jsx';
@@ -50,6 +50,18 @@ const PAGE_SIZE = 6;
 const fmt = (n) => n.toLocaleString('es-ES');
 const fmt2 = (n) => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const uniq = (arr) => [...new Set(arr)].sort();
+const CheckIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M8 12.75C8 12.75 9.6 13.6625 10.4 15C10.4 15 12.8 9.75 16 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+const LocationIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M13.6177 21.367C13.1841 21.773 12.6044 22 12.0011 22C11.3978 22 10.8182 21.773 10.3845 21.367C6.41302 17.626 1.09076 13.4469 3.68627 7.37966C5.08963 4.09916 8.45834 2 12.0011 2C15.5439 2 18.9126 4.09916 20.316 7.37966C22.9082 13.4393 17.599 17.6389 13.6177 21.367Z" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M15.5 11C15.5 12.933 13.933 14.5 12 14.5C10.067 14.5 8.5 12.933 8.5 11C8.5 9.067 10.067 7.5 12 7.5C13.933 7.5 15.5 9.067 15.5 11Z" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
 const toTrader = (o) => ({
   name: o.advertiser_name,
   verified: o.advertiser_verified,
@@ -121,6 +133,8 @@ export default function App() {
   const [view, setView] = React.useState(initialView.view);
   const [profileName, setProfileName] = React.useState(initialView.profile);
   const [profilePage, setProfilePage] = React.useState(1);
+  const [showAllCryptos, setShowAllCryptos] = React.useState(false);
+  const [showAllFiats, setShowAllFiats] = React.useState(false);
   // Lado de la página de Swapped (toggle Comprar/Vender): lo fija la
   // tarjeta del menú Swapped; por defecto Comprar. La página es
   // genérica, sin énfasis a ninguna moneda: el widget arranca en BTC
@@ -166,6 +180,9 @@ export default function App() {
     window.history.pushState(null, '', `/perfil/${encodeURIComponent(name)}`);
     setView('profile');
     window.scrollTo(0, 0);
+  };
+  const scrollToOffers = () => {
+    document.getElementById('profile-offers')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   React.useEffect(() => {
     if (view === 'market' && pendingMarketScroll.current) {
@@ -506,6 +523,19 @@ export default function App() {
   const profileMethods = [...new Set(profileOffers.flatMap((o) => o.payment_methods))];
   const profileChains = [...new Set(profileOffers.flatMap((o) => o.blockchains))];
   const profileCashCities = [...new Set(profileOffers.filter((o) => o.payment_methods.includes('Efectivo')).map((o) => offerLocation(o)))];
+  const countByCurrency = (key) => {
+    const m = new Map();
+    profileOffers.forEach((o) => { const k = o[key]; m.set(k, (m.get(k) || 0) + 1); });
+    return [...m.entries()].map(([code, count]) => ({ code, count })).sort((a, b) => b.count - a.count || a.code.localeCompare(b.code));
+  };
+  const profileCryptoCounts = countByCurrency('buy_currency');
+  const profileFiatCounts = countByCurrency('sell_currency');
+  const profileHasCash = profileCashCities.length > 0;
+  const profileHasOnline = profileOffers.some((o) => o.payment_methods.some((m) => m !== 'Efectivo'));
+  const allTraderCompletions = new Map(OFFERS.map((o) => [o.advertiser_name, o.advertiser_completion]));
+  const otherCompletions = [...allTraderCompletions.entries()].filter(([n]) => n !== (profileFirst && profileFirst.advertiser_name)).map(([, c]) => c);
+  const profileOthersAvg = otherCompletions.length ? Math.round(otherCompletions.reduce((a, b) => a + b, 0) / otherCompletions.length) : 0;
+  const gaugeC = 2 * Math.PI * 64;
   const profileTotalPages = Math.max(1, Math.ceil(profileOffers.length / PAGE_SIZE));
   const profileCurrent = Math.min(profilePage, profileTotalPages);
   const profilePageOffers = profileOffers.slice((profileCurrent - 1) * PAGE_SIZE, profileCurrent * PAGE_SIZE);
@@ -1031,40 +1061,145 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
         <section className="profile" aria-label="Perfil del anunciante">
           {profileTrader ? (
             <>
-              <div className="profile-head">
-                <Avatar name={profileTrader.name} size={64} ringScore={profileTrader.completion} />
-                <div className="profile-head-text">
-                  <div className="profile-name-row">
-                    <h1 className="profile-name">{profileTrader.name}</h1>
-                    {profileTrader.verified && <VerifiedBadge variant={profileTrader.verification} size={20} />}
+              <div className="profile-layout">
+                <aside className="profile-side">
+                  <div className="profile-cover">
+                    <div className="profile-cover-banner" aria-hidden="true" />
+                    <div className="profile-cover-identity">
+                      <Avatar name={profileTrader.name} size={80} ringScore={profileTrader.completion} />
+                      <div className="profile-cover-name-row">
+                        <h1 className="profile-name">{profileTrader.name}</h1>
+                        {profileTrader.verified && <VerifiedBadge variant={profileTrader.verification} size={18} />}
+                      </div>
+                    </div>
                   </div>
-                  <div className="profile-meta">
-                    <span className="profile-meta-item">{ExchangeIcon}{profileTrader.trades.toLocaleString('es-ES')} operaciones</span>
-                    <span className="profile-meta-item">{ThumbIcon}{profileTrader.completion}% completado</span>
+                  <div className="profile-side-block">
+                    <h3 className="profile-side-title">Métodos de pago</h3>
+                    <div className="profile-chips">
+                      {profileMethods.map((m) => (<span key={m} className="profile-chip">{m}</span>))}
+                    </div>
                   </div>
+                  <div className="profile-side-block">
+                    <h3 className="profile-side-title">Disponibilidad</h3>
+                    <div className="profile-chips">
+                      {profileHasCash && <span className="profile-chip">Presencial</span>}
+                      {profileHasOnline && <span className="profile-chip">En línea</span>}
+                    </div>
+                  </div>
+                  <div className="profile-side-block">
+                    <h3 className="profile-side-title">Ubicación</h3>
+                    <p className="profile-side-text">{profileCashCities.length > 0 ? profileCashCities.join(', ') : 'Sin ofertas presenciales'}</p>
+                  </div>
+                  <div className="profile-side-block">
+                    <h3 className="profile-side-title">Ofertas por moneda</h3>
+                    <ul className="profile-side-list">
+                      {(showAllCryptos ? profileCryptoCounts : profileCryptoCounts.slice(0, 3)).map((c) => (
+                        <li key={c.code} className="profile-side-row">
+                          {ASSETS[c.code]?.src ? <img src={ASSETS[c.code].src} alt="" className="profile-side-coin-img" /> : <span className="profile-side-coin" style={{ background: ASSETS[c.code]?.color }}>{ASSETS[c.code]?.symbol || c.code[0]}</span>}
+                          <span className="profile-side-code">{c.code}</span>
+                          <span className="profile-side-count">{c.count} {c.count === 1 ? 'oferta' : 'ofertas'}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    {profileCryptoCounts.length > 3 && (
+                      <button type="button" className="profile-side-more" onClick={() => setShowAllCryptos((v) => !v)}>
+                        {showAllCryptos ? 'Ver menos' : `Ver ${profileCryptoCounts.length - 3} más`}
+                      </button>
+                    )}
+                  </div>
+                  <div className="profile-side-block">
+                    <h3 className="profile-side-title">Ofertas por fiat</h3>
+                    <ul className="profile-side-list">
+                      {(showAllFiats ? profileFiatCounts : profileFiatCounts.slice(0, 3)).map((c) => (
+                        <li key={c.code} className="profile-side-row">
+                          {ASSETS[c.code]?.src ? <img src={ASSETS[c.code].src} alt="" className="profile-side-coin-img" /> : <span className="profile-side-coin" style={{ background: ASSETS[c.code]?.color }}>{ASSETS[c.code]?.symbol || c.code[0]}</span>}
+                          <span className="profile-side-code">{c.code}</span>
+                          <span className="profile-side-count">{c.count} {c.count === 1 ? 'oferta' : 'ofertas'}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    {profileFiatCounts.length > 3 && (
+                      <button type="button" className="profile-side-more" onClick={() => setShowAllFiats((v) => !v)}>
+                        {showAllFiats ? 'Ver menos' : `Ver ${profileFiatCounts.length - 3} más`}
+                      </button>
+                    )}
+                  </div>
+                  <div className="profile-side-actions">
+                    <Button size="md" onClick={scrollToOffers} className="profile-side-action">Comprar</Button>
+                    <Button size="md" variant="outline" onClick={scrollToOffers} className="profile-side-action">Vender</Button>
+                  </div>
+                </aside>
+                <div className="profile-main">
+                  <div className="profile-statcards">
+                    <div className="profile-statcard"><div className="profile-statcard-value">{profileTrader.trades.toLocaleString('es-ES')}</div><div className="profile-statcard-label">Operaciones</div></div>
+                    <div className="profile-statcard"><div className="profile-statcard-value">{profileOffers.length}</div><div className="profile-statcard-label">Ofertas activas</div></div>
+                    <div className="profile-statcard"><div className="profile-statcard-value">{profileBuyCount}</div><div className="profile-statcard-label">En compra</div></div>
+                    <div className="profile-statcard"><div className="profile-statcard-value">{profileSellCount}</div><div className="profile-statcard-label">En venta</div></div>
+                    <div className="profile-statcard"><div className="profile-statcard-value">{profileMethods.length}</div><div className="profile-statcard-label">Métodos</div></div>
+                    <div className="profile-statcard"><div className="profile-statcard-value">{profileChains.length}</div><div className="profile-statcard-label">Redes</div></div>
+                  </div>
+                  <div className="profile-row3">
+                    <div className="profile-card">
+                      <h3 className="profile-card-title">Reputación</h3>
+                      <div className="profile-gauge-wrap">
+                        <svg viewBox="0 0 160 160" className="profile-gauge-svg" aria-hidden="true">
+                          <circle cx="80" cy="80" r="64" fill="none" strokeWidth="12" strokeLinecap="round" transform="rotate(225 80 80)" style={{ stroke: 'var(--cds-border-strong)', strokeDasharray: `${0.75 * gaugeC} ${gaugeC}` }} />
+                          <circle cx="80" cy="80" r="64" fill="none" strokeWidth="12" strokeLinecap="round" transform="rotate(225 80 80)" style={{ stroke: 'var(--cds-accent)', strokeDasharray: `${(profileTrader.completion / 100) * 0.75 * gaugeC} ${gaugeC}` }} />
+                        </svg>
+                        <div className="profile-gauge-number">{profileTrader.completion}<span>%</span></div>
+                      </div>
+                      <p className="profile-card-sub">Porcentaje de operaciones completadas</p>
+                    </div>
+                    <div className="profile-card">
+                      <h3 className="profile-card-title">Resumen</h3>
+                      <div className="profile-summary-row">
+                        <span className="profile-summary-icon">{CheckIcon}</span>
+                        <div className="profile-summary-text">
+                          <div className="profile-summary-title">{profileTrader.verification === 'premium' ? 'Premium' : 'Verificado'}</div>
+                          <div className="profile-summary-sub">{profileTrader.verification === 'premium' ? 'Cuenta premium' : 'Cuenta verificada'}</div>
+                        </div>
+                      </div>
+                      <div className="profile-summary-row">
+                        <span className="profile-summary-icon">{ExchangeIcon}</span>
+                        <div className="profile-summary-text">
+                          <div className="profile-summary-title">Ofertas activas</div>
+                          <div className="profile-summary-sub">{profileOffers.length} en total · {profileBuyCount} compra · {profileSellCount} venta</div>
+                        </div>
+                      </div>
+                      <div className="profile-summary-row">
+                        <span className="profile-summary-icon">{LocationIcon}</span>
+                        <div className="profile-summary-text">
+                          <div className="profile-summary-title">Presenciales</div>
+                          <div className="profile-summary-sub">{profileCashCities.length > 0 ? `${profileCashCities.length} ${profileCashCities.length === 1 ? 'ciudad' : 'ciudades'}` : 'Sin ofertas presenciales'}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="profile-card">
+                      <h3 className="profile-card-title">Comparativa</h3>
+                      <div className="profile-compare-row">
+                        <div className="profile-compare-label"><span>{profileTrader.name}</span><span>{profileTrader.completion}%</span></div>
+                        <div className="profile-compare-track"><div className="profile-compare-bar profile-compare-bar--me" style={{ width: `${profileTrader.completion}%` }} /></div>
+                      </div>
+                      <div className="profile-compare-row">
+                        <div className="profile-compare-label"><span>Otros anunciantes</span><span>{profileOthersAvg}%</span></div>
+                        <div className="profile-compare-track"><div className="profile-compare-bar profile-compare-bar--others" style={{ width: `${profileOthersAvg}%` }} /></div>
+                      </div>
+                      <p className="profile-card-sub">Media de completado de los demás anunciantes</p>
+                    </div>
+                  </div>
+                  {profileCashCities.length > 0 && (
+                    <div className="profile-maps">
+                      {profileCashCities.map((city) => (
+                        <figure key={city} className="profile-map">
+                          <img src={LOCATION_PRECISION[profileTrader.name] === 'exact' ? mapPinImg : mapZoneImg} alt={`Mapa de ${city}`} className="profile-map-img" />
+                          <figcaption className="profile-map-caption">{city} · {LOCATION_PRECISION[profileTrader.name] === 'exact' ? 'Punto exacto' : 'Zona aproximada'}</figcaption>
+                        </figure>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="profile-stats">
-                <MetadataList items={[
-                  { label: 'Ofertas activas:', value: `${profileOffers.length}` },
-                  { label: 'En compra:', value: `${profileBuyCount}` },
-                  { label: 'En venta:', value: `${profileSellCount}` },
-                  { label: 'Métodos de pago:', value: profileMethods.join(', ') },
-                  { label: 'Blockchains:', value: profileChains.join(', ') },
-                  ...(profileCashCities.length > 0 ? [{ label: 'Ubicaciones presenciales:', value: profileCashCities.join(', ') }] : []),
-                ]} />
-              </div>
-              {profileCashCities.length > 0 && (
-                <div className="profile-maps">
-                  {profileCashCities.map((city) => (
-                    <figure key={city} className="profile-map">
-                      <img src={LOCATION_PRECISION[profileTrader.name] === 'exact' ? mapPinImg : mapZoneImg} alt={`Mapa de ${city}`} className="profile-map-img" />
-                      <figcaption className="profile-map-caption">{city} · {LOCATION_PRECISION[profileTrader.name] === 'exact' ? 'Punto exacto' : 'Zona aproximada'}</figcaption>
-                    </figure>
-                  ))}
-                </div>
-              )}
-              <h2 className="profile-offers-title">Ofertas de {profileTrader.name}</h2>
+              <h2 id="profile-offers" className="profile-offers-title">Ofertas de {profileTrader.name}</h2>
               <div className="offer-list-wrap">
                 <div className="offer-list" role="table" aria-label={`Ofertas de ${profileTrader.name}`}>
                   <div className="offer-head" role="row">
