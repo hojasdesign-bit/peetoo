@@ -11,6 +11,7 @@ import { Modal } from './ds/components/Modal/Modal.jsx';
 import { Pagination } from './ds/components/Pagination/Pagination.jsx';
 import { AssetPair } from './ds/components/AssetPair/AssetPair.jsx';
 import { TraderCell, ExchangeIcon } from './ds/components/TraderCell/TraderCell.jsx';
+import QRCode from 'react-qr-code';
 import { Avatar } from './ds/components/Avatar/Avatar.jsx';
 import { VerifiedBadge } from './ds/components/VerifiedBadge/VerifiedBadge.jsx';
 import { MetadataList } from './ds/components/MetadataList/MetadataList.jsx';
@@ -50,6 +51,22 @@ const PAGE_SIZE = 6;
 const fmt = (n) => n.toLocaleString('es-ES');
 const fmt2 = (n) => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const uniq = (arr) => [...new Set(arr)].sort();
+const CopyIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M7.5 14.5C7.5 11.2002 7.5 9.55025 8.52513 8.52513C9.55025 7.5 11.2002 7.5 14.5 7.5C17.7998 7.5 19.4497 7.5 20.4749 8.52513C21.5 9.55025 21.5 11.2002 21.5 14.5C21.5 17.7998 21.5 19.4497 20.4749 20.4749C19.4497 21.5 17.7998 21.5 14.5 21.5C11.2002 21.5 9.55025 21.5 8.52513 20.4749C7.5 19.4497 7.5 17.7998 7.5 14.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M7.5 16.5C6.10355 16.5 5.40533 16.5 4.84402 16.3036C3.83866 15.9518 3.0482 15.1613 2.69641 14.156C2.5 13.5947 2.5 12.8964 2.5 11.5V9.5C2.5 6.20017 2.5 4.55025 3.52513 3.52513C4.55025 2.5 6.20017 2.5 9.5 2.5H11.5C12.8964 2.5 13.5947 2.5 14.156 2.69641C15.1613 3.0482 15.9518 3.83866 16.3036 4.84402C16.5 5.40533 16.5 6.10355 16.5 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+const QrIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M3 6C3 4.58579 3 3.87868 3.43934 3.43934C3.87868 3 4.58579 3 6 3C7.41421 3 8.12132 3 8.56066 3.43934C9 3.87868 9 4.58579 9 6C9 7.41421 9 8.12132 8.56066 8.56066C8.12132 9 7.41421 9 6 9C4.58579 9 3.87868 9 3.43934 8.56066C3 8.12132 3 7.41421 3 6Z" stroke="currentColor" strokeWidth="1.5"/>
+<path d="M3 18C3 16.5858 3 15.8787 3.43934 15.4393C3.87868 15 4.58579 15 6 15C7.41421 15 8.12132 15 8.56066 15.4393C9 15.8787 9 16.5858 9 18C9 19.4142 9 20.1213 8.56066 20.5607C8.12132 21 7.41421 21 6 21C4.58579 21 3.87868 21 3.43934 20.5607C3 20.1213 3 19.4142 3 18Z" stroke="currentColor" strokeWidth="1.5"/>
+<path d="M3 12L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M12 3V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M15 6C15 4.58579 15 3.87868 15.4393 3.43934C15.8787 3 16.5858 3 18 3C19.4142 3 20.1213 3 20.5607 3.43934C21 3.87868 21 4.58579 21 6C21 7.41421 21 8.12132 20.5607 8.56066C20.1213 9 19.4142 9 18 9C16.5858 9 15.8787 9 15.4393 8.56066C15 8.12132 15 7.41421 15 6Z" stroke="currentColor" strokeWidth="1.5"/>
+<path d="M21 12H15C13.5858 12 12.8787 12 12.4393 12.4393C12 12.8787 12 13.5858 12 15M12 17.7692V20.5385M15 15V16.5C15 17.9464 15.7837 18 17 18C17.5523 18 18 18.4477 18 19M16 21H15M18 15C19.4142 15 20.1213 15 20.5607 15.44C21 15.8799 21 16.5881 21 18.0043C21 19.4206 21 20.1287 20.5607 20.5687C20.24 20.8898 19.7767 20.9766 19 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
 const CheckIcon = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z" stroke="currentColor" strokeWidth="1.5" />
@@ -135,6 +152,8 @@ export default function App() {
   const [profilePage, setProfilePage] = React.useState(1);
   const [showAllCryptos, setShowAllCryptos] = React.useState(false);
   const [showAllFiats, setShowAllFiats] = React.useState(false);
+  const [copiedMethod, setCopiedMethod] = React.useState(null);
+  const [qrOpen, setQrOpen] = React.useState(null);
   // Lado de la página de Swapped (toggle Comprar/Vender): lo fija la
   // tarjeta del menú Swapped; por defecto Comprar. La página es
   // genérica, sin énfasis a ninguna moneda: el widget arranca en BTC
@@ -183,6 +202,16 @@ export default function App() {
   };
   const scrollToOffers = () => {
     document.getElementById('profile-offers')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  const copyText = async (text) => {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand('copy'); } catch { ok = false; } document.body.removeChild(ta); return ok; }
+  };
+  const handleCopy = async (m, dest) => {
+    if (await copyText(dest)) {
+      setCopiedMethod(m);
+      window.setTimeout(() => setCopiedMethod((c) => (c === m ? null : c)), 2000);
+    }
   };
   React.useEffect(() => {
     if (view === 'market' && pendingMarketScroll.current) {
@@ -521,6 +550,7 @@ export default function App() {
   const profileBuyCount = profileOffers.filter((o) => o.side === 'buy').length;
   const profileSellCount = profileOffers.length - profileBuyCount;
   const profileMethods = [...new Set(profileOffers.flatMap((o) => o.payment_methods))];
+  const profilePayMethods = profileTrader ? [...profileMethods, ...(PAYMENT_DETAILS[profileTrader.name]?.['Billetera Web3'] ? ['Billetera Web3'] : [])] : [];
   const profileChains = [...new Set(profileOffers.flatMap((o) => o.blockchains))];
   const profileCashCities = [...new Set(profileOffers.filter((o) => o.payment_methods.includes('Efectivo')).map((o) => offerLocation(o)))];
   const countByCurrency = (key) => {
@@ -1076,12 +1106,34 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   <div className="profile-side-block">
                     <h3 className="profile-side-title">Métodos de pago</h3>
                     <ul className="profile-side-list">
-                      {profileMethods.map((m) => (
-                        <li key={m} className="profile-side-pay-row">
-                          <div className="profile-side-pay-method">{m}</div>
-                          <div className="profile-side-pay-dest">{PAYMENT_DETAILS[profileTrader.name]?.[m] || m}</div>
-                        </li>
-                      ))}
+                      {profilePayMethods.map((m) => {
+                        const dest = PAYMENT_DETAILS[profileTrader.name]?.[m] || m;
+                        const canShare = m !== 'Efectivo';
+                        return (
+                          <li key={m} className="profile-side-pay-row">
+                            <div className="profile-side-pay-head">
+                              <div className="profile-side-pay-method">{m}</div>
+                              {canShare && (
+                                <span className="profile-side-pay-actions">
+                                  <button type="button" className="profile-pay-btn" aria-label={copiedMethod === m ? '¡Copiado!' : `Copiar ${m}`} title={copiedMethod === m ? '¡Copiado!' : 'Copiar'} onClick={() => handleCopy(m, dest)}>
+                                    {copiedMethod === m ? CheckIcon : CopyIcon}
+                                  </button>
+                                  <button type="button" className="profile-pay-btn" aria-label={qrOpen === m ? `Ocultar QR de ${m}` : `Mostrar QR de ${m}`} title="Mostrar QR" aria-expanded={qrOpen === m} onClick={() => setQrOpen((o) => (o === m ? null : m))}>
+                                    {QrIcon}
+                                  </button>
+                                  {copiedMethod === m && <span className="profile-pay-copied">Copiado</span>}
+                                </span>
+                              )}
+                            </div>
+                            <div className="profile-side-pay-dest">{dest}</div>
+                            {qrOpen === m && (
+                              <div className="profile-pay-qr">
+                                <QRCode value={dest} size={160} bgColor="#ffffff" fgColor="#000000" />
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                   <div className="profile-side-block">
@@ -1092,8 +1144,19 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                     </div>
                   </div>
                   <div className="profile-side-block">
-                    <h3 className="profile-side-title">Ubicación</h3>
-                    <p className="profile-side-text">{profileCashCities.length > 0 ? profileCashCities.join(', ') : 'Sin ofertas presenciales'}</p>
+                    <h3 className="profile-side-title">Ubicaciones</h3>
+                    {profileCashCities.length > 0 ? (
+                      <div className="profile-loc-scroll">
+                        {profileCashCities.map((city) => (
+                          <figure key={city} className="profile-loc-card">
+                            <img src={LOCATION_PRECISION[profileTrader.name] === 'exact' ? mapPinImg : mapZoneImg} alt={`Mapa de ${city}`} className="profile-loc-img" />
+                            <figcaption className="profile-loc-caption">{city} · {LOCATION_PRECISION[profileTrader.name] === 'exact' ? 'Punto exacto' : 'Zona aproximada'}</figcaption>
+                          </figure>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="profile-side-text">Sin ofertas presenciales</p>
+                    )}
                   </div>
                   <div className="profile-side-block">
                     <h3 className="profile-side-title">Ofertas por moneda</h3>
@@ -1140,7 +1203,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                     <div className="profile-statcard"><div className="profile-statcard-value">{profileOffers.length}</div><div className="profile-statcard-label">Ofertas activas</div></div>
                     <div className="profile-statcard"><div className="profile-statcard-value">{profileBuyCount}</div><div className="profile-statcard-label">En compra</div></div>
                     <div className="profile-statcard"><div className="profile-statcard-value">{profileSellCount}</div><div className="profile-statcard-label">En venta</div></div>
-                    <div className="profile-statcard"><div className="profile-statcard-value">{profileMethods.length}</div><div className="profile-statcard-label">Métodos</div></div>
+                    <div className="profile-statcard"><div className="profile-statcard-value">{profilePayMethods.length}</div><div className="profile-statcard-label">Métodos</div></div>
                     <div className="profile-statcard"><div className="profile-statcard-value">{profileChains.length}</div><div className="profile-statcard-label">Redes</div></div>
                   </div>
                   <div className="profile-row3">
@@ -1192,16 +1255,6 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                       <p className="profile-card-sub">Media de completado de los demás anunciantes</p>
                     </div>
                   </div>
-                  {profileCashCities.length > 0 && (
-                    <div className="profile-maps">
-                      {profileCashCities.map((city) => (
-                        <figure key={city} className="profile-map">
-                          <img src={LOCATION_PRECISION[profileTrader.name] === 'exact' ? mapPinImg : mapZoneImg} alt={`Mapa de ${city}`} className="profile-map-img" />
-                          <figcaption className="profile-map-caption">{city} · {LOCATION_PRECISION[profileTrader.name] === 'exact' ? 'Punto exacto' : 'Zona aproximada'}</figcaption>
-                        </figure>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
               <h2 id="profile-offers" className="profile-offers-title">Ofertas de {profileTrader.name}</h2>

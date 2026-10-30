@@ -182,15 +182,20 @@ píldora), también pendiente de subir al DS.
   lateral + columna principal + tabla debajo a ancho completo.
 - Lateral (tarjeta): franja violeta + avatar 80 con anillo de
   reputación (% completado), nombre e insignia de verificado/Premium;
-  métodos de pago con su destino (a dónde pagar),
+  métodos de pago con su destino (a dónde pagar), botón de copiar y QR
+  por destino (SVG con fondo blanco, uno a la vez; Efectivo no lleva
+  botones), incluida la «Billetera Web3» (una dirección EVM ficticia por
+  anunciante, sirve para las 5 redes; es dato del perfil, no de las
+  ofertas, y no toca los filtros del mercado),
   disponibilidad (Presencial / En línea),
-  ubicación, listas de ofertas por moneda y por fiat (3 + «Ver más») y
-  botones Comprar/Vender que bajan a las ofertas.
+  ubicaciones en tarjetas con scroll horizontal (mapa + ciudad +
+  punto exacto/zona aproximada), listas de ofertas por moneda y por
+  fiat (3 + «Ver más») y botones Comprar/Vender que bajan a las
+  ofertas.
 - Principal: 6 tarjetas (operaciones, ofertas activas, en compra, en
   venta, métodos, redes); medidor radial de reputación (% completado,
   arco de 270°); tarjeta Resumen (verificado/Premium, ofertas, ciudades)
   y Comparativa (su % frente a la media de los demás anunciantes).
-  Los mapas de ubicaciones van en esta columna.
 - Sus ofertas en la misma lista unificada del mercado (misma fila y mismo
   modal), paginada de 6 en 6 y ordenada por precio, sin filtros del
   mercado: el precio no hereda la cantidad del mercado ni la red
