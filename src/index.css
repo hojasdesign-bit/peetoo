@@ -571,6 +571,9 @@ body {
 .profile-side-coin { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; flex-shrink: 0; }
 .profile-side-code { font-weight: 600; color: var(--cds-ink); }
 .profile-side-count { margin-left: auto; color: var(--cds-muted); font-size: 13px; }
+.profile-side-pay-row { display: flex; flex-direction: column; gap: 2px; }
+.profile-side-pay-method { font-weight: 600; color: var(--cds-ink); font-size: 14px; }
+.profile-side-pay-dest { color: var(--cds-muted); font-size: 13px; overflow-wrap: anywhere; }
 .profile-side-more { background: none; border: 0; padding: 8px 0 0; cursor: pointer; color: var(--cds-muted); font: inherit; font-weight: 600; font-size: 13px; }
 .profile-side-actions { padding: 20px; border-top: 1px solid var(--cds-border); display: flex; gap: 12px; }
 .profile-side-action { flex: 1; }

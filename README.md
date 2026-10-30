@@ -182,7 +182,8 @@ píldora), también pendiente de subir al DS.
   lateral + columna principal + tabla debajo a ancho completo.
 - Lateral (tarjeta): franja violeta + avatar 80 con anillo de
   reputación (% completado), nombre e insignia de verificado/Premium;
-  métodos de pago en chips, disponibilidad (Presencial / En línea),
+  métodos de pago con su destino (a dónde pagar),
+  disponibilidad (Presencial / En línea),
   ubicación, listas de ofertas por moneda y por fiat (3 + «Ver más») y
   botones Comprar/Vender que bajan a las ofertas.
 - Principal: 6 tarjetas (operaciones, ofertas activas, en compra, en
@@ -206,8 +207,10 @@ píldora), también pendiente de subir al DS.
 
 - `PAYMENT_DETAILS` en `src/data/offers.js`: un detalle ficticio de
   muestra por anunciante y método (correos, Revtag, bancos con cuenta
-  enmascarada; 'Efectivo' es siempre pago en persona), igual en todas
-  sus ofertas.
+  completa sin enmascarar — el que ve el perfil debe saber a dónde
+  pagar —; 'Efectivo' es siempre pago en persona), igual en todas
+  sus ofertas. El perfil muestra cada método con su destino en el
+  bloque «Métodos de pago» de la lateral.
 - Modal: la fila «Métodos de pago» muestra cada método con su detalle
   (una línea por método); si la oferta acepta Efectivo aparece
   «Ubicación:» con la ciudad derivada de la oferta (la misma del

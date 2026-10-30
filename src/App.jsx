@@ -1075,9 +1075,14 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   </div>
                   <div className="profile-side-block">
                     <h3 className="profile-side-title">Métodos de pago</h3>
-                    <div className="profile-chips">
-                      {profileMethods.map((m) => (<span key={m} className="profile-chip">{m}</span>))}
-                    </div>
+                    <ul className="profile-side-list">
+                      {profileMethods.map((m) => (
+                        <li key={m} className="profile-side-pay-row">
+                          <div className="profile-side-pay-method">{m}</div>
+                          <div className="profile-side-pay-dest">{PAYMENT_DETAILS[profileTrader.name]?.[m] || m}</div>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                   <div className="profile-side-block">
                     <h3 className="profile-side-title">Disponibilidad</h3>
