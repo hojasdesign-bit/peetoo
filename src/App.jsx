@@ -19,7 +19,7 @@ import { OverflowChips } from './ds/components/OverflowChips/OverflowChips.jsx';
 import { NetworkChip } from './ds/components/NetworkChip/NetworkChip.jsx';
 import { PageBackground } from './ds/components/PageBackground/PageBackground.jsx';
 import { DropdownMenu } from './ds/components/DropdownMenu/DropdownMenu.jsx';
-import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC } from './data/offers.js';
+import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC, PAYMENT_DETAILS } from './data/offers.js';
 import { SWAPPED_EDITORIAL_INTRO, SWAPPED_EDITORIAL, SWAPPED_STATS, SWAPPED_PRECIO_TEXT, SWAPPED_RESOURCES_TEXT, SWAPPED_RESOURCES_LINKS, SWAPPED_FAQS, SWAPPED_MORE_CRYPTOS, SWAPPED_METHODS } from './data/swappedPage.js';
 import { SwappedStepVisual } from './components/SwappedStepVisuals.jsx';
 import { SwappedMethodIcon } from './components/SwappedMethodIcon.jsx';
@@ -503,6 +503,7 @@ export default function App() {
   const profileSellCount = profileOffers.length - profileBuyCount;
   const profileMethods = [...new Set(profileOffers.flatMap((o) => o.payment_methods))];
   const profileChains = [...new Set(profileOffers.flatMap((o) => o.blockchains))];
+  const profileCashCities = [...new Set(profileOffers.filter((o) => o.payment_methods.includes('Efectivo')).map((o) => offerLocation(o)))];
   const profileTotalPages = Math.max(1, Math.ceil(profileOffers.length / PAGE_SIZE));
   const profileCurrent = Math.min(profilePage, profileTotalPages);
   const profilePageOffers = profileOffers.slice((profileCurrent - 1) * PAGE_SIZE, profileCurrent * PAGE_SIZE);
@@ -1048,6 +1049,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   { label: 'En venta:', value: `${profileSellCount}` },
                   { label: 'Métodos de pago:', value: profileMethods.join(', ') },
                   { label: 'Blockchains:', value: profileChains.join(', ') },
+                  ...(profileCashCities.length > 0 ? [{ label: 'Ubicaciones presenciales:', value: profileCashCities.join(', ') }] : []),
                 ]} />
               </div>
               <h2 className="profile-offers-title">Ofertas de {profileTrader.name}</h2>
@@ -1360,7 +1362,14 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   <MetadataList items={[
                     { label: 'Límite:', value: `${fmt(selected.min_amount)} - ${fmt(selected.max_amount)} ${selected.sell_currency}` },
                     { label: 'Disponible:', value: `${fmt(selected.available)} ${selected.buy_currency}` },
-                    { label: 'Métodos de pago:', value: selected.payment_methods.join(', ') },
+                    { label: 'Métodos de pago:', value: (
+                      <div>
+                        {selected.payment_methods.map((m) => (
+                          <div key={m}>{m}: {(PAYMENT_DETAILS[selected.advertiser_name] || {})[m] || m}</div>
+                        ))}
+                      </div>
+                    ) },
+                    ...(selected.payment_methods.includes('Efectivo') ? [{ label: 'Ubicación:', value: offerLocation(selected) }] : []),
                     { label: 'Blockchains:', value: selected.blockchains.join(', ') },
                   ]} />
                 </div>

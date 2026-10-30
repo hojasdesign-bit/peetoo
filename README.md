@@ -194,6 +194,20 @@ píldora), también pendiente de subir al DS.
   aparte, en línea, métodos con datos, direcciones ni historial; como en
   el perfil ajeno del repo original, solo perfil + ofertas.
 
+## Ubicaciones y detalles de pago
+
+- `PAYMENT_DETAILS` en `src/data/offers.js`: un detalle ficticio de
+  muestra por anunciante y método (correos, Revtag, bancos con cuenta
+  enmascarada; 'Efectivo' es siempre pago en persona), igual en todas
+  sus ofertas.
+- Modal: la fila «Métodos de pago» muestra cada método con su detalle
+  (una línea por método); si la oferta acepta Efectivo aparece
+  «Ubicación:» con la ciudad derivada de la oferta (la misma del
+  filtro Ubicación). Sin Efectivo no hay fila de ubicación.
+- Perfil: «Ubicaciones presenciales:» con las ciudades de sus ofertas
+  en efectivo (sin fila si no tiene ninguna).
+- La tabla no cambia: ahí siguen solo los nombres de los métodos.
+
 ## Desarrollo
 
 ```bash

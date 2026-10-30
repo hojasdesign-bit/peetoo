@@ -159,3 +159,60 @@ export const OFFERS = [
   { id: 83, side: 'buy', advertiser_name: 'habana_p2p', advertiser_trades: 1250, advertiser_completion: 99, advertiser_verified: true, advertiser_premium: false, buy_currency: 'OUSD', sell_currency: 'MLC', price: 1.05, available: 15800, min_amount: 1000, max_amount: 16000, payment_methods: ['Transferencia Bancaria', 'Wise (USD)'], blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: true },
   { id: 84, side: 'sell', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'OUSD', sell_currency: 'MLC', price: 0.99, available: 24801, min_amount: 1, max_amount: 25001, payment_methods: ['Transferencia Bancaria', 'Bank USA'], blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: false },
 ];
+
+// Detalles de pago por anunciante y método (datos ficticios de muestra:
+// un detalle por anunciante y método, igual en todas sus ofertas; las
+// cuentas van enmascaradas. 'Efectivo' es siempre pago en persona y su
+// ciudad la da la ubicación de la oferta, no este mapa.
+export const PAYMENT_DETAILS = {
+  criptoblue: {
+    'Efectivo': 'Pago en persona',
+    'Zelle': 'criptoblue@gmail.com',
+    'PayPal': 'criptoblue.pagos@gmail.com',
+    'Wise (USD)': 'criptoblue.wise@gmail.com',
+    'Revolut': '@criptoblue',
+    'Transferencia Bancaria': 'Banco Metropolitano · Cuenta ****1234',
+    'Bank USA': 'Chase · Cuenta ****5678',
+    'Wire': 'Transferencia SWIFT · Cuenta ****9012',
+  },
+  yosusenador: {
+    'Efectivo': 'Pago en persona',
+    'Zelle': 'yosusenador@gmail.com',
+    'PayPal': 'yosusenador.pagos@gmail.com',
+    'Wise (USD)': 'yosusenador.wise@gmail.com',
+    'Revolut': '@yosusenador',
+    'Transferencia Bancaria': 'Banco Popular de Ahorro · Cuenta ****2345',
+    'Bank USA': 'Bank of America · Cuenta ****6789',
+    'Wire': 'Transferencia SWIFT · Cuenta ****0123',
+  },
+  tucambioalpoars: {
+    'Efectivo': 'Pago en persona',
+    'Zelle': 'tucambioalpoars@gmail.com',
+    'PayPal': 'tucambioalpoars.pagos@gmail.com',
+    'Wise (USD)': 'tucambioalpoars.wise@gmail.com',
+    'Revolut': '@tucambioalpoars',
+    'Transferencia Bancaria': 'Banco de Crédito y Comercio · Cuenta ****3456',
+    'Bank USA': 'Wells Fargo · Cuenta ****7890',
+    'Wire': 'Transferencia SWIFT · Cuenta ****1234',
+  },
+  habana_p2p: {
+    'Efectivo': 'Pago en persona',
+    'Zelle': 'habana.p2p@gmail.com',
+    'PayPal': 'habana.p2p.pagos@gmail.com',
+    'Wise (USD)': 'habana.p2p.wise@gmail.com',
+    'Revolut': '@habana_p2p',
+    'Transferencia Bancaria': 'Banco Metropolitano · Cuenta ****4567',
+    'Bank USA': 'Citibank · Cuenta ****8901',
+    'Wire': 'Transferencia SWIFT · Cuenta ****2345',
+  },
+  caribe_crypto: {
+    'Efectivo': 'Pago en persona',
+    'Zelle': 'caribe.crypto@gmail.com',
+    'PayPal': 'caribe.crypto.pagos@gmail.com',
+    'Wise (USD)': 'caribe.crypto.wise@gmail.com',
+    'Revolut': '@caribe_crypto',
+    'Transferencia Bancaria': 'Banco Popular de Ahorro · Cuenta ****5678',
+    'Bank USA': 'Chase · Cuenta ****9012',
+    'Wire': 'Transferencia SWIFT · Cuenta ****3456',
+  },
+};
