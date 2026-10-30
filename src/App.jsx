@@ -389,6 +389,7 @@ export default function App() {
       { symbol: '$', color: '#2E7D32', label: 'Comprar USD', code: 'USDcash', src: usdPng, method: 'Efectivo', currency: 'USD' },
       { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'USDzl', method: 'Zelle', currency: 'USD' },
       { symbol: 'P', color: '#003087', label: 'Comprar PayPal', code: 'USDpp', src: paypalIcon, method: 'PayPal', currency: 'USD' },
+      { symbol: 'P', color: '#003087', label: 'Comprar PayPal', code: 'EURpp', src: paypalIcon, method: 'PayPal', currency: 'EUR' },
       { symbol: '$', color: '#006847', label: 'Comprar MXN', code: 'MXNcash', src: mxnPng },
       { symbol: '€', color: '#003399', label: 'Comprar EUR', code: 'EURcash', src: eurPng },
       { symbol: 'T', color: '#3a3a44', label: 'Comprar Transferencia', code: 'CuPdc', method: 'Transferencia Bancaria', currency: 'CUP' },
