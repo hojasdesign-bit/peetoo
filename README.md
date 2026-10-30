@@ -117,6 +117,24 @@ Igual `src/ds/components/Pagination/` lleva un CAMBIO LOCAL (la página
 actual va en cuadrado con bordes redondeados, `radius-md`, en vez de en
 píldora), también pendiente de subir al DS.
 
+## Barra de filtros (escritorio y móvil)
+
+- Sin botón «Eliminar filtros»: el restablecido vive dentro de «Más filtros».
+- «Más filtros» es un botón primario cuadrado (50×50, solo icono) con insignia
+  con el número de filtros activos; el botón de intercambio también es primario
+  (su icono va en línea para heredar el blanco: un SVG en `<img>` no hereda
+  `currentColor` y se veía negro).
+- Ordenar en la barra (esquina derecha, opciones cortas: «Precio ↑»…); sin
+  desplazamiento horizontal a 1440 y 1280.
+- En móvil (≤720px) la barra apila sin desplazar: fila 1 toggle + «Más filtros»,
+  fila 2 cantidad + la moneda que se compra. Red, método, moneda a vender,
+  ordenar y los filtros ocultos (ubicación, ranking, anunciante, depósito)
+  viven en «Más filtros», que en móvil es un modal inferior (bottom sheet)
+  con fondo oscuro, agarre, cruz arriba y pie fijo con Aplicar y Restablecer.
+  Aplicar cierra el modal (los filtros se aplican al cambiarlos).
+- La ubicación es un dato derivado del id de la oferta (no existe en los datos
+  ni sale en la tabla): 6 ubicaciones ficticias, 7 compras + 7 ventas cada una.
+
 ## Desarrollo
 
 ```bash

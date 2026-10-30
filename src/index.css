@@ -347,7 +347,7 @@ body {
 .market .filters .filter-amount input { height: 50px; border-radius: 16px; }
 .market .filters .filter-clear { height: 50px; }
 .market .filters .filter-swap { flex: 0 0 auto; height: 50px; width: 50px; padding: 0; border-radius: 16px; }
-.market .filters .filter-swap img { width: 24px; height: 24px; display: block; }
+.market .filters .filter-swap img, .market .filters .filter-swap svg { width: 24px; height: 24px; display: block; }
 
 .table-wrap { overflow-x: auto; }
 .market-table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 14px; }
@@ -423,3 +423,125 @@ body {
   .order-info { padding-right: 0; border-right: none; padding-bottom: 24px; border-bottom: 1px solid var(--cds-border); }
   .pager { justify-content: center; text-align: center; }
 }
+
+/* Agrupador de filtros ocultos. El botón sustituye a «Eliminar filtros»
+   en la barra; el panel es fixed para escapar del desplazamiento
+   horizontal de la fila de filtros, como el panel del CascadeField. */
+.market .filters .filter-more-wrap { flex: 0 0 auto; white-space: nowrap; }
+.market .filters .filter-more { height: 50px; }
+.more-filters-panel {
+  position: fixed; z-index: 60; width: 300px; box-sizing: border-box;
+  background: #1a1a1a; border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px; padding: 20px; display: flex; flex-direction: column;
+  gap: 16px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+.more-filters-field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 500; color: #ffffff; }
+.more-filters-field select {
+  width: 100%; box-sizing: border-box; background: #101010; color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px;
+  padding: 10px 12px; font-size: 14px; font-family: inherit;
+}
+.more-filters-reset { width: 100%; }
+[data-theme="claro"] .more-filters-panel { background: #ffffff; border-color: var(--cds-border); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15); }
+[data-theme="claro"] .more-filters-field { color: #101010; }
+[data-theme="claro"] .more-filters-field select { background: #ffffff; color: #101010; border-color: var(--cds-border); }
+
+/* el ordenar en la barra (50px, radio 16, como el resto de
+   controles de la fila). */
+/* margin-left auto lo empuja a la esquina derecha cuando la fila
+   tiene espacio libre; si la fila desborda, queda tras Más filtros. */
+.market .filters .filter-sort-wrap { flex: 0 0 auto; margin-left: auto; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.filter-sort-label { font-size: 14px; color: #c5c5c5; }
+.filter-sort {
+  height: 50px; box-sizing: border-box; background: #1a1a1a; color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 16px;
+  padding: 0 12px; font-size: 14px; font-family: inherit;
+}
+[data-theme="claro"] .filter-sort-label { color: #4a4d59; }
+[data-theme="claro"] .filter-sort { background: #ffffff; color: #101010; border-color: var(--cds-border); }
+
+/* El botón Más filtros centra su icono. */
+.market .filters .filter-more { display: inline-flex; align-items: center; gap: 8px; }
+.market .filters .filter-more svg { flex: 0 0 auto; }
+
+/* El botón Más filtros es solo icono (sin texto) para que la barra no
+   desplace; el contador va como insignia en la esquina. */
+.market .filters .filter-more-wrap { position: relative; }
+.filter-more-badge {
+  position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px;
+  padding: 0 4px; border-radius: 999px; background: #ffffff; color: #4608e3;
+  font-size: 11px; font-weight: 700; display: flex; align-items: center;
+  justify-content: center; box-sizing: border-box; pointer-events: none;
+}
+
+/* Móvil: la barra apila sin desplazamiento horizontal. Fila 1: toggle
+   a todo lo ancho + botón Más filtros; fila 2: cantidad + la moneda
+   que se compra. Red, método, moneda a vender y ordenar viven en el
+   panel. */
+.filters-mobile { flex-direction: column; align-items: stretch; }
+.filters-mobile-row { display: flex; gap: 8px; align-items: center; }
+.filters-mobile-row .filter-seg { flex: 1; }
+.filters-mobile-row .filter-amount { flex: 1; min-width: 0; }
+.filters-mobile-row .filter-amount input { width: 100%; box-sizing: border-box; }
+.filters-mobile-currency {
+  flex: 1; min-width: 0; height: 50px; box-sizing: border-box;
+  background: #1a1a1a; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px; padding: 0 10px; font-size: 14px; font-family: inherit;
+}
+[data-theme="claro"] .filters-mobile-currency { background: #ffffff; color: #101010; border-color: rgba(0, 0, 0, 0.14); }
+
+/* el botón Más filtros es cuadrado (50×50) en escritorio y móvil. */
+.market .filters .filter-more { width: 50px; height: 50px; padding: 0; }
+
+/* el panel Más filtros desplaza por dentro cuando su altura
+   está limitada (móvil). */
+.more-filters-panel { overflow-y: auto; }
+
+/* Móvil: los filtros se ven como un modal inferior (bottom
+   sheet) con fondo oscuro detrás. */
+.more-filters-backdrop {
+  position: fixed; inset: 0; z-index: 55;
+  background: rgba(0, 0, 0, 0.5);
+}
+.more-filters-sheet {
+  width: auto;
+  border-radius: 24px 24px 0 0;
+  padding-top: 12px;
+  animation: more-filters-sheet-up 0.25s ease;
+}
+.more-filters-grabber {
+  width: 40px; height: 4px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25); margin: 0 auto 12px;
+}
+[data-theme="claro"] .more-filters-grabber { background: rgba(0, 0, 0, 0.2); }
+@keyframes more-filters-sheet-up {
+  from { transform: translateY(24px); }
+  to { transform: none; }
+}
+
+/* Móvil: el modal inferior tiene cabecera fija (agarre + cruz)
+   y pie fijo (Aplicar + Restablecer); solo los campos desplazan, entre
+   ambos. En escritorio el cuerpo es un envoltorio neutro y el panel
+   sigue como antes. */
+.more-filters-body { display: flex; flex-direction: column; gap: 16px; }
+.more-filters-sheet { display: flex; flex-direction: column; gap: 0; overflow: visible; }
+.more-filters-sheet .more-filters-body { flex: 1; min-height: 0; overflow-y: auto; }
+.more-filters-header {
+  position: relative; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  height: 40px; margin-bottom: 8px;
+}
+.more-filters-grabber { margin: 0; }
+.more-filters-close {
+  position: absolute; right: 0; top: 0; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 0; border-radius: 12px;
+  color: #ffffff; cursor: pointer;
+}
+[data-theme="claro"] .more-filters-close { color: #101010; }
+.more-filters-footer {
+  flex: none; display: flex; gap: 12px;
+  padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+[data-theme="claro"] .more-filters-footer { border-top-color: rgba(0, 0, 0, 0.12); }
+.more-filters-footer > * { flex: 1; height: 50px; border-radius: 16px; }

@@ -22,7 +22,6 @@ import { SwappedMethodIcon } from './components/SwappedMethodIcon.jsx';
 import logoUrl from './assets/logo.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
-import swapIcon from './assets/icons/arrow-left-right.svg';
 import usdcIcon from './assets/coins/usdc.svg';
 import usdtIcon from './assets/coins/usdt.svg';
 import pyusdIcon from './assets/coins/pyusd.svg';
@@ -67,6 +66,28 @@ export default function App() {
   const [chain, setChain] = React.useState('all');
   const [sellCurrency, setSellCurrency] = React.useState('all');
   const [page, setPage] = React.useState(1);
+  // El ordenar va en
+  // la barra (no dentro del agrupador) y el agrupador lleva solo
+  // filtros ocultos. La ubicación NO existe en los datos ni sale en
+  // la tabla: se deriva del id de la oferta para probar el filtro sin
+  // tocar los datos ni añadir columnas.
+  // Ordenar: precio menor a mayor es el orden actual por defecto.
+  const [sortBy, setSortBy] = React.useState('price-asc');
+  const TEST_LOCATIONS = ['La Habana', 'Santiago de Cuba', 'Camagüey', 'Holguín', 'Villa Clara', 'Matanzas'];
+  // Por pareja compra/venta (cada par comparte ubicación) para que cada
+  // lado tenga las 6 ubicaciones: 7 ofertas de compra y 7 de venta cada una.
+  const offerLocation = (o) => TEST_LOCATIONS[Math.floor((o.id - 1) / 2) % TEST_LOCATIONS.length];
+  const TEST_ADVERTISERS = uniq(OFFERS.map((o) => o.advertiser_name));
+  const [locationFilter, setLocationFilter] = React.useState('all');
+  // Ranking = valoración del anunciante (% de operaciones completadas).
+  const [rankingFilter, setRankingFilter] = React.useState('all');
+  const [advertiserFilter, setAdvertiserFilter] = React.useState('all');
+  // Depósito: si la oferta ya tiene depósito realizado o no.
+  const [depositFilter, setDepositFilter] = React.useState('all');
+  const [moreFiltersOpen, setMoreFiltersOpen] = React.useState(false);
+  const moreFiltersBtnRef = React.useRef(null);
+  const moreFiltersPanelRef = React.useRef(null);
+  const [moreFiltersPos, setMoreFiltersPos] = React.useState(null);
   // Orden de los CascadeField: false = [crypto, fiat] (cantidad en fiat),
   // true = [fiat, crypto] (cantidad en crypto). El botón de intercambio
   // invierte este orden; el lado Comprar/Vender NO cambia.
@@ -406,6 +427,13 @@ export default function App() {
     if (payment !== 'all' && !o.payment_methods.includes(payment)) return false;
     if (chain !== 'all' && !o.blockchains.includes(chain)) return false;
     if (sellCurrency !== 'all' && o.sell_currency !== sellCurrency) return false;
+    // filtros ocultos del agrupador (la ubicación es un dato
+    // derivado: no existe en la oferta ni se muestra en la tabla).
+    if (locationFilter !== 'all' && offerLocation(o) !== locationFilter) return false;
+    if (rankingFilter !== 'all' && o.advertiser_completion < Number(rankingFilter)) return false;
+    if (advertiserFilter !== 'all' && o.advertiser_name !== advertiserFilter) return false;
+    if (depositFilter === 'yes' && !o.deposit_made) return false;
+    if (depositFilter === 'no' && o.deposit_made) return false;
     if (!Number.isNaN(parsedAmount) && parsedAmount > 0) {
       // La cantidad se busca en la moneda del SEGUNDO CascadeField: con
       // el orden por defecto [crypto, fiat] es fiat y se compara directa
@@ -417,7 +445,18 @@ export default function App() {
       if (fiatAmount < o.min_amount || fiatAmount > o.max_amount) return false;
     }
     return true;
-  }).sort((a, b) => a.price - b.price);
+  }).sort((a, b) => {
+    // el ordenar de la barra (por defecto, precio menor a
+    // mayor, que es el orden actual sin tocar).
+    switch (sortBy) {
+      case 'price-desc': return b.price - a.price;
+      case 'available-desc': return b.available - a.available;
+      case 'min-asc': return a.min_amount - b.min_amount;
+      case 'max-desc': return b.max_amount - a.max_amount;
+      case 'rating-desc': return (b.advertiser_completion - a.advertiser_completion) || (b.advertiser_trades - a.advertiser_trades);
+      default: return a.price - b.price;
+    }
+  });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -434,7 +473,51 @@ export default function App() {
     // el lado efectivo vuelve a ser el del toggle (si no, el menú
     // prometería una dirección y se mostraría la contraria).
     setCascadesSwapped(false);
+    // el restablecido también limpia el panel oculto y el
+    // ordenar de la barra (vuelve al orden por defecto).
+    setSortBy('price-asc'); setLocationFilter('all'); setRankingFilter('all'); setAdvertiserFilter('all'); setDepositFilter('all'); setMoreFiltersOpen(false);
   };
+  // el panel oculto es fixed (la fila de filtros desplaza en
+  // horizontal y recortaría un panel absoluto) y se posiciona desde el
+  // rect del botón, sujeto al borde derecho y por encima si abajo no
+  // cabe; se cierra al pulsar fuera o con Escape.
+  React.useLayoutEffect(() => {
+    if (!moreFiltersOpen) return undefined;
+    const place = () => {
+      const btn = moreFiltersBtnRef.current;
+      const panel = moreFiltersPanelRef.current;
+      if (!btn || !panel) return;
+      const r = btn.getBoundingClientRect();
+      const w = 300;
+      const left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8));
+      if (window.innerWidth <= 720) {
+        // Móvil: el panel es un modal inferior (bottom sheet):
+        // todo el ancho, pegado abajo, altura máxima del 85% de la
+        // pantalla y desplazamiento interno.
+        setMoreFiltersPos({ top: 'auto', left: 0, right: 0, bottom: 0, maxHeight: '85vh' });
+        return;
+      }
+      const h = panel.offsetHeight;
+      const top = r.bottom + 8 + h <= window.innerHeight ? r.bottom + 8 : Math.max(8, r.top - 8 - h);
+      setMoreFiltersPos({ top, left });
+    };
+    place();
+    window.addEventListener('scroll', place, true);
+    window.addEventListener('resize', place);
+    const onDown = (e) => {
+      if (moreFiltersPanelRef.current && !moreFiltersPanelRef.current.contains(e.target)
+        && moreFiltersBtnRef.current && !moreFiltersBtnRef.current.contains(e.target)) setMoreFiltersOpen(false);
+    };
+    const onKey = (e) => { if (e.key === 'Escape') setMoreFiltersOpen(false); };
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('scroll', place, true);
+      window.removeEventListener('resize', place);
+      document.removeEventListener('pointerdown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [moreFiltersOpen]);
   // Intercambiar los CascadeField: invierte su orden en la barra y con
   // ello la moneda en la que se busca la cantidad (segundo campo: fiat
   // por defecto, crypto tras intercambiar) Y la dirección efectiva de
@@ -524,13 +607,17 @@ export default function App() {
   );
   const swapButton = (
     <Button
-      variant="outline"
       onClick={swapCascadesOrder}
       className="filter-swap"
       aria-label="Alternar la cantidad entre fiat y crypto"
       title="Alternar la cantidad entre fiat y crypto"
     >
-      <img src={swapIcon} alt="" aria-hidden="true" />
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M19.9999 17L3.99994 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M17 14C17 14 19.9999 16.2095 19.9999 17C19.9999 17.7906 16.9999 20 16.9999 20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M4.99994 7L19.9999 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6.99992 4C6.99992 4 3.99995 6.20947 3.99994 7.00002C3.99993 7.79058 6.99994 10 6.99994 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
     </Button>
   );
 
@@ -557,6 +644,14 @@ export default function App() {
       { title: 'Recibir', text: 'Recibe el dinero en tu cuenta bancaria.', visual: 'receive-bank' },
     ],
   };
+
+  // cuántos filtros ocultos están activos (para el contador
+  // del botón de icono de Más filtros).
+  const moreFiltersCount = [locationFilter, rankingFilter, advertiserFilter, depositFilter].filter((v) => v !== 'all').length
+    + (isNarrow && sortBy !== 'price-asc' ? 1 : 0)
+    + (isNarrow && chain !== 'all' ? 1 : 0)
+    + (isNarrow && payment !== 'all' ? 1 : 0)
+    + (isNarrow && (side === 'buy' ? sellCurrency : buyCurrency) !== 'all' ? 1 : 0);
 
   return (
     <div className={`app${view === 'swapped' ? ' app-swapped' : ''}`}>
@@ -839,7 +934,66 @@ export default function App() {
         <Text tone="muted">Compra y vende USDC y USDT directamente entre personas.</Text>
 
         <section className="market" aria-label="Ofertas del mercado">
-          <div className="filters">
+          <div className={isNarrow ? 'filters filters-mobile' : 'filters'}>
+            {isNarrow && (
+              <>
+                <div className="filters-mobile-row">
+                  <SegmentedControl
+                    ariaLabel="Comprar o vender"
+                    options={[{ value: 'buy', label: 'Comprar' }, { value: 'sell', label: 'Vender' }]}
+                    value={side}
+                    onChange={upd(setSide)}
+                    className="filter-seg"
+                  />
+                  <span ref={moreFiltersBtnRef} className="filter-more-wrap">
+                    <Button
+                      onClick={() => setMoreFiltersOpen((v) => !v)}
+                      className="filter-more"
+                      aria-expanded={moreFiltersOpen}
+                      aria-label={moreFiltersCount > 0 ? `Más filtros (${moreFiltersCount} activos)` : 'Más filtros'}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                        <path d="M4 6 h16 M7 12 h10 M10 18 h4" />
+                      </svg>
+                    </Button>
+                    {moreFiltersCount > 0 && (<span className="filter-more-badge">{moreFiltersCount}</span>)}
+                  </span>
+                </div>
+                <div className="filters-mobile-row">
+                  <Input
+                    placeholder="Cantidad"
+                    aria-label="Cantidad"
+                    inputMode="decimal"
+                    value={amount}
+                    onChange={updEvent(setAmount, (v) => v.replace(/[^0-9.]/g, ''))}
+                    className="filter-amount"
+                  />
+                  {side === 'buy' ? (
+                    <select
+                      className="filters-mobile-currency"
+                      aria-label="Moneda a comprar"
+                      value={buyCurrency}
+                      onChange={(e) => { setBuyCurrency(e.target.value); setPage(1); }}
+                    >
+                      <option value="all">Comprar</option>
+                      {currenciesForChain(chain).map((c) => (<option key={c.value} value={c.value}>{c.label}</option>))}
+                    </select>
+                  ) : (
+                    <select
+                      className="filters-mobile-currency"
+                      aria-label="Moneda a comprar"
+                      value={sellCurrency}
+                      onChange={(e) => { setSellCurrency(e.target.value); setPage(1); }}
+                    >
+                      <option value="all">Comprar</option>
+                      {currenciesForMethod(payment).map((c) => (<option key={c.value} value={c.value}>{c.label}</option>))}
+                    </select>
+                  )}
+                </div>
+              </>
+            )}
+            {!isNarrow && (
+              <>
             <SegmentedControl
               ariaLabel="Comprar o vender"
               options={[{ value: 'buy', label: 'Comprar' }, { value: 'sell', label: 'Vender' }]}
@@ -856,7 +1010,144 @@ export default function App() {
               className="filter-amount"
             />
             {leftCascade}{swapButton}{rightCascade}
-            <Button variant="outline" onClick={clearFilters} className="filter-clear">Eliminar filtros</Button>
+            {/* el botón Eliminar filtros sale de la barra; en
+                su lugar va este agrupador de filtros ocultos, con la
+                opción de restablecer dentro del panel. Queda al final
+                de los filtros, con icono además del texto. */}
+            <span ref={moreFiltersBtnRef} className="filter-more-wrap">
+              <Button
+                onClick={() => setMoreFiltersOpen((v) => !v)}
+                className="filter-more"
+                aria-expanded={moreFiltersOpen}
+                aria-label={moreFiltersCount > 0 ? `Más filtros (${moreFiltersCount} activos)` : 'Más filtros'}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                  <path d="M4 6 h16 M7 12 h10 M10 18 h4" />
+                </svg>
+              </Button>
+              {moreFiltersCount > 0 && (<span className="filter-more-badge">{moreFiltersCount}</span>)}
+            </span>
+            {/* el ordenar va aquí, en la esquina derecha de
+                la barra (al final, después de Más filtros), no dentro
+                del agrupador. */}
+            <span className="filter-sort-wrap">
+              <select
+                className="filter-sort"
+                aria-label="Ordenar resultados"
+                value={sortBy}
+                onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
+              >
+                <option value="price-asc">Precio ↑</option>
+                <option value="price-desc">Precio ↓</option>
+                <option value="available-desc">Disponible ↓</option>
+                <option value="min-asc">Mínimo ↑</option>
+                <option value="max-desc">Máximo ↓</option>
+                <option value="rating-desc">Valoración ↓</option>
+              </select>
+            </span>
+              </>
+            )}
+            {moreFiltersOpen && isNarrow && (
+              <div className="more-filters-backdrop" aria-hidden="true" />
+            )}
+            {moreFiltersOpen && (
+              <div
+                className={isNarrow ? 'more-filters-panel more-filters-sheet' : 'more-filters-panel'}
+                ref={moreFiltersPanelRef}
+                role={isNarrow ? 'dialog' : undefined}
+                aria-modal={isNarrow ? true : undefined}
+                aria-label={isNarrow ? 'Más filtros' : undefined}
+                style={moreFiltersPos ? { top: moreFiltersPos.top, left: moreFiltersPos.left, right: moreFiltersPos.right, bottom: moreFiltersPos.bottom, maxHeight: moreFiltersPos.maxHeight } : undefined}
+              >
+                {isNarrow && (
+                  <div className="more-filters-header">
+                    <div className="more-filters-grabber" aria-hidden="true" />
+                    <button type="button" className="more-filters-close" aria-label="Cerrar" onClick={() => setMoreFiltersOpen(false)}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M6 6 L18 18 M18 6 L6 18" /></svg>
+                    </button>
+                  </div>
+                )}
+                <div className="more-filters-body">
+                {isNarrow && (
+                  <>
+                    <label className="more-filters-field">
+                      <span>Ordenar</span>
+                      <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }}>
+                        <option value="price-asc">Precio ↑</option>
+                        <option value="price-desc">Precio ↓</option>
+                        <option value="available-desc">Disponible ↓</option>
+                        <option value="min-asc">Mínimo ↑</option>
+                        <option value="max-desc">Máximo ↓</option>
+                        <option value="rating-desc">Valoración ↓</option>
+                      </select>
+                    </label>
+                    <label className="more-filters-field">
+                      <span>Red blockchain</span>
+                      <select value={chain} onChange={(e) => { setChain(e.target.value); setPage(1); }}>
+                        <option value="all">Cualquier blockchain</option>
+                        {chainOptions.map((c) => (<option key={c} value={c}>{c}</option>))}
+                      </select>
+                    </label>
+                    <label className="more-filters-field">
+                      <span>Método</span>
+                      <select value={payment} onChange={(e) => { setPayment(e.target.value); setPage(1); }}>
+                        <option value="all">Cualquier método</option>
+                        {paymentOptions.map((c) => (<option key={c} value={c}>{c}</option>))}
+                      </select>
+                    </label>
+                    <label className="more-filters-field">
+                      <span>Moneda a vender</span>
+                      <select
+                        value={side === 'buy' ? sellCurrency : buyCurrency}
+                        onChange={(e) => { side === 'buy' ? setSellCurrency(e.target.value) : setBuyCurrency(e.target.value); setPage(1); }}
+                      >
+                        <option value="all">Vender</option>
+                        {(side === 'buy' ? currenciesForMethod(payment) : currenciesForChain(chain)).map((c) => (<option key={c.value} value={c.value}>{c.label}</option>))}
+                      </select>
+                    </label>
+                  </>
+                )}
+                <label className="more-filters-field">
+                  <span>Ubicación</span>
+                  <select value={locationFilter} onChange={(e) => { setLocationFilter(e.target.value); setPage(1); }}>
+                    <option value="all">Todas las ubicaciones</option>
+                    {TEST_LOCATIONS.map((l) => (<option key={l} value={l}>{l}</option>))}
+                  </select>
+                </label>
+                <label className="more-filters-field">
+                  <span>Ranking (valoración mínima)</span>
+                  <select value={rankingFilter} onChange={(e) => { setRankingFilter(e.target.value); setPage(1); }}>
+                    <option value="all">Cualquier valoración</option>
+                    <option value="100">100%</option>
+                    <option value="99">99% o más</option>
+                    <option value="98">98% o más</option>
+                  </select>
+                </label>
+                <label className="more-filters-field">
+                  <span>Anunciante</span>
+                  <select value={advertiserFilter} onChange={(e) => { setAdvertiserFilter(e.target.value); setPage(1); }}>
+                    <option value="all">Todos los anunciantes</option>
+                    {TEST_ADVERTISERS.map((a) => (<option key={a} value={a}>{a}</option>))}
+                  </select>
+                </label>
+                <label className="more-filters-field">
+                  <span>Depósito</span>
+                  <select value={depositFilter} onChange={(e) => { setDepositFilter(e.target.value); setPage(1); }}>
+                    <option value="all">Con o sin depósito</option>
+                    <option value="yes">Con depósito realizado</option>
+                    <option value="no">Sin depósito</option>
+                  </select>
+                </label>
+                </div>
+                {isNarrow && (
+                  <div className="more-filters-footer">
+                    <Button onClick={() => setMoreFiltersOpen(false)} className="more-filters-apply">Aplicar</Button>
+                    <Button variant="outline" onClick={clearFilters} className="more-filters-reset">Restablecer</Button>
+                  </div>
+                )}
+                {!isNarrow && (<Button variant="outline" onClick={clearFilters} className="more-filters-reset">Restablecer filtros</Button>)}
+              </div>
+            )}
           </div>
 
           <div className="table-wrap">
