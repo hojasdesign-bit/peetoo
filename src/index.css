@@ -551,3 +551,14 @@ body {
 }
 [data-theme="claro"] .more-filters-footer { border-top-color: rgba(0, 0, 0, 0.12); }
 .more-filters-footer > * { flex: 1; height: 50px; border-radius: 16px; }
+
+/* Perfil público del anunciante (/perfil/:nombre). */
+.profile-shell { max-width: 1200px; margin: 0 auto; padding: 16px 24px 48px; position: relative; z-index: 1; }
+.profile-head { display: flex; align-items: center; gap: 20px; margin: 8px 0 24px; }
+.profile-name-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.profile-name { margin: 0; font-size: 32px; font-weight: 700; color: var(--cds-ink); }
+.profile-meta { display: flex; gap: 16px; margin-top: 8px; color: var(--cds-muted); flex-wrap: wrap; }
+.profile-meta-item { display: inline-flex; align-items: center; gap: 6px; }
+.profile-stats { margin: 0 0 24px; }
+.profile-offers-title { margin: 0 0 16px; font-size: 20px; font-weight: 700; color: var(--cds-ink); }
+.profile-notfound { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 48px 0; text-align: center; }

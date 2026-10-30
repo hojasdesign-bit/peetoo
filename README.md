@@ -172,6 +172,28 @@ píldora), también pendiente de subir al DS.
   del Modal (el foco solo se mueve al panel al abrir; antes cada render lo
   devolvía al panel y el teclado móvil se cerraba a cada tecla).
 
+## Perfil público del anunciante
+
+- Ruta `/perfil/:nombre` (p. ej. `/perfil/criptoblue`), vista de la app
+  como /swapped: mantiene header y footer, entrada directa y navegación
+  por historial; las celdas de anunciante (tabla y modal) enlazan a ella.
+- Cabecera: avatar con anillo de reputación (% completado), nombre,
+  insignia de verificado/Premium, operaciones y % completado (los mismos
+  iconos de la celda: exchange y pulgar de hugeicons).
+- Stats con MetadataList: ofertas activas, en compra, en venta, métodos
+  de pago y blockchains agregados de sus ofertas.
+- Sus ofertas en la misma lista unificada del mercado (misma fila y mismo
+  modal), paginada de 6 en 6 y ordenada por precio, sin filtros del
+  mercado: el precio no hereda la cantidad del mercado ni la red
+  filtrada.
+- El modal desde el perfil usa el lado de la oferta misma (`orderSide`),
+  no el toggle del mercado: una oferta de venta abre como venta aunque
+  el mercado estuviera en compra. El botón de vuelta dice «Volver al
+  perfil» en vez de «Volver al mercado».
+- Sin datos privados ni inventados: no hay bio, desde cuándo, rating
+  aparte, en línea, métodos con datos, direcciones ni historial; como en
+  el perfil ajeno del repo original, solo perfil + ofertas.
+
 ## Desarrollo
 
 ```bash

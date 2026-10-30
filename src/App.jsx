@@ -10,7 +10,9 @@ import { Badge } from './ds/components/Badge/Badge.jsx';
 import { Modal } from './ds/components/Modal/Modal.jsx';
 import { Pagination } from './ds/components/Pagination/Pagination.jsx';
 import { AssetPair } from './ds/components/AssetPair/AssetPair.jsx';
-import { TraderCell } from './ds/components/TraderCell/TraderCell.jsx';
+import { TraderCell, ThumbIcon, ExchangeIcon } from './ds/components/TraderCell/TraderCell.jsx';
+import { Avatar } from './ds/components/Avatar/Avatar.jsx';
+import { VerifiedBadge } from './ds/components/VerifiedBadge/VerifiedBadge.jsx';
 import { MetadataList } from './ds/components/MetadataList/MetadataList.jsx';
 import { SwapPair } from './ds/components/SwapPair/SwapPair.jsx';
 import { OverflowChips } from './ds/components/OverflowChips/OverflowChips.jsx';
@@ -101,12 +103,22 @@ export default function App() {
   // que describe resultados (filtro, verbo, dirección del par) usa
   // effectiveSide; solo el SegmentedControl muestra side.
   const effectiveSide = cascadesSwapped ? (side === 'buy' ? 'sell' : 'buy') : side;
-  // Vista: 'market' o 'swapped'. La página /swapped es una vista de la
-  // app (no una página estática): así mantiene el header y los enlaces
-  // se comportan igual que en el mercado. La vista inicial sale de la
-  // URL para que /swapped abra directo en el widget.
-  const isSwappedPath = () => window.location.pathname.replace(/\.html$/, '') === '/swapped';
-  const [view, setView] = React.useState(isSwappedPath() ? 'swapped' : 'market');
+  // Vista: 'market', 'swapped' o 'profile'. /swapped y /perfil/:nombre
+  // son vistas de la app (no páginas estáticas): así mantienen el
+  // header y los enlaces se comportan igual que en el mercado. La vista
+  // inicial sale de la URL para que /swapped y /perfil/:nombre abran
+  // directos.
+  const pathToView = () => {
+    const path = window.location.pathname.replace(/\.html$/, '');
+    if (path === '/swapped') return { view: 'swapped', profile: '' };
+    const m = path.match(/^\/perfil\/(.+)$/);
+    if (m) return { view: 'profile', profile: decodeURIComponent(m[1]) };
+    return { view: 'market', profile: '' };
+  };
+  const initialView = pathToView();
+  const [view, setView] = React.useState(initialView.view);
+  const [profileName, setProfileName] = React.useState(initialView.profile);
+  const [profilePage, setProfilePage] = React.useState(1);
   // Lado de la página de Swapped (toggle Comprar/Vender): lo fija la
   // tarjeta del menú Swapped; por defecto Comprar. La página es
   // genérica, sin énfasis a ninguna moneda: el widget arranca en BTC
@@ -134,13 +146,24 @@ export default function App() {
   // primero navega; el mercado se renderiza tras el cambio de estado y
   // el desplazamiento lo hace el efecto de abajo.
   const goToMarket = () => {
-    if (view === 'swapped') {
+    if (view === 'swapped' || view === 'profile') {
       pendingMarketScroll.current = true;
       window.history.pushState(null, '', '/');
       setView('market');
     } else {
       document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  };
+  // Ir al perfil público de un anunciante: cierra el modal si estaba
+  // abierto y navega sin recargar (el mercado queda intacto detrás).
+  const goToTrader = (name) => {
+    setSelected(null);
+    setOrderDone(false);
+    setProfileName(name);
+    setProfilePage(1);
+    window.history.pushState(null, '', `/perfil/${encodeURIComponent(name)}`);
+    setView('profile');
+    window.scrollTo(0, 0);
   };
   React.useEffect(() => {
     if (view === 'market' && pendingMarketScroll.current) {
@@ -149,7 +172,12 @@ export default function App() {
     }
   }, [view]);
   React.useEffect(() => {
-    const onPop = () => setView(isSwappedPath() ? 'swapped' : 'market');
+    const onPop = () => {
+      const p = pathToView();
+      setView(p.view);
+      setProfileName(p.profile);
+      setProfilePage(1);
+    };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
@@ -464,6 +492,22 @@ export default function App() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const pageOffers = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  // Datos del perfil público: el primer anuncio del nombre da los datos
+  // del anunciante (todos comparten sus stats) y sus ofertas salen
+  // ordenadas por precio, sin filtros del mercado.
+  const profileFirst = view === 'profile' ? OFFERS.find((o) => o.advertiser_name.toLowerCase() === profileName.toLowerCase()) : null;
+  const profileTrader = profileFirst ? toTrader(profileFirst) : null;
+  const profileOffers = profileFirst ? OFFERS.filter((o) => o.advertiser_name === profileFirst.advertiser_name).sort((a, b) => a.price - b.price) : [];
+  const profileBuyCount = profileOffers.filter((o) => o.side === 'buy').length;
+  const profileSellCount = profileOffers.length - profileBuyCount;
+  const profileMethods = [...new Set(profileOffers.flatMap((o) => o.payment_methods))];
+  const profileChains = [...new Set(profileOffers.flatMap((o) => o.blockchains))];
+  const profileTotalPages = Math.max(1, Math.ceil(profileOffers.length / PAGE_SIZE));
+  const profileCurrent = Math.min(profilePage, profileTotalPages);
+  const profilePageOffers = profileOffers.slice((profileCurrent - 1) * PAGE_SIZE, profileCurrent * PAGE_SIZE);
+  const profileFrom = profileOffers.length === 0 ? 0 : (profileCurrent - 1) * PAGE_SIZE + 1;
+  const profileTo = Math.min(profileCurrent * PAGE_SIZE, profileOffers.length);
   const from = filtered.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
   const to = Math.min(currentPage * PAGE_SIZE, filtered.length);
 
@@ -540,16 +584,23 @@ export default function App() {
   const closeModal = () => { setSelected(null); setOrderDone(false); };
   const modalParsed = Number.parseFloat(modalAmount);
 
+// Lado de la orden en el modal: en el mercado coincide con el lado
+// efectivo (las filas visibles ya son de ese lado); en el perfil, cada
+// oferta puede ser de un lado distinto, así que sale de la oferta
+// misma. Así el modal se comporta igual que en el mercado para esa
+// oferta, sin tocar el toggle del mercado.
+const orderSide = view === 'profile' && selected ? selected.side : effectiveSide;
+
 // El bloque SwapPair ES el campo de cantidad: se escribe lo que se da (Das)
 // y se calcula lo que se recibe (Recibes) con el precio. La validación usa
 // el lado de venta de la oferta (sus límites están en esa moneda).
-const swapDasCode = selected ? (effectiveSide === 'sell' ? selected.buy_currency : selected.sell_currency) : '';
-const swapRecibesCode = selected ? (effectiveSide === 'sell' ? selected.sell_currency : selected.buy_currency) : '';
+const swapDasCode = selected ? (orderSide === 'sell' ? selected.buy_currency : selected.sell_currency) : '';
+const swapRecibesCode = selected ? (orderSide === 'sell' ? selected.sell_currency : selected.buy_currency) : '';
 const swapDasAmt = !Number.isNaN(modalParsed) ? modalParsed : 0;
-const swapRecibesAmt = effectiveSide === 'sell' ? swapDasAmt * (selected?.price ?? 0) : swapDasAmt / (selected?.price || 1);
-const swapSellAmt = effectiveSide === 'sell' ? swapRecibesAmt : swapDasAmt;
-const swapDasMin = effectiveSide === 'sell' ? (selected?.min_amount ?? 0) / (selected?.price || 1) : (selected?.min_amount ?? 0);
-const swapDasMax = effectiveSide === 'sell' ? (selected?.max_amount ?? 0) / (selected?.price || 1) : (selected?.max_amount ?? 0);
+const swapRecibesAmt = orderSide === 'sell' ? swapDasAmt * (selected?.price ?? 0) : swapDasAmt / (selected?.price || 1);
+const swapSellAmt = orderSide === 'sell' ? swapRecibesAmt : swapDasAmt;
+const swapDasMin = orderSide === 'sell' ? (selected?.min_amount ?? 0) / (selected?.price || 1) : (selected?.min_amount ?? 0);
+const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selected?.price || 1) : (selected?.max_amount ?? 0);
   const modalValid = selected && !Number.isNaN(modalParsed) && swapSellAmt >= selected.min_amount && swapSellAmt <= selected.max_amount;
 
   const priceMain = (o) => {
@@ -564,10 +615,10 @@ const swapDasMax = effectiveSide === 'sell' ? (selected?.max_amount ?? 0) / (sel
   // Con filtro de red, la red filtrada va primera para que siempre quede
   // visible en la tabla y no oculta en el +n; como solo se ven 2, otra
   // de las redes pasa al +n (el +n sigue siendo 1). Sin filtro, el orden
-  // no cambia.
-  const renderChains = (o) => {
-    const items = chain !== 'all' && o.blockchains.includes(chain)
-      ? [chain, ...o.blockchains.filter((c) => c !== chain)]
+  // no cambia. El perfil pasa 'all' para no heredar el filtro del mercado.
+  const renderChains = (o, prioChain = chain) => {
+    const items = prioChain !== 'all' && o.blockchains.includes(prioChain)
+      ? [prioChain, ...o.blockchains.filter((c) => c !== prioChain)]
       : o.blockchains;
     return (
       <OverflowChips
@@ -577,6 +628,27 @@ const swapDasMax = effectiveSide === 'sell' ? (selected?.max_amount ?? 0) / (sel
       />
     );
   };
+
+  // Fila de oferta, compartida por el mercado y el perfil: en el perfil
+  // el verbo, la dirección del par y el precio salen de la oferta misma
+  // (sin filtro de cantidad del mercado) y la celda de anunciante no
+  // enlaza a sí misma.
+  const renderOfferRow = (o, inProfile = false) => (
+    <div key={o.id} className="offer-row" role="row">
+      <div className="offer-cell offer-pair" role="cell"><AssetPair from={ASSETS[o.sell_currency]} to={ASSETS[o.buy_currency]} reverse={inProfile ? o.side === 'sell' : effectiveSide === 'sell'} size={44} /></div>
+      <div className="offer-cell offer-amounts" role="cell">
+        <div className="amount">{fmt(o.available)} {o.buy_currency} {o.deposit_made && DepositIcon}</div>
+        <div className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</div>
+      </div>
+      <div className="offer-cell offer-price" role="cell">
+        <div className="price">{inProfile ? `${fmt2(o.price)} ${o.sell_currency}` : priceMain(o)}</div>
+        <div className="sub">{inProfile ? `1 ${o.buy_currency}` : priceNote(o)}</div>
+      </div>
+      <div className="offer-cell offer-chains" role="cell">{inProfile ? renderChains(o, 'all') : renderChains(o)}</div>
+      <div className="offer-cell offer-trader" role="cell">{inProfile ? <TraderCell trader={toTrader(o)} /> : <TraderCell trader={toTrader(o)} href={`/perfil/${o.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(o.advertiser_name); }} />}</div>
+      <div className="offer-cell offer-actions" role="cell"><Button size="md" onClick={() => openModal(o)}>{inProfile ? (o.side === 'buy' ? 'Comprar' : 'Vender') : verb} {o.buy_currency}</Button></div>
+    </div>
+  );
 
   // Los dos pares del filtro, como objetos de props: cada par sigue
   // ligado a su dominio (crypto: red+moneda; fiat: método+moneda) y los
@@ -951,6 +1023,61 @@ const swapDasMax = effectiveSide === 'sell' ? (selected?.max_amount ?? 0) / (sel
             </div>
           </section>
         </main>
+      ) : view === 'profile' ? (
+      <main className="profile-shell">
+        <section className="profile" aria-label="Perfil del anunciante">
+          {profileTrader ? (
+            <>
+              <div className="profile-head">
+                <Avatar name={profileTrader.name} size={64} ringScore={profileTrader.completion} />
+                <div className="profile-head-text">
+                  <div className="profile-name-row">
+                    <h1 className="profile-name">{profileTrader.name}</h1>
+                    {profileTrader.verified && <VerifiedBadge variant={profileTrader.verification} size={20} />}
+                  </div>
+                  <div className="profile-meta">
+                    <span className="profile-meta-item">{ExchangeIcon}{profileTrader.trades.toLocaleString('es-ES')} operaciones</span>
+                    <span className="profile-meta-item">{ThumbIcon}{profileTrader.completion}% completado</span>
+                  </div>
+                </div>
+              </div>
+              <div className="profile-stats">
+                <MetadataList items={[
+                  { label: 'Ofertas activas:', value: `${profileOffers.length}` },
+                  { label: 'En compra:', value: `${profileBuyCount}` },
+                  { label: 'En venta:', value: `${profileSellCount}` },
+                  { label: 'Métodos de pago:', value: profileMethods.join(', ') },
+                  { label: 'Blockchains:', value: profileChains.join(', ') },
+                ]} />
+              </div>
+              <h2 className="profile-offers-title">Ofertas de {profileTrader.name}</h2>
+              <div className="offer-list-wrap">
+                <div className="offer-list" role="table" aria-label={`Ofertas de ${profileTrader.name}`}>
+                  <div className="offer-head" role="row">
+                    <div className="offer-cell" role="columnheader">Das / Recibes</div>
+                    <div className="offer-cell" role="columnheader">Disponible / Min - Max</div>
+                    <div className="offer-cell" role="columnheader">Precio</div>
+                    <div className="offer-cell" role="columnheader">Red blockchain</div>
+                    <div className="offer-cell" role="columnheader">Anunciante</div>
+                    <div className="offer-cell" role="columnheader"><span className="sr-only">Acciones</span></div>
+                  </div>
+                  {profilePageOffers.map((o) => renderOfferRow(o, true))}
+                </div>
+              </div>
+              <div className="pager">
+                <Pagination page={profileCurrent} totalPages={profileTotalPages} onChange={setProfilePage} />
+                <Text tone="muted">Mostrando {profileFrom} - {profileTo} de {profileOffers.length} items</Text>
+              </div>
+            </>
+          ) : (
+            <div className="profile-notfound">
+              <Heading level="h1">Anunciante no encontrado</Heading>
+              <Text tone="muted">No existe un anunciante con ese nombre.</Text>
+              <Button size="lg" onClick={goToMarket}>Volver al mercado</Button>
+            </div>
+          )}
+        </section>
+      </main>
       ) : (
       <main className="shell">
         <Heading level="h1">Crypto</Heading>
@@ -1183,22 +1310,7 @@ const swapDasMax = effectiveSide === 'sell' ? (selected?.max_amount ?? 0) / (sel
                 <div className="offer-cell" role="columnheader">Anunciante</div>
                 <div className="offer-cell" role="columnheader"><span className="sr-only">Acciones</span></div>
               </div>
-              {pageOffers.map((o) => (
-                <div key={o.id} className="offer-row" role="row">
-                  <div className="offer-cell offer-pair" role="cell"><AssetPair from={ASSETS[o.sell_currency]} to={ASSETS[o.buy_currency]} reverse={effectiveSide === 'sell'} size={44} /></div>
-                  <div className="offer-cell offer-amounts" role="cell">
-                    <div className="amount">{fmt(o.available)} {o.buy_currency} {o.deposit_made && DepositIcon}</div>
-                    <div className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</div>
-                  </div>
-                  <div className="offer-cell offer-price" role="cell">
-                    <div className="price">{priceMain(o)}</div>
-                    <div className="sub">{priceNote(o)}</div>
-                  </div>
-                  <div className="offer-cell offer-chains" role="cell">{renderChains(o)}</div>
-                  <div className="offer-cell offer-trader" role="cell"><TraderCell trader={toTrader(o)} /></div>
-                  <div className="offer-cell offer-actions" role="cell"><Button size="md" onClick={() => openModal(o)}>{verb} {o.buy_currency}</Button></div>
-                </div>
-              ))}
+              {pageOffers.map((o) => renderOfferRow(o))}
             </div>
             {pageOffers.length === 0 && (
               <div className="empty">No hay anuncios que coincidan con los filtros.</div>
@@ -1237,11 +1349,11 @@ const swapDasMax = effectiveSide === 'sell' ? (selected?.max_amount ?? 0) / (sel
         </div>
       </footer>
 
-      <Modal open={!!selected} onClose={closeModal} size="lg" title={selected ? (orderDone ? 'Orden creada' : `${verb} ${selected.buy_currency}`) : ''}>
+      <Modal open={!!selected} onClose={closeModal} size="lg" title={selected ? (orderDone ? 'Orden creada' : `${view === 'profile' ? (selected.side === 'buy' ? 'Comprar' : 'Vender') : verb} ${selected.buy_currency}`) : ''}>
         {selected && !orderDone && (
           <div className="order-grid">
             <div className="order-info">
-              <TraderCell trader={toTrader(selected)} />
+              <TraderCell trader={toTrader(selected)} href={`/perfil/${selected.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(selected.advertiser_name); }} />
               <div className="order-meta">
                 <h5 className="order-meta-title">Información de la orden</h5>
                 <div className="order-meta-box">
@@ -1288,7 +1400,7 @@ const swapDasMax = effectiveSide === 'sell' ? (selected?.max_amount ?? 0) / (sel
             <img src={checkIcon} alt="" className="ui-icon-lg" />
             <Text>Orden creada: das {fmt(swapDasAmt)} {swapDasCode} y recibes {fmt(swapRecibesAmt)} {swapRecibesCode} con {selected.advertiser_name}.</Text>
             <Text tone="muted">Datos de muestra: no se realizó ninguna operación real.</Text>
-            <Button size="lg" onClick={closeModal}>Volver al mercado</Button>
+            <Button size="lg" onClick={closeModal}>{view === 'profile' ? 'Volver al perfil' : 'Volver al mercado'}</Button>
           </div>
         )}
       </Modal>
