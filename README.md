@@ -148,6 +148,30 @@ píldora), también pendiente de subir al DS.
 - La tabla `<table>` y las tarjetas `.cards` anteriores se eliminaron; no queda
   ningún resto en App.jsx ni en index.css.
 
+## Modal de orden (adoptado de la prueba del modal, 2026-10-30)
+
+- En móvil (≤768px) el detalle de la orden es un modal inferior (bottom
+  sheet: ancho completo, agarre, 85vh máx.); en escritorio sigue centrado.
+- La información de la orden usa el MetadataList del DS (Límite, Disponible,
+  Métodos de pago, Blockchains) dentro de una caja con borde; el título va en
+  su propia barra con fondo encima, y la tabla pasa por encima (z-index) con
+  solape 24px tapando el borde inferior del título (mayor que el radio 16 de
+  las esquinas); la tabla lleva el mismo fondo que el modal; 24px sobre el
+  título y 24px bajo la tabla hasta la nota legal.
+- El campo de cantidad ES el SwapPair: se escribe lo que se da (Das) y se
+  calcula lo que se recibe (Recibes) con el precio; la validación usa el lado
+  de venta de la oferta. La línea de tasa va bajo el swap; el bloque de ayudas
+  antiguo (precio unitario + límite) se eliminó por duplicado.
+- Las píldoras del SwapPair muestran la imagen de la moneda cuando existe
+  (si no, la letra) y no llevan flecha cuando no son desplegables.
+- El campo Das muestra estado de error (borde rojo) cuando el monto escrito
+  no es válido.
+- Divergencias vendorizadas pendientes de posible port al DS (solo en la
+  copia de peetoo-app, no en el DS): el bloque de sheet del Modal, el port
+  del MetadataList, la imagen/flecha/error del SwapPair, y el efecto de foco
+  del Modal (el foco solo se mueve al panel al abrir; antes cada render lo
+  devolvía al panel y el teclado móvil se cerraba a cada tecla).
+
 ## Desarrollo
 
 ```bash

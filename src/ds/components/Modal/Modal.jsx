@@ -18,24 +18,29 @@ export function Modal({
   ...rest
 }) {
   const panelRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!open) return;
 
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') onClose?.();
+      if (event.key === 'Escape') onCloseRef.current?.();
     };
     document.addEventListener('keydown', onKeyDown);
 
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    // El foco se mueve al panel SOLO al abrir. Si este efecto dependiera de
+    // onClose (que cambia en cada render), cada tecla devolvería el foco al
+    // panel y el teclado móvil se cerraría a cada carácter.
     panelRef.current?.focus();
 
     return () => {
       document.removeEventListener('keydown', onKeyDown);
       document.body.style.overflow = prevOverflow;
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 

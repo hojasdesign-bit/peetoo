@@ -11,6 +11,8 @@ import { Modal } from './ds/components/Modal/Modal.jsx';
 import { Pagination } from './ds/components/Pagination/Pagination.jsx';
 import { AssetPair } from './ds/components/AssetPair/AssetPair.jsx';
 import { TraderCell } from './ds/components/TraderCell/TraderCell.jsx';
+import { MetadataList } from './ds/components/MetadataList/MetadataList.jsx';
+import { SwapPair } from './ds/components/SwapPair/SwapPair.jsx';
 import { OverflowChips } from './ds/components/OverflowChips/OverflowChips.jsx';
 import { NetworkChip } from './ds/components/NetworkChip/NetworkChip.jsx';
 import { PageBackground } from './ds/components/PageBackground/PageBackground.jsx';
@@ -536,7 +538,18 @@ export default function App() {
   };
   const closeModal = () => { setSelected(null); setOrderDone(false); };
   const modalParsed = Number.parseFloat(modalAmount);
-  const modalValid = selected && !Number.isNaN(modalParsed) && modalParsed >= selected.min_amount && modalParsed <= selected.max_amount;
+
+// El bloque SwapPair ES el campo de cantidad: se escribe lo que se da (Das)
+// y se calcula lo que se recibe (Recibes) con el precio. La validación usa
+// el lado de venta de la oferta (sus límites están en esa moneda).
+const swapDasCode = selected ? (effectiveSide === 'sell' ? selected.buy_currency : selected.sell_currency) : '';
+const swapRecibesCode = selected ? (effectiveSide === 'sell' ? selected.sell_currency : selected.buy_currency) : '';
+const swapDasAmt = !Number.isNaN(modalParsed) ? modalParsed : 0;
+const swapRecibesAmt = effectiveSide === 'sell' ? swapDasAmt * (selected?.price ?? 0) : swapDasAmt / (selected?.price || 1);
+const swapSellAmt = effectiveSide === 'sell' ? swapRecibesAmt : swapDasAmt;
+const swapDasMin = effectiveSide === 'sell' ? (selected?.min_amount ?? 0) / (selected?.price || 1) : (selected?.min_amount ?? 0);
+const swapDasMax = effectiveSide === 'sell' ? (selected?.max_amount ?? 0) / (selected?.price || 1) : (selected?.max_amount ?? 0);
+  const modalValid = selected && !Number.isNaN(modalParsed) && swapSellAmt >= selected.min_amount && swapSellAmt <= selected.max_amount;
 
   const priceMain = (o) => {
     const valid = !Number.isNaN(parsedAmount) && parsedAmount > 0;
@@ -1219,30 +1232,32 @@ export default function App() {
           <div className="order-grid">
             <div className="order-info">
               <TraderCell trader={toTrader(selected)} />
-              <h5 className="order-subhead">Información de la orden</h5>
-              <dl className="order-rows">
-                <div><dt>Límite:</dt><dd>{fmt(selected.min_amount)} - {fmt(selected.max_amount)} {selected.sell_currency}</dd></div>
-                <div><dt>Disponible:</dt><dd>{fmt(selected.available)} {selected.buy_currency}</dd></div>
-                <div><dt>Métodos de pago:</dt><dd>{selected.payment_methods.join(', ')}</dd></div>
-                <div><dt>Blockchains:</dt><dd>{selected.blockchains.join(', ')}</dd></div>
-              </dl>
+              <div className="order-meta">
+                <h5 className="order-meta-title">Información de la orden</h5>
+                <div className="order-meta-box">
+                  <MetadataList items={[
+                    { label: 'Límite:', value: `${fmt(selected.min_amount)} - ${fmt(selected.max_amount)} ${selected.sell_currency}` },
+                    { label: 'Disponible:', value: `${fmt(selected.available)} ${selected.buy_currency}` },
+                    { label: 'Métodos de pago:', value: selected.payment_methods.join(', ') },
+                    { label: 'Blockchains:', value: selected.blockchains.join(', ') },
+                  ]} />
+                </div>
+              </div>
               <p className="legal">Al proceder, confirmas que leíste y aceptaste el aviso legal de intercambio.</p>
             </div>
             <div className="order-form">
-              <div className="amount-row">
-                <Input
-                  placeholder="Monto"
-                  aria-label="Monto"
-                  inputMode="decimal"
-                  value={modalAmount}
-                  onChange={(e) => setModalAmount(e.target.value.replace(/[^0-9.]/g, ''))}
-                />
-                <span className="currency-chip">{selected.buy_currency}</span>
-              </div>
-              <p className="helpers">
-                <span>Precio unitario: 1 {selected.buy_currency} = {fmt2(selected.price)} {selected.sell_currency}</span>
-                <span>Límite: {fmt(selected.min_amount)} - {fmt(selected.max_amount)} {selected.sell_currency}</span>
-              </p>
+              <SwapPair
+                payLabel="Das"
+                receiveLabel="Recibes"
+                payCurrency={ASSETS[swapDasCode]}
+                receiveCurrency={ASSETS[swapRecibesCode]}
+                payAmount={modalAmount}
+                onPayAmountChange={(e) => setModalAmount(e.target.value.replace(/[^0-9.]/g, ''))}
+                receiveAmount={fmt(swapRecibesAmt)}
+                quickAmounts={[]}
+                error={Boolean(modalAmount && !modalValid)}
+              />
+              <p className="order-rate">Tasa de cambio: 1 {selected.buy_currency} = {fmt2(selected.price)} {selected.sell_currency}</p>
               {selected.blockchains.length > 1 && (
                 <Select
                   label="Seleccionar blockchain"
@@ -1252,7 +1267,7 @@ export default function App() {
                 />
               )}
               {modalAmount && !modalValid && (
-                <Text tone="muted">El monto debe estar entre {fmt(selected.min_amount)} y {fmt(selected.max_amount)} {selected.sell_currency}.</Text>
+                <Text tone="muted">El monto debe estar entre {fmt(swapDasMin)} y {fmt(swapDasMax)} {swapDasCode}.</Text>
               )}
               <Button size="lg" disabled={!modalValid} onClick={() => setOrderDone(true)}>Comenzar intercambio</Button>
             </div>
@@ -1261,7 +1276,7 @@ export default function App() {
         {selected && orderDone && (
           <div className="order-done">
             <img src={checkIcon} alt="" className="ui-icon-lg" />
-            <Text>Orden creada con {fmt(modalParsed)} {selected.buy_currency} a {fmt2(selected.price)} {selected.sell_currency} con {selected.advertiser_name}.</Text>
+            <Text>Orden creada: das {fmt(swapDasAmt)} {swapDasCode} y recibes {fmt(swapRecibesAmt)} {swapRecibesCode} con {selected.advertiser_name}.</Text>
             <Text tone="muted">Datos de muestra: no se realizó ninguna operación real.</Text>
             <Button size="lg" onClick={closeModal}>Volver al mercado</Button>
           </div>

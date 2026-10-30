@@ -12,6 +12,9 @@ import { cn } from '../../utils.js';
  *
  * Con `onFlip` aparece un botón circular de intercambio sobre la
  * costura entre campos (el widget original no lo trae: es opt-in).
+ *
+ * Con `error` el campo de pago muestra el estado de error (borde rojo,
+ * como el Input del DS): el monto escrito no es válido.
  */
 export function SwapPair({
   payLabel = 'Usted paga',
@@ -23,6 +26,7 @@ export function SwapPair({
   receiveCurrency = { code: 'BTC', symbol: '₿', color: '#f7931a' },
   onPayCurrencyClick,
   onReceiveCurrencyClick,
+  error = false,
   onFlip,
   quickAmounts = [100, 200, 500, 1000],
   activeQuick = null,
@@ -33,7 +37,7 @@ export function SwapPair({
   return (
     <div className={cn(styles.root, className)} {...rest}>
       {/* ---- Usted paga ---- */}
-      <div className={cn(styles.field, styles.fieldPay)}>
+      <div className={cn(styles.field, styles.fieldPay, error && styles.fieldError)}>
         <span className={styles.label}>{payLabel}</span>
         <div className={styles.fieldRow}>
           <input
@@ -89,15 +93,23 @@ export function SwapPair({
 }
 
 function CurrencyPill({ currency, onClick, label }) {
-  return (
-    <button type="button" className={styles.pill} onClick={onClick} aria-label={label}>
+  const content = (
+    <>
       <span className={styles.coin} style={{ backgroundColor: currency.color }} aria-hidden="true">
-        {currency.symbol}
+        {currency.src ? <img src={currency.src} alt="" className={styles.coinImg} /> : currency.symbol}
       </span>
       <span>{currency.code}</span>
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-        <path d="M3 4.5l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      {onClick ? (
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <path d="M3 4.5l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : null}
+    </>
+  );
+  if (!onClick) return <span className={styles.pill}>{content}</span>;
+  return (
+    <button type="button" className={styles.pill} onClick={onClick} aria-label={label}>
+      {content}
     </button>
   );
 }

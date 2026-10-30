@@ -87,6 +87,38 @@
   from { opacity: 0; transform: translateY(12px) scale(0.97); }
 }
 
+/* Móvil (≤768px, como las tarjetas): el panel deja de ser una ventana
+   centrada y pasa a ser un modal inferior (bottom sheet): pegado abajo,
+   ancho completo, radio superior 24, agarre y subida animada. Solo CSS:
+   el comportamiento (Escape, clic fuera, foco, bloqueo de scroll) no cambia. */
+@media (max-width: 768px) {
+  .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .panel {
+    max-width: none;
+    max-height: 85vh;
+    border-radius: 24px 24px 0 0;
+    border-bottom: 0;
+    animation: cds-modal-sheet-up 0.25s ease;
+  }
+  .panel::before {
+    content: "";
+    width: 40px;
+    height: 4px;
+    flex: none;
+    align-self: center;
+    margin: 12px auto 0;
+    border-radius: 999px;
+    background: var(--cds-border-strong);
+  }
+}
+
+@keyframes cds-modal-sheet-up {
+  from { opacity: 0; transform: translateY(100%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .overlay, .panel { animation: none; }
 }
