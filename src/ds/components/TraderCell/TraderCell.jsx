@@ -9,10 +9,11 @@ const TradesIcon = (
     <path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
-const CompletionIcon = (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.9" />
-    <path d="M8 12.5l2.5 2.5L16 9.5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+const ThumbIcon = (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <rect x="4" y="11" width="4.5" height="10" rx="1.5" />
+    <rect x="9" y="11" width="12" height="10" rx="3" />
+    <rect x="6.5" y="2" width="6" height="12" rx="3" transform="rotate(-12 9.5 13)" />
   </svg>
 );
 
@@ -43,7 +44,7 @@ export function TraderCell({ trader = {}, href, className = '', ...rest }) {
             )}
             {completion != null && (
               <span className={styles.metaItem}>
-                {CompletionIcon}
+                {ThumbIcon}
                 {completion}%
               </span>
             )}
