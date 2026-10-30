@@ -472,7 +472,7 @@ export default function App() {
     }
   }, [theme]);
 
-  const paymentOptions = uniq(OFFERS.flatMap((o) => o.payment_methods));
+  const paymentOptions = uniq(OFFERS.map((o) => o.payment_method));
   const chainOptions = uniq(OFFERS.flatMap((o) => o.blockchains));
   const buyOptions = uniq(OFFERS.map((o) => o.buy_currency));
   const sellOptions = uniq(OFFERS.map((o) => o.sell_currency));
@@ -492,7 +492,7 @@ export default function App() {
   const currenciesForMethod = (method) => {
     const curs = method === 'all'
       ? sellOptions
-      : uniq(OFFERS.filter((o) => o.payment_methods.includes(method)).map((o) => o.sell_currency));
+      : uniq(OFFERS.filter((o) => o.payment_method === method).map((o) => o.sell_currency));
     // Como en currenciesForChain: la moneda elegida desde el header puede
     // no tener ofertas (EURcash, MXNcash, CADcash): si está seleccionada,
     // se añade para que el segundo campo pueda mostrarla aunque la lista
@@ -506,7 +506,7 @@ export default function App() {
   const filtered = OFFERS.filter((o) => {
     if (o.side !== effectiveSide) return false;
     if (buyCurrency !== 'all' && o.buy_currency !== buyCurrency) return false;
-    if (payment !== 'all' && !o.payment_methods.includes(payment)) return false;
+    if (payment !== 'all' && o.payment_method !== payment) return false;
     if (chain !== 'all' && !o.blockchains.includes(chain)) return false;
     if (sellCurrency !== 'all' && o.sell_currency !== sellCurrency) return false;
     // filtros ocultos del agrupador (la ubicación es un dato
@@ -552,10 +552,10 @@ export default function App() {
   const profileOffers = profileFirst ? OFFERS.filter((o) => o.advertiser_name === profileFirst.advertiser_name).sort((a, b) => a.price - b.price) : [];
   const profileBuyCount = profileOffers.filter((o) => o.side === 'buy').length;
   const profileSellCount = profileOffers.length - profileBuyCount;
-  const profileMethods = [...new Set(profileOffers.flatMap((o) => o.payment_methods))];
+  const profileMethods = [...new Set(profileOffers.map((o) => o.payment_method))];
   const profilePayMethods = profileTrader ? [...profileMethods, ...['ETH', 'SOL', 'BTC'].filter((k) => PAYMENT_DETAILS[profileTrader.name]?.[k])] : [];
   const profileChains = [...new Set(profileOffers.flatMap((o) => o.blockchains))];
-  const profileCashCities = [...new Set(profileOffers.filter((o) => o.payment_methods.includes('Efectivo')).map((o) => offerLocation(o)))];
+  const profileCashCities = [...new Set(profileOffers.filter((o) => o.payment_method === 'Efectivo').map((o) => offerLocation(o)))];
   const countByCurrency = (key) => {
     const m = new Map();
     profileOffers.forEach((o) => { const k = o[key]; m.set(k, (m.get(k) || 0) + 1); });
@@ -564,7 +564,7 @@ export default function App() {
   const profileCryptoCounts = countByCurrency('buy_currency');
   const profileFiatCounts = countByCurrency('sell_currency');
   const profileHasCash = profileCashCities.length > 0;
-  const profileHasOnline = profileOffers.some((o) => o.payment_methods.some((m) => m !== 'Efectivo'));
+  const profileHasOnline = profileOffers.some((o) => o.payment_method !== 'Efectivo');
   const allTraderCompletions = new Map(OFFERS.map((o) => [o.advertiser_name, o.advertiser_completion]));
   const otherCompletions = [...allTraderCompletions.entries()].filter(([n]) => n !== (profileFirst && profileFirst.advertiser_name)).map(([, c]) => c);
   const profileOthersAvg = otherCompletions.length ? Math.round(otherCompletions.reduce((a, b) => a + b, 0) / otherCompletions.length) : 0;
@@ -1578,19 +1578,13 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   <MetadataList items={[
                     { label: 'Límite:', value: `${fmt(selected.min_amount)} - ${fmt(selected.max_amount)} ${selected.sell_currency}` },
                     { label: 'Disponible:', value: `${fmt(selected.available)} ${selected.buy_currency}` },
-                    { label: 'Métodos de pago:', value: (
-                      <div>
-                        {selected.payment_methods.map((m) => (
-                          <div key={m}>{m}: {(PAYMENT_DETAILS[selected.advertiser_name] || {})[m] || m}</div>
-                        ))}
-                      </div>
-                    ) },
-                    ...(selected.payment_methods.includes('Efectivo') ? [{ label: 'Ubicación:', value: offerLocation(selected) }] : []),
+                    { label: 'Método de pago:', value: selected.payment_method },
+                    ...(selected.payment_method === 'Efectivo' ? [{ label: 'Ubicación:', value: offerLocation(selected) }] : []),
                     { label: 'Blockchains:', value: selected.blockchains.join(', ') },
                   ]} />
                 </div>
               </div>
-              {selected.payment_methods.includes('Efectivo') && (
+              {selected.payment_method === 'Efectivo' && (
                 <div className="order-map">
                   <img src={LOCATION_PRECISION[selected.advertiser_name] === 'exact' ? mapPinImg : mapZoneImg} alt={`Mapa de ${offerLocation(selected)}`} className="order-map-img" />
                   <p className="order-map-caption">{offerLocation(selected)} · {LOCATION_PRECISION[selected.advertiser_name] === 'exact' ? 'Punto exacto configurado por el anunciante' : 'Zona aproximada: el anunciante solo compartió la ciudad'}</p>

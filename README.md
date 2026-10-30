@@ -85,9 +85,9 @@ producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
 ## Datos de muestra
 
 Todo lo que ves son **datos de solo muestra**: 84 ofertas demo, una por
-cada par crypto×fiat (7 cryptos × 6 fiats) en compra y en venta, con los
-métodos de pago y las redes rotados para que cada método aparezca con
-cada fiat y cada red con cada crypto. Los anunciantes son ficticios, sin
+cada par crypto×fiat (7 cryptos × 6 fiats) en compra y en venta, con un
+único método de pago por oferta y las redes rotadas para que cada red
+aparezca con cada crypto. Los anunciantes son ficticios, sin
 carteras ni datos personales, y los precios siguen la convención demo
 (~1,0x), no son tasas reales. Etecsa y Clásica no tienen ofertas: sus
 pares están pendientes de aclaración. No hay login real, ni transacciones
@@ -216,12 +216,12 @@ píldora), también pendiente de subir al DS.
   pagar —; 'Efectivo' es siempre pago en persona), igual en todas
   sus ofertas. El perfil muestra cada método con su destino en el
   bloque «Métodos de pago» de la lateral.
-- Modal: la fila «Métodos de pago» muestra cada método con su detalle
-  (una línea por método); si la oferta acepta Efectivo aparece
-  «Ubicación:» con la ciudad derivada de la oferta (la misma del
-  filtro Ubicación). Sin Efectivo no hay fila de ubicación.
-- Perfil: «Ubicaciones presenciales:» con las ciudades de sus ofertas
-  en efectivo (sin fila si no tiene ninguna).
+- Modal: la fila «Método de pago» nombra el método, sin detalle; si el
+  método es Efectivo aparece «Ubicación:» con la ciudad derivada de la
+  oferta (la misma del filtro Ubicación). Sin Efectivo no hay fila de
+  ubicación.
+- Perfil: «Ubicaciones» con tarjetas de sus ciudades en efectivo con
+  scroll horizontal (sin bloque si no tiene ninguna).
 - La tabla no cambia: ahí siguen solo los nombres de los métodos.
 
 ## Mockup de mapa (sin stack de mapas todavía)
