@@ -308,7 +308,7 @@ export default function App() {
       { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'ZELLE', method: 'Zelle', currency: 'USD' },
       { symbol: '$', color: '#006847', label: 'Comprar MXN', code: 'MXNcash', src: mxnPng },
       { symbol: '€', color: '#003399', label: 'Comprar EUR', code: 'EURcash', src: eurPng },
-      { symbol: 'T', color: '#3a3a44', label: 'Comprar Transferencia', code: 'TRANSF', method: 'Transferencia Bancaria', currency: 'all' },
+      { symbol: 'T', color: '#3a3a44', label: 'Comprar Transferencia', code: 'CuPdc', method: 'Transferencia Bancaria', currency: 'CUP' },
       { symbol: 'E', color: '#3a3a44', label: 'Comprar Etecsa', code: 'ETECSA' },
       { symbol: '$', color: '#D80621', label: 'Comprar CAD', code: 'CADcash', src: cadPng },
       { symbol: 'C', color: '#3a3a44', label: 'Comprar Clásica', code: 'CLASICA' },
@@ -338,8 +338,9 @@ export default function App() {
   const fiatFilter = (code) => {
     const coin = fiatDropdown.coins.find((c) => c.code === code) || {};
     // Par del tile si lo trae; si no, moneda = ticker (o su moneda
-    // cash) y método abierto. Pendiente de que aclare ticker, nombre
-    // y logo de los nuevos métodos/monedas.
+    // cash) y método abierto. Transferencia ya aclarada (ticker
+    // CuPdc, moneda CUP, método Transferencia Bancaria); pendientes
+    // Etecsa, Clásica, MLC y Zelle.
     const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP', EURcash: 'EUR', MXNcash: 'MXN', CADcash: 'CAD' };
     clearFilters();
     // La fiat comprada va en el lado Comprar: campos intercambiados y
