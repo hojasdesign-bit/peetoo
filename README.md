@@ -89,8 +89,10 @@ cada par crypto×fiat (7 cryptos × 6 fiats) en compra y en venta, con un
 único método de pago por oferta y las redes rotadas para que cada red
 aparezca con cada crypto. Los anunciantes son ficticios, sin
 carteras ni datos personales, y los precios siguen la convención demo
-(~1,0x), no son tasas reales. Etecsa y Clásica no tienen ofertas: sus
-pares están pendientes de aclaración. No hay login real, ni transacciones
+(~1,0x), no son tasas reales. Tiles de fiat aclarados: Etecsa es CUP
+(ticker CuPetec), Clásica es USD (USDcls), MLC es USD (USDmlc) y
+Qvapay es USD (USDqp); los cuatro son solo moneda (sin método) y
+muestran las 7 ventas de su moneda. No hay login real, ni transacciones
 reales, ni conexión con Supabase u OpenFort en esta versión.
 
 ## Stack

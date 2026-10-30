@@ -388,10 +388,11 @@ export default function App() {
       { symbol: '$', color: '#006847', label: 'Comprar MXN', code: 'MXNcash', src: mxnPng },
       { symbol: '€', color: '#003399', label: 'Comprar EUR', code: 'EURcash', src: eurPng },
       { symbol: 'T', color: '#3a3a44', label: 'Comprar Transferencia', code: 'CuPdc', method: 'Transferencia Bancaria', currency: 'CUP' },
-      { symbol: 'E', color: '#3a3a44', label: 'Comprar Etecsa', code: 'ETECSA' },
+      { symbol: '$', color: '#D64545', label: 'Comprar Etecsa', code: 'CuPetec', src: cupPng },
       { symbol: '$', color: '#D80621', label: 'Comprar CAD', code: 'CADcash', src: cadPng },
-      { symbol: 'C', color: '#3a3a44', label: 'Comprar Clásica', code: 'CLASICA' },
-      { symbol: '$', color: '#0F766E', label: 'Comprar MLC', code: 'MLC' },
+      { symbol: '$', color: '#2E7D32', label: 'Comprar Clásica', code: 'USDcls', src: usdPng },
+      { symbol: '$', color: '#2E7D32', label: 'Comprar MLC', code: 'USDmlc', src: usdPng },
+      { symbol: '$', color: '#2E7D32', label: 'Comprar Qvapay', code: 'USDqp', src: usdPng },
       // Último tile: quita solo el filtro de fiat (código vacío → rama
       // de etiqueta en onFiatMenuNavigate), sin tocar el resto.
       { symbol: '+', color: '#3a3a44', label: 'Todas las fiat', code: '' },
@@ -420,7 +421,7 @@ export default function App() {
     // cash) y método abierto. Transferencia ya aclarada (ticker
     // CuPdc, moneda CUP, método Transferencia Bancaria); pendientes
     // Etecsa, Clásica, MLC y Zelle.
-    const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP', EURcash: 'EUR', MXNcash: 'MXN', CADcash: 'CAD' };
+    const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP', EURcash: 'EUR', MXNcash: 'MXN', CADcash: 'CAD', CuPetec: 'CUP', USDcls: 'USD', USDmlc: 'USD', USDqp: 'USD' };
     clearFilters();
     // La fiat comprada va en el lado Comprar: campos intercambiados y
     // toggle en Comprar → lado efectivo venta → mismos resultados.
