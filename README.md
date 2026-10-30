@@ -92,7 +92,10 @@ carteras ni datos personales, y los precios siguen la convención demo
 (~1,0x), no son tasas reales. Tiles de fiat aclarados: Etecsa es CUP
 (ticker CuPetec), Clásica es USD (USDcls), MLC es USD (USDmlc) y
 Qvapay es USD (USDqp); los cuatro son solo moneda (sin método) y
-muestran las 7 ventas de su moneda. No hay login real, ni transacciones
+muestran las 7 ventas de su moneda. PayPal es método + USD (USDpp,
+2 ventas) con su logo; TropiPay es USD (USDtp, 7 ventas) con su logo
+amarillo y azul; Etecsa lleva su logo azul en el tile CuPetec en vez
+de la foto CUP. No hay login real, ni transacciones
 reales, ni conexión con Supabase u OpenFort en esta versión.
 
 ## Stack

@@ -35,6 +35,9 @@ import pyusdIcon from './assets/coins/pyusd.svg';
 import ousdIcon from './assets/coins/ousd.svg';
 import eurcIcon from './assets/coins/eurc.svg';
 import zelleIcon from './assets/coins/zelle.svg';
+import paypalIcon from './assets/coins/paypal.svg';
+import tropipayIcon from './assets/coins/tropipay.svg';
+import etecsaIcon from './assets/coins/etecsa.svg';
 import usatIcon from './assets/coins/usat.svg';
 import { cupPng, usdPng, eurPng, mxnPng, cadPng } from './assets/coins/fiat-images.js';
 import placeholderGenericIcon from './assets/coins/placeholder-generic.svg';
@@ -385,14 +388,16 @@ export default function App() {
       { symbol: '$', color: '#D64545', label: 'Comprar CUP', code: 'CuPcash', src: cupPng, method: 'Efectivo', currency: 'CUP' },
       { symbol: '$', color: '#2E7D32', label: 'Comprar USD', code: 'USDcash', src: usdPng, method: 'Efectivo', currency: 'USD' },
       { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'USDzl', method: 'Zelle', currency: 'USD' },
+      { symbol: 'P', color: '#003087', label: 'Comprar PayPal', code: 'USDpp', src: paypalIcon, method: 'PayPal', currency: 'USD' },
       { symbol: '$', color: '#006847', label: 'Comprar MXN', code: 'MXNcash', src: mxnPng },
       { symbol: '€', color: '#003399', label: 'Comprar EUR', code: 'EURcash', src: eurPng },
       { symbol: 'T', color: '#3a3a44', label: 'Comprar Transferencia', code: 'CuPdc', method: 'Transferencia Bancaria', currency: 'CUP' },
-      { symbol: '$', color: '#D64545', label: 'Comprar Etecsa', code: 'CuPetec', src: cupPng },
+      { symbol: 'E', color: '#030364', label: 'Comprar Etecsa', code: 'CuPetec', src: etecsaIcon },
       { symbol: '$', color: '#D80621', label: 'Comprar CAD', code: 'CADcash', src: cadPng },
       { symbol: '$', color: '#2E7D32', label: 'Comprar Clásica', code: 'USDcls', src: usdPng },
       { symbol: '$', color: '#2E7D32', label: 'Comprar MLC', code: 'USDmlc', src: usdPng },
       { symbol: '$', color: '#2E7D32', label: 'Comprar Qvapay', code: 'USDqp', src: usdPng },
+      { symbol: 'T', color: '#f5cc4e', label: 'Comprar TropiPay', code: 'USDtp', src: tropipayIcon },
       // Último tile: quita solo el filtro de fiat (código vacío → rama
       // de etiqueta en onFiatMenuNavigate), sin tocar el resto.
       { symbol: '+', color: '#3a3a44', label: 'Todas las fiat', code: '' },
@@ -421,7 +426,7 @@ export default function App() {
     // cash) y método abierto. Transferencia ya aclarada (ticker
     // CuPdc, moneda CUP, método Transferencia Bancaria); pendientes
     // Etecsa, Clásica, MLC y Zelle.
-    const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP', EURcash: 'EUR', MXNcash: 'MXN', CADcash: 'CAD', CuPetec: 'CUP', USDcls: 'USD', USDmlc: 'USD', USDqp: 'USD' };
+    const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP', EURcash: 'EUR', MXNcash: 'MXN', CADcash: 'CAD', CuPetec: 'CUP', USDcls: 'USD', USDmlc: 'USD', USDqp: 'USD', USDtp: 'USD' };
     clearFilters();
     // La fiat comprada va en el lado Comprar: campos intercambiados y
     // toggle en Comprar → lado efectivo venta → mismos resultados.
