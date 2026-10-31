@@ -1,19 +1,32 @@
 // Contenido de la página /swapped tal cual está en swapped.com/es/buy/usdc
 // (extraído en vivo el 2026-10-29). Los métodos no llevan logos de marca.
 // La sección «Más criptos» ya no usa la lista original de swapped.com:
-// desde 2026-10-31 lleva el top 10 de stablecoins del artículo de
-// stablewatch.io «10 best stablecoins you should know in 2026» (por
-// capitalización), con el logo real donde existe (USDT/USDC/PYUSD ya en
-// el proyecto, DAI/USDe/USDD de web3icons, USDY de icons.stablewatch.io)
-// y disco con la inicial como placeholder para USDS/USD G/RLUSD (sin SVG
-// público en web3icons; no se usa la marca de otro token).
-import usdtLogo from '../assets/coins/usdt.svg';
-import usdcLogo from '../assets/coins/usdc.svg';
-import pyusdLogo from '../assets/coins/pyusd.svg';
-import daiLogo from '../assets/coins/dai.svg';
-import usdeLogo from '../assets/coins/usde.svg';
-import usddLogo from '../assets/coins/usdd.svg';
-import usdyLogo from '../assets/coins/usdy.webp';
+// desde 2026-10-31 lleva el top 20 por TVL de la plataforma de analítica
+// de stablewatch.io (/analytics), con logos de stablewatch: 16 SVG color
+// de la home (/landing/grid/color/) y 4 webp de icons.stablewatch.io
+// (BUIDL, syrupUSDG, M, savUSD, que no tienen SVG en la home). Los webp
+// NO están en el repo (el push solo acepta texto): se recuperan con
+// scripts/download-stablewatch-icons.sh; en el despliegue sí van.
+import susdsLogo from '../assets/coins/stablewatch/susds.svg';
+import usdyLogo from '../assets/coins/stablewatch/usdy.svg';
+import usycLogo from '../assets/coins/stablewatch/usyc.svg';
+import buidlLogo from '../assets/coins/stablewatch/buidl.webp';
+import susdeLogo from '../assets/coins/stablewatch/susde.svg';
+import syrupusdcLogo from '../assets/coins/stablewatch/syrupusdc.svg';
+import ustbLogo from '../assets/coins/stablewatch/ustb.svg';
+import susdaiLogo from '../assets/coins/stablewatch/susdai.svg';
+import syrupusdgLogo from '../assets/coins/stablewatch/syrupusdg.webp';
+import ousgLogo from '../assets/coins/stablewatch/ousg.svg';
+import syrupusdtLogo from '../assets/coins/stablewatch/syrupusdt.svg';
+import mLogo from '../assets/coins/stablewatch/m.webp';
+import sghoLogo from '../assets/coins/stablewatch/sgho.svg';
+import usccLogo from '../assets/coins/stablewatch/uscc.svg';
+import sdaiLogo from '../assets/coins/stablewatch/sdai.svg';
+import wsrusdLogo from '../assets/coins/stablewatch/wsrusd.svg';
+import savusdLogo from '../assets/coins/stablewatch/savusd.webp';
+import susdaLogo from '../assets/coins/stablewatch/susda.svg';
+import mtbillLogo from '../assets/coins/stablewatch/mtbill.svg';
+import fxsaveLogo from '../assets/coins/stablewatch/fxsave.svg';
 
 export const SWAPPED_EDITORIAL_INTRO = 'En los mercados de criptomonedas, donde los precios cambian drásticamente en cuestión de minutos, necesitas un refugio seguro para proteger el valor de tus activos. Por eso existen las stablecoins para salvarte. USDC destaca especialmente—es el resultado de la colaboración entre Circle y Coinbase. Se ha convertido en la base de DeFi en todas las blockchains.';
 
@@ -98,16 +111,26 @@ export const SWAPPED_FAQS = [
 ];
 
 export const SWAPPED_MORE_CRYPTOS = [
-  { name: 'Tether', ticker: 'USDT', logo: usdtLogo },
-  { name: 'USD Coin', ticker: 'USDC', logo: usdcLogo },
-  { name: 'Sky Dollar', ticker: 'USDS', color: '#555555' },
-  { name: 'Dai', ticker: 'DAI', logo: daiLogo },
-  { name: 'Ethena USDe', ticker: 'USDe', logo: usdeLogo },
-  { name: 'PayPal USD', ticker: 'PYUSD', logo: pyusdLogo },
-  { name: 'Global Dollar', ticker: 'USDG', color: '#555555' },
-  { name: 'Ripple USD', ticker: 'RLUSD', color: '#555555' },
-  { name: 'USDD', ticker: 'USDD', logo: usddLogo },
-  { name: 'Ondo USDY', ticker: 'USDY', logo: usdyLogo },
+  { name: 'sUSDS', ticker: 'sUSDS', logo: susdsLogo },
+  { name: 'USDY', ticker: 'USDY', logo: usdyLogo },
+  { name: 'USYC', ticker: 'USYC', logo: usycLogo },
+  { name: 'BUIDL', ticker: 'BUIDL', logo: buidlLogo },
+  { name: 'sUSDe', ticker: 'sUSDe', logo: susdeLogo },
+  { name: 'syrupUSDC', ticker: 'syrupUSDC', logo: syrupusdcLogo },
+  { name: 'USTB', ticker: 'USTB', logo: ustbLogo },
+  { name: 'sUSDai', ticker: 'sUSDai', logo: susdaiLogo },
+  { name: 'syrupUSDG', ticker: 'syrupUSDG', logo: syrupusdgLogo },
+  { name: 'OUSG', ticker: 'OUSG', logo: ousgLogo },
+  { name: 'syrupUSDT', ticker: 'syrupUSDT', logo: syrupusdtLogo },
+  { name: 'M', ticker: 'M', logo: mLogo },
+  { name: 'sGHO', ticker: 'sGHO', logo: sghoLogo },
+  { name: 'USCC', ticker: 'USCC', logo: usccLogo },
+  { name: 'sDAI', ticker: 'sDAI', logo: sdaiLogo },
+  { name: 'wsrUSD', ticker: 'wsrUSD', logo: wsrusdLogo },
+  { name: 'savUSD', ticker: 'savUSD', logo: savusdLogo },
+  { name: 'sUSDa', ticker: 'sUSDa', logo: susdaLogo },
+  { name: 'mTBILL', ticker: 'mTBILL', logo: mtbillLogo },
+  { name: 'fxSAVE', ticker: 'fxSAVE', logo: fxsaveLogo },
 ];
 
 export const SWAPPED_METHODS = ['Apple Pay', 'Card', 'Google Pay', 'PaySafeCard', 'Bank Transfer', 'Skrill', 'Rapid Transfer', '+24 more'];

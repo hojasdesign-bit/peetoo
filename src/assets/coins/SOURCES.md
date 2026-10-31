@@ -1,16 +1,21 @@
 # Fuentes de los logos de la sección «Más criptos» (/swapped)
 
-Top 10 de stablecoins del artículo de stablewatch.io
-«10 best stablecoins you should know in 2026» (por capitalización).
+Top 20 por TVL de la plataforma de analítica de stablewatch.io
+(/analytics, orden descendente a 2026-10-31): sUSDS, USDY, USYC, BUIDL,
+sUSDe, syrupUSDC, USTB, sUSDai, syrupUSDG, OUSG, syrupUSDT, M, sGHO,
+USCC, sDAI, wsrUSD, savUSD, sUSDa, mTBILL, fxSAVE.
 
-- USDT, USDC, PYUSD: ya estaban en el proyecto (del repo original).
-- DAI, USDe, USDD: `@web3icons/core` (MIT), `dist/svgs/tokens/branded/`,
-  extraídos del `.svg.js` a SVG plano.
-- USDY: `https://icons.stablewatch.io/0xaf37c1167910ebC994e266949387d2c7C326b879-small.webp`
-  (webp 64x64, de la plataforma de analítica de stablewatch).
-  El push de GitHub solo acepta texto: este webp NO está en el repo.
-  Se recupera con `scripts/download-stablewatch-icons.sh` y sí va en el
-  despliegue (Vite lo empaqueta en dist).
-- USDS, USDG, RLUSD: SIN logo (no hay SVG público en web3icons).
-  Placeholder: disco con la inicial, color neutro #555555. No se usa la
-  marca de otro token. Si aparece un SVG oficial, se sustituye el disco.
+- 16 SVG color de la home de stablewatch
+  (`https://www.stablewatch.io/landing/grid/color/<token>.svg`,
+  72x72): sUSDS, USDY, USYC, sUSDe, syrupUSDC, USTB, sUSDai, OUSG,
+  syrupUSDT, sGHO, USCC, sDAI, wsrUSD, sUSDa, mTBILL, fxSAVE.
+  Están en el repo (texto).
+- 4 webp de `https://icons.stablewatch.io/<id>-small.webp` (64x64,
+  sin SVG en la home): BUIDL, syrupUSDG, M, savUSD.
+  El push de GitHub solo acepta texto: estos webp NO están en el repo.
+  Se recuperan con `scripts/download-stablewatch-icons.sh` y sí van en
+  el despliegue (Vite los empaqueta en dist o como data URI).
+
+Archivos huérfanos de la versión anterior (#88, ya sin uso, no se
+empaquetan): `dai.svg`, `usde.svg`, `usdd.svg` y `usdy.webp` (raíz de
+coins/). Se dejan en su sitio; no afectan a la build.
