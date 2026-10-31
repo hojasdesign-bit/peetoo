@@ -155,6 +155,20 @@ píldora), también pendiente de subir al DS.
 - La tabla `<table>` y las tarjetas `.cards` anteriores se eliminaron; no queda
   ningún resto en App.jsx ni en index.css.
 
+## Badge de método en el precio + abreviatura (adoptado de la prueba del badge, 2026-10-31)
+
+- Cada fila lleva en la columna de precio, tras el valor, una píldora con
+  el método (Efectivo → Cash, Transferencia Bancaria → Bank, el resto con
+  el nombre completo).
+- En escritorio la píldora va en línea (12px, radio 8px); en móvil
+  (≤768px) va absoluta tras el valor (10px, radio 6px) y el precio vuelve
+  a 16px, en una línea sin tocar el botón.
+- El precio calculado con cantidad se abrevia desde 1000 (4001 × 1,01 →
+  «4,04k CUP») con el valor exacto en el title; por debajo de 1000 y sin
+  cantidad, exacto.
+- Solo se portaron el badge y la abreviatura: offers.js y los tiles no se
+  tocaron (la fusión MLC queda intacta).
+
 ## Modal de orden (adoptado de la prueba del modal, 2026-10-30)
 
 - En móvil (≤768px) el detalle de la orden es un modal inferior (bottom

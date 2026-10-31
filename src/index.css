@@ -366,6 +366,7 @@ body {
 .offer-cell:first-child { padding-left: 24px; }
 .offer-cell:last-child { padding-right: 24px; }
 .offer-actions { text-align: right; white-space: nowrap; }
+.offer-method-badge { display: inline-block; vertical-align: middle; font-size: 12px; font-weight: 600; line-height: 1; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--cds-border-strong); color: var(--cds-ink); white-space: nowrap; }
 .offer-list .amount { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .offer-list .price { font-size: 14px; font-weight: 600; }
 
@@ -393,7 +394,8 @@ body {
   .offer-amounts { grid-area: amounts; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; }
   .offer-amounts .amount { font-weight: 600; display: flex; align-items: center; gap: 6px; }
   .offer-price { grid-area: price; text-align: left; }
-  .offer-price .price { font-size: 16px; font-weight: 600; }
+  .offer-price .price { display: inline-block; position: relative; font-size: 16px; font-weight: 600; }
+  .offer-price .price .offer-method-badge { position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 6px; font-size: 10px; padding: 4px 6px; border-radius: 6px; }
   .offer-chains { grid-area: chains; }
   .offer-trader { grid-area: trader; }
   .offer-actions { grid-area: actions; text-align: right; white-space: nowrap; align-self: center; }

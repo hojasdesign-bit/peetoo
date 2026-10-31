@@ -53,6 +53,14 @@ import placeholderGenericIcon from './assets/coins/placeholder-generic.svg';
 const PAGE_SIZE = 6;
 const fmt = (n) => n.toLocaleString('es-ES');
 const fmt2 = (n) => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+// Abreviatura sensata: desde 1000 se abrevia (1k en vez de 1000) y el
+// valor exacto va en el title. Sin decimales superfluos: 1000 -> 1k.
+const abbrevNum = (n) => {
+  const abs = Math.abs(n);
+  if (abs >= 1e6) return `${fmt2(n / 1e6).replace(/,00$/, '')}M`;
+  if (abs >= 1e3) return `${fmt2(n / 1e3).replace(/,00$/, '')}k`;
+  return fmt2(n);
+};
 const uniq = (arr) => [...new Set(arr)].sort();
 const CopyIcon = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -680,7 +688,14 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
 
   const priceMain = (o) => {
     const valid = !Number.isNaN(parsedAmount) && parsedAmount > 0;
-    return `${fmt2(valid ? o.price * parsedAmount : o.price)} ${o.sell_currency}`;
+    const v = valid ? o.price * parsedAmount : o.price;
+    return `${abbrevNum(v)} ${o.sell_currency}`;
+  };
+  const priceTitle = (o) => {
+    const valid = !Number.isNaN(parsedAmount) && parsedAmount > 0;
+    const v = valid ? o.price * parsedAmount : o.price;
+    const exact = `${fmt2(v)} ${o.sell_currency}`;
+    return priceMain(o) === exact ? undefined : exact;
   };
   const priceNote = (o) => {
     const valid = !Number.isNaN(parsedAmount) && parsedAmount > 0;
@@ -717,6 +732,9 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
     return tile ? { code: tile.code, symbol: tile.symbol, color: tile.color, src: tile.src } : ASSETS[o.sell_currency];
   };
 
+  // Etiqueta corta solo para el badge (el resto usa el nombre completo).
+  const methodBadgeLabel = (m) => m === 'Efectivo' ? 'Cash' : m === 'Transferencia Bancaria' ? 'Bank' : m;
+
   const renderOfferRow = (o, inProfile = false) => (
     <div key={o.id} className="offer-row" role="row">
       <div className="offer-cell offer-pair" role="cell"><AssetPair from={fiatLegAsset(o)} to={ASSETS[o.buy_currency]} reverse={inProfile ? o.side === 'sell' : effectiveSide === 'sell'} size={44} /></div>
@@ -725,7 +743,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
         <div className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</div>
       </div>
       <div className="offer-cell offer-price" role="cell">
-        <div className="price">{inProfile ? `${fmt2(o.price)} ${o.sell_currency}` : priceMain(o)}</div>
+        <div className="price"><span className="price-value" title={inProfile ? undefined : priceTitle(o)}>{inProfile ? `${fmt2(o.price)} ${o.sell_currency}` : priceMain(o)}</span> <span className="offer-method-badge">{methodBadgeLabel(o.payment_method)}</span></div>
         <div className="sub">{inProfile ? `1 ${o.buy_currency}` : priceNote(o)}</div>
       </div>
       <div className="offer-cell offer-chains" role="cell">{inProfile ? renderChains(o, 'all') : renderChains(o)}</div>
