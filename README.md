@@ -95,8 +95,10 @@ carteras ni datos personales, y los precios siguen la convención demo
 (ticker CuPetec, 1 venta), Clásica es método + USD (USDcls, 1 venta),
 Qvapay es método + USD (USDqp, 1 venta) y TropiPay es método + USD (USDtp, 1 venta);
 MLC es USD (USDmlc, 7 ventas, solo moneda). PayPal es método + USD (USDpp,
-2 ventas) y método + EUR (EURpp, 2 ventas) con su logo; Etecsa lleva su logo azul en el tile CuPetec en vez
-de la foto CUP. No hay login real, ni transacciones
+2 ventas), EUR (EURpp, 2 ventas), MXN (MXNpp, 2 ventas) y CAD (CADpp, 1 venta)
+con su logo; PayPal no aplica a CUP. Etecsa lleva su logo azul en el tile CuPetec en vez
+de la foto CUP. La celda del par de cada fila muestra el ticker de la pata fiat
+(USDpp, CuPcash...) para distinguir el método. No hay login real, ni transacciones
 reales, ni conexión con Supabase u OpenFort en esta versión.
 
 ## Stack

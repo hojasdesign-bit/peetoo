@@ -390,6 +390,8 @@ export default function App() {
       { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'USDzl', method: 'Zelle', currency: 'USD' },
       { symbol: 'P', color: '#003087', label: 'Comprar PayPal', code: 'USDpp', src: paypalIcon, method: 'PayPal', currency: 'USD' },
       { symbol: 'P', color: '#003087', label: 'Comprar PayPal', code: 'EURpp', src: paypalIcon, method: 'PayPal', currency: 'EUR' },
+      { symbol: 'P', color: '#003087', label: 'Comprar PayPal', code: 'MXNpp', src: paypalIcon, method: 'PayPal', currency: 'MXN' },
+      { symbol: 'P', color: '#003087', label: 'Comprar PayPal', code: 'CADpp', src: paypalIcon, method: 'PayPal', currency: 'CAD' },
       { symbol: '$', color: '#006847', label: 'Comprar MXN', code: 'MXNcash', src: mxnPng },
       { symbol: '€', color: '#003399', label: 'Comprar EUR', code: 'EURcash', src: eurPng },
       { symbol: 'T', color: '#3a3a44', label: 'Comprar Transferencia', code: 'CuPdc', method: 'Transferencia Bancaria', currency: 'CUP' },
@@ -715,9 +717,11 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
     return tile ? { code: tile.code, symbol: tile.symbol, color: tile.color, src: tile.src } : ASSETS[o.sell_currency];
   };
 
-  const renderOfferRow = (o, inProfile = false) => (
+  const renderOfferRow = (o, inProfile = false) => {
+    const leg = fiatLegAsset(o);
+    return (
     <div key={o.id} className="offer-row" role="row">
-      <div className="offer-cell offer-pair" role="cell"><AssetPair from={fiatLegAsset(o)} to={ASSETS[o.buy_currency]} reverse={inProfile ? o.side === 'sell' : effectiveSide === 'sell'} size={44} /></div>
+      <div className="offer-cell offer-pair" role="cell"><span className="offer-pair-wrap"><AssetPair from={leg} to={ASSETS[o.buy_currency]} reverse={inProfile ? o.side === 'sell' : effectiveSide === 'sell'} size={44} /><span className="offer-pair-ticker">{leg.code}</span></span></div>
       <div className="offer-cell offer-amounts" role="cell">
         <div className="amount">{fmt(o.available)} {o.buy_currency} {o.deposit_made && DepositIcon}</div>
         <div className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</div>
@@ -730,7 +734,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
       <div className="offer-cell offer-trader" role="cell">{inProfile ? <TraderCell trader={toTrader(o)} /> : <TraderCell trader={toTrader(o)} href={`/perfil/${o.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(o.advertiser_name); }} />}</div>
       <div className="offer-cell offer-actions" role="cell"><Button size="md" onClick={() => openModal(o)}>{inProfile ? (o.side === 'buy' ? 'Comprar' : 'Vender') : verb} {o.buy_currency}</Button></div>
     </div>
-  );
+    );
+  };
 
   // Los dos pares del filtro, como objetos de props: cada par sigue
   // ligado a su dominio (crypto: red+moneda; fiat: método+moneda) y los
