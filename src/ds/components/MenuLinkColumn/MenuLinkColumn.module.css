@@ -17,7 +17,7 @@
   gap: 12px;
   font-family: var(--cds-font-sans);
 }
-.root { margin-left: 64px; }
+.root { margin-left: 0; } /* Sin margen: con 144px la columna acoge los enlaces en español y la fila de redes (128px) sin recorte */
 .link {
   color: var(--mh-text);
   text-decoration: none;

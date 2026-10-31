@@ -9,7 +9,7 @@ export function MenuSocials({ socials = [] }) {
       <span className={styles.follow}>Seguir</span>
       <span className={styles.row}>
         {socials.map((social) => (
-          <a key={social.label} className={styles.btn} href={social.href || '#'} aria-label={social.label}>
+          <a key={social.label} className={styles.btn} href={social.href || '#'} aria-label={social.label} onClick={(e) => { if (!social.href) e.preventDefault(); }}>
             {social.icon}
           </a>
         ))}

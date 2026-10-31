@@ -32,7 +32,7 @@
   to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 .grid { display: grid; gap: 16px; }
-.gridCoins { grid-template-columns: 366px 1fr 144px; }
+.gridCoins { grid-template-columns: 366px minmax(0, 1fr) 144px; } /* minmax(0,1fr): la pista de monedas no empuja la columna de enlaces fuera del panel */
 .gridCards { grid-template-columns: 1fr 144px; }
 .gridLinks { grid-template-columns: 1fr 144px; }
 .coins { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-content: start; }

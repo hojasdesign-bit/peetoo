@@ -286,6 +286,26 @@ body {
 /* En el cajón móvil las tarjetas van apiladas, no en panel absoluto. */
 .swapped-drawer-cards { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 8px 10px; }
 
+/* Pie del submenú Swapped (escritorio): enlaces + Seguir, a todo el
+   ancho del panel, con separador superior. */
+.swapped-panel-foot {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  border-top: 1px solid var(--cds-border); padding-top: 16px;
+}
+.swapped-foot-links { display: flex; gap: 24px; flex-wrap: wrap; }
+.swapped-foot-link { color: var(--cds-ink); text-decoration: none; font-size: 16px; font-weight: 500; line-height: 24px; white-space: nowrap; }
+.swapped-foot-link:hover { color: var(--cds-accent-hover); }
+.swapped-foot-socials { display: flex; align-items: center; gap: 12px; }
+.swapped-foot-follow { font-size: 16px; line-height: 22px; color: var(--cds-muted); }
+.swapped-foot-btn { color: var(--cds-ink); display: inline-flex; line-height: 0; }
+.swapped-foot-btn:hover { color: var(--cds-accent-hover); }
+/* Misma pie en el cajón móvil, apilada. */
+.drawer-swapped-foot {
+  display: flex; flex-direction: column; gap: 12px;
+  border-top: 1px solid var(--cds-border); padding: 12px 6px 4px; margin-top: 4px;
+}
+
 /* Aviso del lado Vender: la tarjeta de /sell/usdc, 382×500, radio 28,
    padding 56, texto centrado y degradado violeta radial sobre negro,
    con el contenido centrado en vertical. */
