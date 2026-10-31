@@ -445,14 +445,14 @@ body {
 }
 .more-filters-field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 500; color: #ffffff; }
 .more-filters-field select {
-  width: 100%; box-sizing: border-box; background: #101010; color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px;
-  padding: 10px 12px; font-size: 14px; font-family: inherit;
+  width: 100%; box-sizing: border-box; background: #1a1a1a; color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 16px;
+  height: 50px; padding: 0 44px 0 16px; font-size: 16px; font-family: inherit;
 }
 .more-filters-reset { width: 100%; }
 [data-theme="claro"] .more-filters-panel { background: #ffffff; border-color: var(--cds-border); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15); }
 [data-theme="claro"] .more-filters-field { color: #101010; }
-[data-theme="claro"] .more-filters-field select { background: #ffffff; color: #101010; border-color: var(--cds-border); }
+[data-theme="claro"] .more-filters-field select { background: #ffffff; color: #101010; border-color: rgba(0, 0, 0, 0.14); }
 
 /* el ordenar en la barra (50px, radio 16, como el resto de
    controles de la fila). */
@@ -489,10 +489,10 @@ body {
 .filters-mobile { flex-direction: column; align-items: stretch; }
 .filters-mobile-row { display: flex; gap: 8px; align-items: center; }
 .filters-mobile-row .filter-seg { flex: 1; }
-.filters-mobile-row .filter-amount { flex: 1; min-width: 0; }
+.filters-mobile-row .filter-amount { flex: 0 0 calc(50% - 4px); min-width: 0; } /* mitad de fila menos mitad del gap (8px); el select imponía su ancho intrínseco y salía más ancho */
 .filters-mobile-row .filter-amount input { width: 100%; box-sizing: border-box; }
 .filters-mobile-currency {
-  flex: 1; min-width: 0; height: 50px; box-sizing: border-box;
+  flex: 0 0 calc(50% - 4px); min-width: 0; height: 50px; box-sizing: border-box;
   background: #1a1a1a; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 16px; padding: 0 44px 0 16px; font-size: 16px; font-family: inherit;
 }
