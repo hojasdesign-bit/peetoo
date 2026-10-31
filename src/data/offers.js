@@ -2,10 +2,14 @@
  * Ofertas de muestra del mercado Crypto de peetoo.
  * Cobertura demo completa: 84 ofertas, una por cada par crypto×fiat
  * (7 cryptos del menú × 6 fiats del menú) en compra y en venta. Los
- * Cada oferta tiene un único método de pago, de 4 en total:
- * Efectivo, PayPal, Transferencia Bancaria y Zelle. Salvo MLC (siempre
- * Transferencia Bancaria) y las filas protegidas de los tiles, el método
- * rota por (crypto + fiat + 2·lado) mod 4. Las redes rotan para que
+ * Cada oferta tiene un único método de pago, de 8 en total:
+ * Efectivo, PayPal, Transferencia Bancaria y Zelle (todas las monedas)
+ * más Etecsa (solo CUP) y Clásica, Qvapay y TropiPay (solo USD).
+ * Salvo MLC (siempre Transferencia Bancaria) y las filas protegidas
+ * de los tiles, el método rota por (crypto + fiat + 2·lado) mod 4;
+ * 8 filas se convierten a los métodos nuevos para que sus tiles
+ * tengan oferta: Etecsa venta 14 + compra 13, Clásica venta 28 +
+ * compra 3, Qvapay venta 40 + compra 15, TropiPay venta 52 + compra 27. Las redes rotan para que
  * cada red aparezca con cada crypto. Los anunciantes son ficticios
  * (sin carteras ni datos personales). Los precios siguen la convención
  * demo del set anterior (~1,0x), no son tasas reales de mercado.
@@ -78,7 +82,7 @@ export const CHAIN_COLORS = {
 export const OFFERS = [
   { id: 1, side: 'buy', advertiser_name: 'criptoblue', advertiser_trades: 10060, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: true, buy_currency: 'USDT', sell_currency: 'CUP', price: 1.01, available: 4001, min_amount: 1, max_amount: 4001, payment_method: 'Efectivo', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: false },
   { id: 2, side: 'sell', advertiser_name: 'yosusenador', advertiser_trades: 3392, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDT', sell_currency: 'CUP', price: 1, available: 8050, min_amount: 50, max_amount: 8050, payment_method: 'Transferencia Bancaria', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: true },
-  { id: 3, side: 'buy', advertiser_name: 'tucambioalpoars', advertiser_trades: 702, advertiser_completion: 98, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDT', sell_currency: 'USD', price: 1.02, available: 7950, min_amount: 50, max_amount: 8050, payment_method: 'PayPal', blockchains: ['Base', 'Arbitrum', 'BNB Chain'], deposit_made: true },
+  { id: 3, side: 'buy', advertiser_name: 'tucambioalpoars', advertiser_trades: 702, advertiser_completion: 98, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDT', sell_currency: 'USD', price: 1.02, available: 7950, min_amount: 50, max_amount: 8050, payment_method: 'Clásica', blockchains: ['Base', 'Arbitrum', 'BNB Chain'], deposit_made: true },
   { id: 4, side: 'sell', advertiser_name: 'habana_p2p', advertiser_trades: 1250, advertiser_completion: 99, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDT', sell_currency: 'USD', price: 0.99, available: 15000, min_amount: 100, max_amount: 15100, payment_method: 'Efectivo', blockchains: ['Arbitrum', 'Optimism', 'Polygon'], deposit_made: true },
   { id: 5, side: 'buy', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDT', sell_currency: 'EUR', price: 1.03, available: 14900, min_amount: 100, max_amount: 15100, payment_method: 'Transferencia Bancaria', blockchains: ['Optimism', 'BNB Chain', 'Base'], deposit_made: true },
   { id: 6, side: 'sell', advertiser_name: 'criptoblue', advertiser_trades: 10060, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: true, buy_currency: 'USDT', sell_currency: 'EUR', price: 0.98, available: 25000, min_amount: 200, max_amount: 25200, payment_method: 'Efectivo', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: false },
@@ -88,9 +92,9 @@ export const OFFERS = [
   { id: 10, side: 'sell', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDT', sell_currency: 'CAD', price: 0.96, available: 4900, min_amount: 1000, max_amount: 5000, payment_method: 'Transferencia Bancaria', blockchains: ['Optimism', 'BNB Chain', 'Base'], deposit_made: true },
   { id: 11, side: 'buy', advertiser_name: 'criptoblue', advertiser_trades: 10060, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: true, buy_currency: 'USDT', sell_currency: 'MLC', price: 1.06, available: 4800, min_amount: 1000, max_amount: 5000, payment_method: 'Transferencia Bancaria', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: true },
   { id: 12, side: 'sell', advertiser_name: 'yosusenador', advertiser_trades: 3392, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDT', sell_currency: 'MLC', price: 1, available: 7801, min_amount: 1, max_amount: 8001, payment_method: 'Transferencia Bancaria', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: false },
-  { id: 13, side: 'buy', advertiser_name: 'habana_p2p', advertiser_trades: 1250, advertiser_completion: 99, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USAT', sell_currency: 'CUP', price: 1.02, available: 14950, min_amount: 50, max_amount: 15050, payment_method: 'PayPal', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: true },
-  { id: 14, side: 'sell', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USAT', sell_currency: 'CUP', price: 0.99, available: 25000, min_amount: 100, max_amount: 25100, payment_method: 'Zelle', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: true },
-  { id: 15, side: 'buy', advertiser_name: 'criptoblue', advertiser_trades: 10060, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: true, buy_currency: 'USAT', sell_currency: 'USD', price: 1.03, available: 24900, min_amount: 100, max_amount: 25100, payment_method: 'Transferencia Bancaria', blockchains: ['Base', 'Arbitrum', 'BNB Chain'], deposit_made: true },
+  { id: 13, side: 'buy', advertiser_name: 'habana_p2p', advertiser_trades: 1250, advertiser_completion: 99, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USAT', sell_currency: 'CUP', price: 1.02, available: 14950, min_amount: 50, max_amount: 15050, payment_method: 'Etecsa', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: true },
+  { id: 14, side: 'sell', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USAT', sell_currency: 'CUP', price: 0.99, available: 25000, min_amount: 100, max_amount: 25100, payment_method: 'Etecsa', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: true },
+  { id: 15, side: 'buy', advertiser_name: 'criptoblue', advertiser_trades: 10060, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: true, buy_currency: 'USAT', sell_currency: 'USD', price: 1.03, available: 24900, min_amount: 100, max_amount: 25100, payment_method: 'Qvapay', blockchains: ['Base', 'Arbitrum', 'BNB Chain'], deposit_made: true },
   { id: 16, side: 'sell', advertiser_name: 'yosusenador', advertiser_trades: 3392, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USAT', sell_currency: 'USD', price: 0.98, available: 45000, min_amount: 200, max_amount: 45200, payment_method: 'PayPal', blockchains: ['Arbitrum', 'Optimism', 'Polygon'], deposit_made: false },
   { id: 17, side: 'buy', advertiser_name: 'tucambioalpoars', advertiser_trades: 702, advertiser_completion: 98, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USAT', sell_currency: 'EUR', price: 1.04, available: 45200, min_amount: 200, max_amount: 45200, payment_method: 'Zelle', blockchains: ['Optimism', 'BNB Chain', 'Base'], deposit_made: false },
   { id: 18, side: 'sell', advertiser_name: 'habana_p2p', advertiser_trades: 1250, advertiser_completion: 99, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USAT', sell_currency: 'EUR', price: 0.97, available: 4500, min_amount: 500, max_amount: 4500, payment_method: 'PayPal', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: true },
@@ -102,8 +106,8 @@ export const OFFERS = [
   { id: 24, side: 'sell', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USAT', sell_currency: 'MLC', price: 0.99, available: 25050, min_amount: 50, max_amount: 25050, payment_method: 'Transferencia Bancaria', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: true },
   { id: 25, side: 'buy', advertiser_name: 'yosusenador', advertiser_trades: 3392, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDC', sell_currency: 'CUP', price: 1.03, available: 44900, min_amount: 100, max_amount: 45100, payment_method: 'Transferencia Bancaria', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: true },
   { id: 26, side: 'sell', advertiser_name: 'tucambioalpoars', advertiser_trades: 702, advertiser_completion: 98, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDC', sell_currency: 'CUP', price: 0.98, available: 4000, min_amount: 200, max_amount: 4200, payment_method: 'Efectivo', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: false },
-  { id: 27, side: 'buy', advertiser_name: 'habana_p2p', advertiser_trades: 1250, advertiser_completion: 99, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDC', sell_currency: 'USD', price: 1.04, available: 4200, min_amount: 200, max_amount: 4200, payment_method: 'Zelle', blockchains: ['Base', 'Arbitrum', 'BNB Chain'], deposit_made: false },
-  { id: 28, side: 'sell', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDC', sell_currency: 'USD', price: 0.97, available: 8500, min_amount: 500, max_amount: 8500, payment_method: 'Efectivo', blockchains: ['Arbitrum', 'Optimism', 'Polygon'], deposit_made: true },
+  { id: 27, side: 'buy', advertiser_name: 'habana_p2p', advertiser_trades: 1250, advertiser_completion: 99, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDC', sell_currency: 'USD', price: 1.04, available: 4200, min_amount: 200, max_amount: 4200, payment_method: 'TropiPay', blockchains: ['Base', 'Arbitrum', 'BNB Chain'], deposit_made: false },
+  { id: 28, side: 'sell', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDC', sell_currency: 'USD', price: 0.97, available: 8500, min_amount: 500, max_amount: 8500, payment_method: 'Clásica', blockchains: ['Arbitrum', 'Optimism', 'Polygon'], deposit_made: true },
   { id: 29, side: 'buy', advertiser_name: 'criptoblue', advertiser_trades: 10060, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: true, buy_currency: 'USDC', sell_currency: 'EUR', price: 1.05, available: 8400, min_amount: 500, max_amount: 8500, payment_method: 'Efectivo', blockchains: ['Optimism', 'BNB Chain', 'Base'], deposit_made: true },
   { id: 30, side: 'sell', advertiser_name: 'yosusenador', advertiser_trades: 3392, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDC', sell_currency: 'EUR', price: 0.96, available: 15900, min_amount: 1000, max_amount: 16000, payment_method: 'Transferencia Bancaria', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: true },
   { id: 31, side: 'buy', advertiser_name: 'tucambioalpoars', advertiser_trades: 702, advertiser_completion: 98, advertiser_verified: true, advertiser_premium: false, buy_currency: 'USDC', sell_currency: 'MXN', price: 1.06, available: 15800, min_amount: 1000, max_amount: 16000, payment_method: 'PayPal', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: true },
@@ -115,7 +119,7 @@ export const OFFERS = [
   { id: 37, side: 'buy', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'EURC', sell_currency: 'CUP', price: 1.04, available: 8200, min_amount: 200, max_amount: 8200, payment_method: 'Zelle', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: false },
   { id: 38, side: 'sell', advertiser_name: 'criptoblue', advertiser_trades: 10060, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: true, buy_currency: 'EURC', sell_currency: 'CUP', price: 0.97, available: 15500, min_amount: 500, max_amount: 15500, payment_method: 'PayPal', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: true },
   { id: 39, side: 'buy', advertiser_name: 'yosusenador', advertiser_trades: 3392, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: false, buy_currency: 'EURC', sell_currency: 'USD', price: 1.05, available: 15400, min_amount: 500, max_amount: 15500, payment_method: 'Efectivo', blockchains: ['Base', 'Arbitrum', 'BNB Chain'], deposit_made: true },
-  { id: 40, side: 'sell', advertiser_name: 'tucambioalpoars', advertiser_trades: 702, advertiser_completion: 98, advertiser_verified: true, advertiser_premium: false, buy_currency: 'EURC', sell_currency: 'USD', price: 0.96, available: 25900, min_amount: 1000, max_amount: 26000, payment_method: 'Transferencia Bancaria', blockchains: ['Arbitrum', 'Optimism', 'Polygon'], deposit_made: true },
+  { id: 40, side: 'sell', advertiser_name: 'tucambioalpoars', advertiser_trades: 702, advertiser_completion: 98, advertiser_verified: true, advertiser_premium: false, buy_currency: 'EURC', sell_currency: 'USD', price: 0.96, available: 25900, min_amount: 1000, max_amount: 26000, payment_method: 'Qvapay', blockchains: ['Arbitrum', 'Optimism', 'Polygon'], deposit_made: true },
   { id: 41, side: 'buy', advertiser_name: 'habana_p2p', advertiser_trades: 1250, advertiser_completion: 99, advertiser_verified: true, advertiser_premium: false, buy_currency: 'EURC', sell_currency: 'EUR', price: 1.06, available: 25800, min_amount: 1000, max_amount: 26000, payment_method: 'PayPal', blockchains: ['Optimism', 'BNB Chain', 'Base'], deposit_made: true },
   { id: 42, side: 'sell', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'EURC', sell_currency: 'EUR', price: 1, available: 44801, min_amount: 1, max_amount: 45001, payment_method: 'Zelle', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: false },
   { id: 43, side: 'buy', advertiser_name: 'criptoblue', advertiser_trades: 10060, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: true, buy_currency: 'EURC', sell_currency: 'MXN', price: 1.07, available: 45001, min_amount: 1, max_amount: 45001, payment_method: 'Transferencia Bancaria', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: false },
@@ -127,7 +131,7 @@ export const OFFERS = [
   { id: 49, side: 'buy', advertiser_name: 'tucambioalpoars', advertiser_trades: 702, advertiser_completion: 98, advertiser_verified: true, advertiser_premium: false, buy_currency: 'PYUSD', sell_currency: 'CUP', price: 1.05, available: 25400, min_amount: 500, max_amount: 25500, payment_method: 'Efectivo', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: true },
   { id: 50, side: 'sell', advertiser_name: 'habana_p2p', advertiser_trades: 1250, advertiser_completion: 99, advertiser_verified: true, advertiser_premium: false, buy_currency: 'PYUSD', sell_currency: 'CUP', price: 0.96, available: 45900, min_amount: 1000, max_amount: 46000, payment_method: 'Transferencia Bancaria', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: true },
   { id: 51, side: 'buy', advertiser_name: 'caribe_crypto', advertiser_trades: 480, advertiser_completion: 97, advertiser_verified: true, advertiser_premium: false, buy_currency: 'PYUSD', sell_currency: 'USD', price: 1.06, available: 45800, min_amount: 1000, max_amount: 46000, payment_method: 'PayPal', blockchains: ['Base', 'Arbitrum', 'BNB Chain'], deposit_made: true },
-  { id: 52, side: 'sell', advertiser_name: 'criptoblue', advertiser_trades: 10060, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: true, buy_currency: 'PYUSD', sell_currency: 'USD', price: 1, available: 3801, min_amount: 1, max_amount: 4001, payment_method: 'Zelle', blockchains: ['Arbitrum', 'Optimism', 'Polygon'], deposit_made: false },
+  { id: 52, side: 'sell', advertiser_name: 'criptoblue', advertiser_trades: 10060, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: true, buy_currency: 'PYUSD', sell_currency: 'USD', price: 1, available: 3801, min_amount: 1, max_amount: 4001, payment_method: 'TropiPay', blockchains: ['Arbitrum', 'Optimism', 'Polygon'], deposit_made: false },
   { id: 53, side: 'buy', advertiser_name: 'yosusenador', advertiser_trades: 3392, advertiser_completion: 100, advertiser_verified: true, advertiser_premium: false, buy_currency: 'PYUSD', sell_currency: 'EUR', price: 1.07, available: 4001, min_amount: 1, max_amount: 4001, payment_method: 'Transferencia Bancaria', blockchains: ['Optimism', 'BNB Chain', 'Base'], deposit_made: false },
   { id: 54, side: 'sell', advertiser_name: 'tucambioalpoars', advertiser_trades: 702, advertiser_completion: 98, advertiser_verified: true, advertiser_premium: false, buy_currency: 'PYUSD', sell_currency: 'EUR', price: 0.99, available: 8050, min_amount: 50, max_amount: 8050, payment_method: 'Efectivo', blockchains: ['BNB Chain', 'Polygon', 'Arbitrum'], deposit_made: true },
   { id: 55, side: 'buy', advertiser_name: 'habana_p2p', advertiser_trades: 1250, advertiser_completion: 99, advertiser_verified: true, advertiser_premium: false, buy_currency: 'PYUSD', sell_currency: 'MXN', price: 1.01, available: 7950, min_amount: 50, max_amount: 8050, payment_method: 'Zelle', blockchains: ['Polygon', 'Base', 'Optimism'], deposit_made: true },
@@ -169,6 +173,10 @@ export const OFFERS = [
 export const PAYMENT_DETAILS = {
   criptoblue: {
     'Efectivo': 'Pago en persona',
+    'Etecsa': '+53 5828 6140',
+    'Clásica': 'Tarjeta Clásica · 1633 1272 6816 2782',
+    'Qvapay': 'criptoblue@qvapay.com',
+    'TropiPay': 'criptoblue@tropipay.com',
     'Zelle': 'criptoblue@gmail.com',
     'PayPal': 'criptoblue.pagos@gmail.com',
     'Wise (USD)': 'criptoblue.wise@gmail.com',
@@ -182,6 +190,10 @@ export const PAYMENT_DETAILS = {
   },
   yosusenador: {
     'Efectivo': 'Pago en persona',
+    'Etecsa': '+53 5996 1318',
+    'Clásica': 'Tarjeta Clásica · 2728 6526 1604 1217',
+    'Qvapay': 'yosusenador@qvapay.com',
+    'TropiPay': 'yosusenador@tropipay.com',
     'Zelle': 'yosusenador@gmail.com',
     'PayPal': 'yosusenador.pagos@gmail.com',
     'Wise (USD)': 'yosusenador.wise@gmail.com',
@@ -195,6 +207,10 @@ export const PAYMENT_DETAILS = {
   },
   tucambioalpoars: {
     'Efectivo': 'Pago en persona',
+    'Etecsa': '+53 5580 3475',
+    'Clásica': 'Tarjeta Clásica · 4542 2693 2731 6475',
+    'Qvapay': 'tucambioalpoars@qvapay.com',
+    'TropiPay': 'tucambioalpoars@tropipay.com',
     'Zelle': 'tucambioalpoars@gmail.com',
     'PayPal': 'tucambioalpoars.pagos@gmail.com',
     'Wise (USD)': 'tucambioalpoars.wise@gmail.com',
@@ -208,6 +224,10 @@ export const PAYMENT_DETAILS = {
   },
   habana_p2p: {
     'Efectivo': 'Pago en persona',
+    'Etecsa': '+53 5637 9667',
+    'Clásica': 'Tarjeta Clásica · 2422 7753 9596 4575',
+    'Qvapay': 'habana_p2p@qvapay.com',
+    'TropiPay': 'habana_p2p@tropipay.com',
     'Zelle': 'habana.p2p@gmail.com',
     'PayPal': 'habana.p2p.pagos@gmail.com',
     'Wise (USD)': 'habana.p2p.wise@gmail.com',
@@ -221,6 +241,10 @@ export const PAYMENT_DETAILS = {
   },
   caribe_crypto: {
     'Efectivo': 'Pago en persona',
+    'Etecsa': '+53 5804 1942',
+    'Clásica': 'Tarjeta Clásica · 4843 8316 7801 2001',
+    'Qvapay': 'caribe_crypto@qvapay.com',
+    'TropiPay': 'caribe_crypto@tropipay.com',
     'Zelle': 'caribe.crypto@gmail.com',
     'PayPal': 'caribe.crypto.pagos@gmail.com',
     'Wise (USD)': 'caribe.crypto.wise@gmail.com',

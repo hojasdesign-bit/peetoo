@@ -86,16 +86,16 @@ producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
 
 Todo lo que ves son **datos de solo muestra**: 84 ofertas demo, una por
 cada par crypto×fiat (7 cryptos × 6 fiats) en compra y en venta, con un
-único método de pago por oferta (solo 4: Efectivo, PayPal, Transferencia
-Bancaria y Zelle; MLC siempre por Transferencia Bancaria) y las redes
+único método de pago por oferta (8 en total: Efectivo, PayPal, Transferencia
+Bancaria y Zelle para todas las monedas, más Etecsa solo para CUP y
+Clásica, Qvapay y TropiPay solo para USD; MLC siempre por Transferencia Bancaria) y las redes
 rotadas para que cada red aparezca con cada crypto. Los anunciantes son ficticios, sin
 carteras ni datos personales, y los precios siguen la convención demo
-(~1,0x), no son tasas reales. Tiles de fiat aclarados: Etecsa es CUP
-(ticker CuPetec), Clásica es USD (USDcls), MLC es USD (USDmlc) y
-Qvapay es USD (USDqp); los cuatro son solo moneda (sin método) y
-muestran las 7 ventas de su moneda. PayPal es método + USD (USDpp,
-2 ventas) y método + EUR (EURpp, 2 ventas) con su logo; TropiPay es USD (USDtp, 7 ventas) con su logo
-amarillo y azul; Etecsa lleva su logo azul en el tile CuPetec en vez
+(~1,0x), no son tasas reales. Tiles de fiat aclarados: Etecsa es método + CUP
+(ticker CuPetec, 1 venta), Clásica es método + USD (USDcls, 1 venta),
+Qvapay es método + USD (USDqp, 1 venta) y TropiPay es método + USD (USDtp, 1 venta);
+MLC es USD (USDmlc, 7 ventas, solo moneda). PayPal es método + USD (USDpp,
+2 ventas) y método + EUR (EURpp, 2 ventas) con su logo; Etecsa lleva su logo azul en el tile CuPetec en vez
 de la foto CUP. No hay login real, ni transacciones
 reales, ni conexión con Supabase u OpenFort en esta versión.
 
