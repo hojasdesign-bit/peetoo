@@ -82,9 +82,11 @@ body {
 .topbar, .shell, .swapped-stage, .app-footer { min-width: 0; width: 100%; }
 .swapped-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 40px; max-width: 1120px; margin: 0 auto; padding: 90px 24px 60px; } /* aire arriba como la original: el título cae a ~223px como en swapped.com */
 .swapped-stage iframe { width: 382px; max-width: 100%; height: 500px; border: 0; border-radius: 28px; background: #fff; }
-/* El toggle de la página hereda el ancho del widget; el selector con
-   dos clases vence al ancho 100% del módulo del SegmentedControl. */
-.swapped-stage .swapped-toggle { width: 400px; max-width: 100%; }
+/* El toggle va a 220px (botones iguales de 104px), no a 400px fijos:
+   con fit-content los segmentos salían desiguales (99/85) porque el
+   contenedor se ceñía a cada etiqueta. El selector con dos clases
+   vence al ancho 100% del módulo. */
+.swapped-stage .swapped-toggle { width: 220px; max-width: 100%; }
 /* Página de Swapped, medida de /buy/usdc y /sell/usdc a 1440:
    contenido de 1072px en dos columnas (texto 670 + 20 + widget 382);
    la columna izquierda lleva título, descripción, pasos y métodos;
