@@ -366,8 +366,6 @@ body {
 .offer-cell:first-child { padding-left: 24px; }
 .offer-cell:last-child { padding-right: 24px; }
 .offer-actions { text-align: right; white-space: nowrap; }
-.offer-pair-wrap { display: inline-flex; align-items: center; gap: 8px; }
-.offer-pair-ticker { font-size: 13px; font-weight: 600; color: var(--cds-ink); }
 .offer-list .amount { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .offer-list .price { font-size: 14px; font-weight: 600; }
 
