@@ -14,10 +14,9 @@ body {
 
 .topbar {
   /* Ya no fijo: acompaña a la página al bajar. Relative (no static)
-     para seguir siendo el ancla de los paneles absolutos del menú. */
+     para seguir siendo el ancla de los paneles absolutos del menú.
+     Sin fondo ni borde inferior: transparente sobre el fondo de la página. */
   position: relative; z-index: 50;
-  background: var(--cds-bg);
-  border-bottom: 1px solid var(--cds-border);
   display: flex; flex-direction: column; align-items: stretch;
   max-width: none; margin: 0 auto; padding: 20px 48px;
 }
