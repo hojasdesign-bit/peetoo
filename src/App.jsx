@@ -1118,7 +1118,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
             <div className="swapped-more-grid">
               {SWAPPED_MORE_CRYPTOS.map((c) => (
                 <span className="swapped-more-card" key={c.ticker}>
-                  <span className="swapped-more-disc" style={{ backgroundColor: c.color }}>{c.ticker[0]}</span>
+                  <span className="swapped-more-disc" style={c.logo ? undefined : { backgroundColor: c.color }}>{c.logo ? <img className="swapped-more-logo" src={c.logo} alt="" /> : c.ticker[0]}</span>
                   <span className="swapped-more-name">Comprar {c.name} ({c.ticker})</span>
                 </span>
               ))}

@@ -1,7 +1,19 @@
 // Contenido de la página /swapped tal cual está en swapped.com/es/buy/usdc
-// (extraído en vivo el 2026-10-29). Los métodos y las criptos no llevan
-// logos de marca: las tarjetas muestran el nombre y las criptos un disco
-// de color con la inicial, propios, no las marcas originales.
+// (extraído en vivo el 2026-10-29). Los métodos no llevan logos de marca.
+// La sección «Más criptos» ya no usa la lista original de swapped.com:
+// desde 2026-10-31 lleva el top 10 de stablecoins del artículo de
+// stablewatch.io «10 best stablecoins you should know in 2026» (por
+// capitalización), con el logo real donde existe (USDT/USDC/PYUSD ya en
+// el proyecto, DAI/USDe/USDD de web3icons, USDY de icons.stablewatch.io)
+// y disco con la inicial como placeholder para USDS/USD G/RLUSD (sin SVG
+// público en web3icons; no se usa la marca de otro token).
+import usdtLogo from '../assets/coins/usdt.svg';
+import usdcLogo from '../assets/coins/usdc.svg';
+import pyusdLogo from '../assets/coins/pyusd.svg';
+import daiLogo from '../assets/coins/dai.svg';
+import usdeLogo from '../assets/coins/usde.svg';
+import usddLogo from '../assets/coins/usdd.svg';
+import usdyLogo from '../assets/coins/usdy.webp';
 
 export const SWAPPED_EDITORIAL_INTRO = 'En los mercados de criptomonedas, donde los precios cambian drásticamente en cuestión de minutos, necesitas un refugio seguro para proteger el valor de tus activos. Por eso existen las stablecoins para salvarte. USDC destaca especialmente—es el resultado de la colaboración entre Circle y Coinbase. Se ha convertido en la base de DeFi en todas las blockchains.';
 
@@ -86,38 +98,16 @@ export const SWAPPED_FAQS = [
 ];
 
 export const SWAPPED_MORE_CRYPTOS = [
-  { name: 'Bitcoin', ticker: 'BTC', color: '#f7931a' },
-  { name: 'Ethereum', ticker: 'ETH', color: '#627eea' },
-  { name: 'Solana', ticker: 'SOL', color: '#9945ff' },
-  { name: 'Litecoin', ticker: 'LTC', color: '#345d9d' },
-  { name: 'Dogecoin', ticker: 'DOGE', color: '#c2a633' },
-  { name: 'Ripple', ticker: 'XRP', color: '#25a4e8' },
-  { name: 'Bitcoin Cash', ticker: 'BCH', color: '#0ac18e' },
-  { name: 'Tron', ticker: 'TRX', color: '#ff0013' },
-  { name: 'Chainlink', ticker: 'LINK', color: '#2a5ada' },
-  { name: 'Toncoin', ticker: 'TON', color: '#0098ea' },
-  { name: 'USDT', ticker: 'USDT', color: '#26a17b' },
-  { name: 'Dai', ticker: 'DAI', color: '#f5ac37' },
-  { name: 'Polygon', ticker: 'POL', color: '#8247e5' },
-  { name: 'Cardano', ticker: 'ADA', color: '#0033ad' },
-  { name: 'Cosmos', ticker: 'ATOM', color: '#2e3148' },
-  { name: 'Avalanche', ticker: 'AVAX', color: '#e84142' },
-  { name: 'ApeCoin', ticker: 'APE', color: '#0055ff' },
-  { name: 'Arbitrum', ticker: 'ARB', color: '#28a0f0' },
-  { name: 'Optimism', ticker: 'OP', color: '#ff0420' },
-  { name: 'Sandbox', ticker: 'SAND', color: '#00aeff' },
-  { name: 'Shiba Inu', ticker: 'SHIB', color: '#ff6b35' },
-  { name: 'Uniswap', ticker: 'UNI', color: '#ff007a' },
-  { name: 'Worldcoin', ticker: 'WLD', color: '#555555' },
-  { name: 'Osmosis', ticker: 'OSMO', color: '#5e12a3' },
-  { name: 'Hyperliquid', ticker: 'HYPE', color: '#26e0a0' },
-  { name: 'Binance Coin', ticker: 'BNB', color: '#f0b90b' },
-  { name: 'Trust Wallet Token', ticker: 'TWT', color: '#3375bb' },
-  { name: 'PAX Gold', ticker: 'PAXG', color: '#d4af37' },
-  { name: 'Tether Gold', ticker: 'XAUt', color: '#c9a227' },
-  { name: 'Monad', ticker: 'MON', color: '#836ef9' },
-  { name: 'Cronos', ticker: 'CRO', color: '#002d74' },
-  { name: 'USDH', ticker: 'USDH', color: '#2e8b57' },
+  { name: 'Tether', ticker: 'USDT', logo: usdtLogo },
+  { name: 'USD Coin', ticker: 'USDC', logo: usdcLogo },
+  { name: 'Sky Dollar', ticker: 'USDS', color: '#555555' },
+  { name: 'Dai', ticker: 'DAI', logo: daiLogo },
+  { name: 'Ethena USDe', ticker: 'USDe', logo: usdeLogo },
+  { name: 'PayPal USD', ticker: 'PYUSD', logo: pyusdLogo },
+  { name: 'Global Dollar', ticker: 'USDG', color: '#555555' },
+  { name: 'Ripple USD', ticker: 'RLUSD', color: '#555555' },
+  { name: 'USDD', ticker: 'USDD', logo: usddLogo },
+  { name: 'Ondo USDY', ticker: 'USDY', logo: usdyLogo },
 ];
 
 export const SWAPPED_METHODS = ['Apple Pay', 'Card', 'Google Pay', 'PaySafeCard', 'Bank Transfer', 'Skrill', 'Rapid Transfer', '+24 more'];
