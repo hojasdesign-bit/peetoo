@@ -13,11 +13,13 @@ body {
 }
 
 .topbar {
-  position: sticky; top: 0; z-index: 50;
+  /* Ya no fijo: acompaña a la página al bajar. Relative (no static)
+     para seguir siendo el ancla de los paneles absolutos del menú. */
+  position: relative; z-index: 50;
   background: var(--cds-bg);
   border-bottom: 1px solid var(--cds-border);
   display: flex; flex-direction: column; align-items: stretch;
-  max-width: none; margin: 0 auto; padding: 12px 24px;
+  max-width: none; margin: 0 auto; padding: 20px 32px;
 }
 /* Fila en tres zonas iguales (1fr auto 1fr): el menú queda centrado
    de verdad, el logo a la izquierda y Demo + Login a la derecha. */
@@ -447,7 +449,7 @@ body {
 
 .app-footer { border-top: 1px solid var(--cds-border); margin-top: 32px; }
 .foot-inner {
-  max-width: none; margin: 0 auto; padding: 16px 24px;
+  max-width: none; margin: 0 auto; padding: 24px 32px;
   display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
   font-size: 12px; color: var(--cds-muted);
 }
