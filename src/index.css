@@ -80,7 +80,7 @@ body {
    también anula el estirado, así que llevan ancho definido (con el
    max-width 1200 + centrado intactos en escritorio). */
 .topbar, .shell, .swapped-stage, .app-footer { min-width: 0; width: 100%; }
-.swapped-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 40px; max-width: 1120px; margin: 0 auto; padding: 40px 24px 60px; }
+.swapped-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 40px; max-width: 1120px; margin: 0 auto; padding: 90px 24px 60px; } /* aire arriba como la original: el título cae a ~223px como en swapped.com */
 .swapped-stage iframe { width: 382px; max-width: 100%; height: 500px; border: 0; border-radius: 28px; background: #fff; }
 /* El toggle de la página hereda el ancho del widget; el selector con
    dos clases vence al ancho 100% del módulo del SegmentedControl. */
