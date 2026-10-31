@@ -144,7 +144,7 @@ body {
    (los selectores con dos clases vencen al módulo del DS). Sin chip
    de moneda encima: la página es genérica, así que el título arranca
    a la altura del widget, no 59px más abajo como en la de USDC. */
-.swapped-hero-text h1 { font-size: 60px; line-height: 70px; margin: 0; }
+.swapped-hero-text h1 { font-size: 48px; line-height: 60px; margin: 0; } /* mismo puntaje que el título Crypto del mercado */
 .swapped-hero-text p { font-size: 16px; line-height: 22px; color: #f5f5f5; margin: 0; }
 [data-theme="claro"] .swapped-hero-text p { color: #4a4d59; }
 /* Pasos: título de sección 24/600; tarjetas en columna (sin fondo)
