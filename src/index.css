@@ -19,7 +19,7 @@ body {
   background: var(--cds-bg);
   border-bottom: 1px solid var(--cds-border);
   display: flex; flex-direction: column; align-items: stretch;
-  max-width: none; margin: 0 auto; padding: 20px 32px;
+  max-width: none; margin: 0 auto; padding: 20px 48px;
 }
 /* Fila en tres zonas iguales (1fr auto 1fr): el menú queda centrado
    de verdad, el logo a la izquierda y Demo + Login a la derecha. */
@@ -449,7 +449,7 @@ body {
 
 .app-footer { border-top: 1px solid var(--cds-border); margin-top: 32px; }
 .foot-inner {
-  max-width: none; margin: 0 auto; padding: 24px 32px;
+  max-width: none; margin: 0 auto; padding: 24px 48px;
   display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
   font-size: 12px; color: var(--cds-muted);
 }
