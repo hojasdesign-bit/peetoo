@@ -498,6 +498,37 @@ body {
 }
 [data-theme="claro"] .filters-mobile-currency { background: #ffffff; color: #101010; border-color: rgba(0, 0, 0, 0.14); }
 
+/* Selects nativos con chevron propio (igual que el Select del DS):
+   sin apariencia del navegador, chevron a 16px del borde y foco
+   violeta como los demás inputs (antes el foco dibujaba un outline
+   casi negro y el chevron era el del navegador, pegado al borde). */
+.filter-sort,
+.more-filters-field select,
+.filters-mobile-currency {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 44px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23a1a1a1' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px 16px;
+}
+.filter-sort:focus,
+.more-filters-field select:focus,
+.filters-mobile-currency:focus {
+  outline: none;
+  border-color: var(--cds-accent);
+  box-shadow: var(--cds-focus-ring);
+}
+[data-theme="claro"] .filter-sort,
+[data-theme="claro"] .more-filters-field select,
+[data-theme="claro"] .filters-mobile-currency {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%236b7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px 16px;
+}
+
 /* el botón Más filtros es cuadrado (50×50) en escritorio y móvil. */
 .market .filters .filter-more { width: 50px; height: 50px; padding: 0; }
 
