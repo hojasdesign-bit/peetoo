@@ -903,6 +903,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               </button>
             </span>
             <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
+            {/* Botón de login, sin acción por el momento */}
+            <button type="button" className="topbar-login">Login</button>
           </span>
           <button
             type="button"
@@ -982,6 +984,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               </div>
             )}
             <span className="drawer-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
+            {/* Botón de login, sin acción por el momento */}
+            <button type="button" className="drawer-login">Login</button>
           </nav>
         )}
       </header>

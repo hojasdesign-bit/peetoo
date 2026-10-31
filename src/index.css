@@ -35,6 +35,18 @@ body {
 }
 .buy-menu-btn:hover, .buy-menu-btn-open, .fiat-menu-btn:hover, .fiat-menu-btn-open, .swapped-menu-btn:hover, .swapped-menu-btn-open { color: var(--cds-accent-hover); }
 
+/* Botón de login del header (sin acción por el momento): píldora con
+   borde, 40px, mismo texto 16px/500 que los disparadores de menú. */
+.topbar-login {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 40px; padding: 0 20px; flex: none;
+  font: inherit; font-size: 16px; font-weight: 500; line-height: 22px;
+  color: var(--cds-ink); background: transparent;
+  border: 1px solid var(--cds-border-strong); border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+}
+.topbar-login:hover { border-color: var(--cds-accent); color: var(--cds-accent-hover); }
+
 /* Enlace del header a la página del widget de Swapped: mismo tratamiento
    que los disparadores de menú (16px/500, hover violeta). */
 .topbar-link {
@@ -67,6 +79,15 @@ body {
   .drawer-link { font-size: 16px; font-weight: 500; line-height: 22px; color: var(--cds-ink); text-decoration: none; padding: 12px 6px; }
   .drawer-link:hover { color: var(--cds-accent-hover); }
   .drawer-demo { padding: 12px 6px 4px; }
+  .drawer-login {
+    width: 100%; height: 48px; margin-top: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font: inherit; font-size: 16px; font-weight: 500; line-height: 22px;
+    color: var(--cds-ink); background: transparent;
+    border: 1px solid var(--cds-border-strong); border-radius: 16px;
+    cursor: pointer;
+  }
+  .drawer-login:hover { border-color: var(--cds-accent); color: var(--cds-accent-hover); }
 }
 
 /* Vista del widget de Swapped: la app es columna a alto completo para
