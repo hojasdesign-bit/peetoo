@@ -170,6 +170,10 @@ píldora), también pendiente de subir al DS.
   antiguo (precio unitario + límite) se eliminó por duplicado.
 - Las píldoras del SwapPair muestran la imagen de la moneda cuando existe
   (si no, la letra) y no llevan flecha cuando no son desplegables.
+  La pata fiat (par de la fila y píldoras del modal) es método + moneda:
+  si la combinación tiene tile propio en Comprar fiat, muestra su imagen
+  y su ticker (USDpp, USDzl, CuPdc...); si no, la foto y el código de
+  la moneda. Las cantidades y la tasa siguen en código de moneda.
 - El campo Das muestra estado de error (borde rojo) cuando el monto escrito
   no es válido.
 - Divergencias vendorizadas pendientes de posible port al DS (solo en la

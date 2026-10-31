@@ -706,9 +706,18 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
   // el verbo, la dirección del par y el precio salen de la oferta misma
   // (sin filtro de cantidad del mercado) y la celda de anunciante no
   // enlaza a sí misma.
+  // La pata fiat de una oferta es método + moneda: si esa combinación
+  // tiene tile propio en Comprar fiat, la pata se dibuja con la imagen
+  // y el ticker del tile (USDpp, USDzl, CuPdc...); si no, con la foto
+  // y el código de la moneda.
+  const fiatLegAsset = (o) => {
+    const tile = fiatDropdown.coins.find((c) => c.method === o.payment_method && c.currency === o.sell_currency);
+    return tile ? { code: tile.code, symbol: tile.symbol, color: tile.color, src: tile.src } : ASSETS[o.sell_currency];
+  };
+
   const renderOfferRow = (o, inProfile = false) => (
     <div key={o.id} className="offer-row" role="row">
-      <div className="offer-cell offer-pair" role="cell"><AssetPair from={ASSETS[o.sell_currency]} to={ASSETS[o.buy_currency]} reverse={inProfile ? o.side === 'sell' : effectiveSide === 'sell'} size={44} /></div>
+      <div className="offer-cell offer-pair" role="cell"><AssetPair from={fiatLegAsset(o)} to={ASSETS[o.buy_currency]} reverse={inProfile ? o.side === 'sell' : effectiveSide === 'sell'} size={44} /></div>
       <div className="offer-cell offer-amounts" role="cell">
         <div className="amount">{fmt(o.available)} {o.buy_currency} {o.deposit_made && DepositIcon}</div>
         <div className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</div>
@@ -1603,8 +1612,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               <SwapPair
                 payLabel="Das"
                 receiveLabel="Recibes"
-                payCurrency={ASSETS[swapDasCode]}
-                receiveCurrency={ASSETS[swapRecibesCode]}
+                payCurrency={swapDasCode === selected.sell_currency ? fiatLegAsset(selected) : ASSETS[swapDasCode]}
+                receiveCurrency={swapRecibesCode === selected.sell_currency ? fiatLegAsset(selected) : ASSETS[swapRecibesCode]}
                 payAmount={modalAmount}
                 onPayAmountChange={(e) => setModalAmount(e.target.value.replace(/[^0-9.]/g, ''))}
                 receiveAmount={fmt(swapRecibesAmt)}
