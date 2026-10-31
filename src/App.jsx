@@ -324,14 +324,15 @@ export default function App() {
   // va en la fila del header y el panel contiene las dos secciones
   // desplegables + el enlace a Swapped + la insignia Demo.
   const [hamburgerOpen, setHamburgerOpen] = React.useState(false);
-  // Pie compartida del submenú Swapped (escritorio y cajón móvil):
-  // enlaces informativos sin acción + redes de ejemplo.
-  const closeSwappedFoot = (e) => { e.preventDefault(); setSwappedMenuOpen(false); setHamburgerOpen(false); };
-  const renderSwappedFoot = (wrapClass) => (
+  // Pie de enlaces informativos sin acción + redes de ejemplo:
+  // en escritorio cierra el panel Swapped; en móvil es el bloque único
+  // fuera de los submenús, dentro del cajón.
+  const closeInfoFoot = (e) => { e.preventDefault(); setSwappedMenuOpen(false); setHamburgerOpen(false); };
+  const renderInfoFoot = (wrapClass) => (
     <div className={wrapClass}>
       <span className="swapped-foot-links">
         {INFO_LINKS.map((link) => (
-          <a key={link.label} href="#" className="swapped-foot-link" role="menuitem" onClick={closeSwappedFoot}>
+          <a key={link.label} href="#" className="swapped-foot-link" role="menuitem" onClick={closeInfoFoot}>
             {link.label}
           </a>
         ))}
@@ -339,7 +340,7 @@ export default function App() {
       <span className="swapped-foot-socials">
         <span className="swapped-foot-follow">Seguir</span>
         {EXAMPLE_SOCIALS.map((social) => (
-          <a key={social.label} href="#" className="swapped-foot-btn" aria-label={social.label} onClick={closeSwappedFoot}>
+          <a key={social.label} href="#" className="swapped-foot-btn" aria-label={social.label} onClick={closeInfoFoot}>
             {social.icon}
           </a>
         ))}
@@ -975,7 +976,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               <span className="swapped-card-title">Vender</span>
               <span className="swapped-card-desc">Vende tu cripto y recibe el dinero con tu método de pago preferido.</span>
             </button>
-            {renderSwappedFoot('swapped-panel-foot')}
+            {renderInfoFoot('swapped-panel-foot')}
           </div>
         )}
         {hamburgerOpen && isNarrow && (
@@ -990,7 +991,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               <span className={`drawer-chev ${buyMenuOpen ? 'drawer-chev-open' : ''}`} aria-hidden="true" />
             </button>
             {buyMenuOpen && (
-              <DropdownMenu dropdown={buyDropdown} mobile open={buyMenuOpen} onNavigate={onBuyMenuNavigate} />
+              <DropdownMenu dropdown={{ ...buyDropdown, links: buyDropdown.links.filter((l) => !INFO_LINKS.includes(l)), socials: undefined }} mobile open={buyMenuOpen} onNavigate={onBuyMenuNavigate} />
             )}
             <button
               type="button"
@@ -1002,7 +1003,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               <span className={`drawer-chev ${fiatMenuOpen ? 'drawer-chev-open' : ''}`} aria-hidden="true" />
             </button>
             {fiatMenuOpen && (
-              <DropdownMenu dropdown={fiatDropdown} mobile open={fiatMenuOpen} onNavigate={onFiatMenuNavigate} />
+              <DropdownMenu dropdown={{ ...fiatDropdown, links: fiatDropdown.links.filter((l) => !INFO_LINKS.includes(l)), socials: undefined }} mobile open={fiatMenuOpen} onNavigate={onFiatMenuNavigate} />
             )}
             <button
               type="button"
@@ -1013,7 +1014,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               Swapped
               <span className={`drawer-chev ${swappedMenuOpen ? 'drawer-chev-open' : ''}`} aria-hidden="true" />
             </button>
-            {swappedMenuOpen && (<>
+            {swappedMenuOpen && (
               <div className="swapped-drawer-cards">
                 <button type="button" className="swapped-card" onClick={() => goSwappedSide('buy')}>
                   <span className="swapped-card-title">Comprar</span>
@@ -1024,9 +1025,9 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   <span className="swapped-card-desc">Vende tu cripto y recibe el dinero con tu método de pago preferido.</span>
                 </button>
               </div>
-              {renderSwappedFoot('drawer-swapped-foot')}
-              </>
             )}
+            {/* En móvil, enlaces y redes una sola vez, fuera de los submenús */}
+            {renderInfoFoot('drawer-info-foot')}
             <span className="drawer-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
             {/* Botón de login, sin acción por el momento */}
             <button type="button" className="drawer-login">Login</button>

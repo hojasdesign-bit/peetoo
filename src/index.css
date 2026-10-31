@@ -66,9 +66,15 @@ body {
    línea como antes. */
 .topbar-burger { display: none; }
 @media (max-width: 720px) {
-  .topbar-row { display: flex; justify-content: space-between; }
+  /* En móvil el Login NO se esconde: queda en la fila junto a la
+     hamburguesa (logo a la izquierda, Login + hamburguesa a la
+     derecha). Solo se ocultan los menús y la insignia Demo. El lateral
+     del header baja de 64px a 32px para que los tres quepan a 360px. */
+  .topbar { padding: 20px 32px; }
+  .topbar-row { display: flex; justify-content: space-between; gap: 12px; }
   .topbar-center { display: none; }
-  .topbar-right { display: none; }
+  .topbar-right { display: flex; margin-left: auto; }
+  .topbar-demo { display: none; }
   .topbar-burger {
     display: inline-flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
     width: 40px; height: 40px; flex: none;
@@ -300,8 +306,8 @@ body {
 .swapped-foot-follow { font-size: 16px; line-height: 22px; color: var(--cds-muted); }
 .swapped-foot-btn { color: var(--cds-ink); display: inline-flex; line-height: 0; }
 .swapped-foot-btn:hover { color: var(--cds-accent-hover); }
-/* Misma pie en el cajón móvil, apilada. */
-.drawer-swapped-foot {
+/* Bloque único de enlaces y redes en el cajón móvil, apilado. */
+.drawer-info-foot {
   display: flex; flex-direction: column; gap: 12px;
   border-top: 1px solid var(--cds-border); padding: 12px 6px 4px; margin-top: 4px;
 }
