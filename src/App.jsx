@@ -865,7 +865,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
           <span className="brand">
             <img src={logoUrl} alt="Zeroo" className="logo-img" />
           </span>
-          <span className="topbar-right">
+          <span className="topbar-center">
             <span className="buy-menu" onMouseEnter={openBuyMenu}>
               <button
                 type="button"
@@ -902,6 +902,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                 <span className="swapped-menu-chev" aria-hidden="true" />
               </button>
             </span>
+          </span>
+          <span className="topbar-right">
             <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
             {/* Botón de login, sin acción por el momento */}
             <button type="button" className="topbar-login">Login</button>
