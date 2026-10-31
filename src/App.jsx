@@ -398,7 +398,7 @@ export default function App() {
       { symbol: 'E', color: '#030364', label: 'Comprar Etecsa', code: 'CuPetec', src: etecsaIcon, method: 'Etecsa', currency: 'CUP' },
       { symbol: '$', color: '#D80621', label: 'Comprar CAD', code: 'CADcash', src: cadPng },
       { symbol: '$', color: '#2E7D32', label: 'Comprar Clásica', code: 'USDcls', src: usdPng, method: 'Clásica', currency: 'USD' },
-      { symbol: '$', color: '#2E7D32', label: 'Comprar MLC', code: 'USDmlc', src: usdPng },
+      { symbol: '$', color: '#2E7D32', label: 'Comprar MLC', code: 'MLC', src: usdPng, method: 'Transferencia Bancaria', currency: 'USD' },
       { symbol: '$', color: '#2E7D32', label: 'Comprar Qvapay', code: 'USDqp', src: usdPng, method: 'Qvapay', currency: 'USD' },
       { symbol: 'T', color: '#f5cc4e', label: 'Comprar TropiPay', code: 'USDtp', src: tropipayIcon, method: 'TropiPay', currency: 'USD' },
       // Último tile: quita solo el filtro de fiat (código vacío → rama
@@ -426,10 +426,10 @@ export default function App() {
   const fiatFilter = (code) => {
     const coin = fiatDropdown.coins.find((c) => c.code === code) || {};
     // Par del tile si lo trae; si no, moneda = ticker (o su moneda
-    // cash) y método abierto. Transferencia ya aclarada (ticker
-    // CuPdc, moneda CUP, método Transferencia Bancaria); pendientes
-    // Etecsa, Clásica, MLC y Zelle.
-    const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP', EURcash: 'EUR', MXNcash: 'MXN', CADcash: 'CAD', CuPetec: 'CUP', USDcls: 'USD', USDmlc: 'USD', USDqp: 'USD', USDtp: 'USD' };
+    // cash) y método abierto. MLC es el ticker de USD por
+    // Transferencia Bancaria; Etecsa, Clásica, Qvapay, TropiPay y
+    // Zelle ya están aclaradas como métodos.
+    const cashToCurrency = { USDcash: 'USD', CuPcash: 'CUP', EURcash: 'EUR', MXNcash: 'MXN', CADcash: 'CAD', CuPetec: 'CUP', USDcls: 'USD', USDqp: 'USD', USDtp: 'USD' };
     clearFilters();
     // La fiat comprada va en el lado Comprar: campos intercambiados y
     // toggle en Comprar → lado efectivo venta → mismos resultados.
