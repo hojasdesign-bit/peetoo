@@ -86,8 +86,9 @@ producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
 
 Todo lo que ves son **datos de solo muestra**: 84 ofertas demo, una por
 cada par crypto×fiat (7 cryptos × 6 fiats) en compra y en venta, con un
-único método de pago por oferta y las redes rotadas para que cada red
-aparezca con cada crypto. Los anunciantes son ficticios, sin
+único método de pago por oferta (solo 4: Efectivo, PayPal, Transferencia
+Bancaria y Zelle; MLC siempre por Transferencia Bancaria) y las redes
+rotadas para que cada red aparezca con cada crypto. Los anunciantes son ficticios, sin
 carteras ni datos personales, y los precios siguen la convención demo
 (~1,0x), no son tasas reales. Tiles de fiat aclarados: Etecsa es CUP
 (ticker CuPetec), Clásica es USD (USDcls), MLC es USD (USDmlc) y
