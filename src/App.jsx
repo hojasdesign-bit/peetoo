@@ -41,6 +41,11 @@ import etecsaIcon from './assets/coins/etecsa.svg';
 import usatIcon from './assets/coins/usat.svg';
 import { cupPng, usdPng, eurPng, mxnPng, cadPng } from './assets/coins/fiat-images.js';
 import placeholderGenericIcon from './assets/coins/placeholder-generic.svg';
+import { HomePage } from './views/HomePages.jsx';
+const SwappedView = React.lazy(() => import('./views/SwappedView.jsx'));
+const ProfileView = React.lazy(() => import('./views/ProfileView.jsx'));
+const LegalPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.LegalPage })));
+const GlossaryPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.GlossaryPage })));
 
 /**
  * peetoo · Mercado Crypto.
@@ -62,34 +67,6 @@ const abbrevNum = (n) => {
   return fmt2(n);
 };
 const uniq = (arr) => [...new Set(arr)].sort();
-const CopyIcon = (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M7.5 14.5C7.5 11.2002 7.5 9.55025 8.52513 8.52513C9.55025 7.5 11.2002 7.5 14.5 7.5C17.7998 7.5 19.4497 7.5 20.4749 8.52513C21.5 9.55025 21.5 11.2002 21.5 14.5C21.5 17.7998 21.5 19.4497 20.4749 20.4749C19.4497 21.5 17.7998 21.5 14.5 21.5C11.2002 21.5 9.55025 21.5 8.52513 20.4749C7.5 19.4497 7.5 17.7998 7.5 14.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M7.5 16.5C6.10355 16.5 5.40533 16.5 4.84402 16.3036C3.83866 15.9518 3.0482 15.1613 2.69641 14.156C2.5 13.5947 2.5 12.8964 2.5 11.5V9.5C2.5 6.20017 2.5 4.55025 3.52513 3.52513C4.55025 2.5 6.20017 2.5 9.5 2.5H11.5C12.8964 2.5 13.5947 2.5 14.156 2.69641C15.1613 3.0482 15.9518 3.83866 16.3036 4.84402C16.5 5.40533 16.5 6.10355 16.5 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-const QrIcon = (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M3 6C3 4.58579 3 3.87868 3.43934 3.43934C3.87868 3 4.58579 3 6 3C7.41421 3 8.12132 3 8.56066 3.43934C9 3.87868 9 4.58579 9 6C9 7.41421 9 8.12132 8.56066 8.56066C8.12132 9 7.41421 9 6 9C4.58579 9 3.87868 9 3.43934 8.56066C3 8.12132 3 7.41421 3 6Z" stroke="currentColor" strokeWidth="1.5"/>
-<path d="M3 18C3 16.5858 3 15.8787 3.43934 15.4393C3.87868 15 4.58579 15 6 15C7.41421 15 8.12132 15 8.56066 15.4393C9 15.8787 9 16.5858 9 18C9 19.4142 9 20.1213 8.56066 20.5607C8.12132 21 7.41421 21 6 21C4.58579 21 3.87868 21 3.43934 20.5607C3 20.1213 3 19.4142 3 18Z" stroke="currentColor" strokeWidth="1.5"/>
-<path d="M3 12L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M12 3V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M15 6C15 4.58579 15 3.87868 15.4393 3.43934C15.8787 3 16.5858 3 18 3C19.4142 3 20.1213 3 20.5607 3.43934C21 3.87868 21 4.58579 21 6C21 7.41421 21 8.12132 20.5607 8.56066C20.1213 9 19.4142 9 18 9C16.5858 9 15.8787 9 15.4393 8.56066C15 8.12132 15 7.41421 15 6Z" stroke="currentColor" strokeWidth="1.5"/>
-<path d="M21 12H15C13.5858 12 12.8787 12 12.4393 12.4393C12 12.8787 12 13.5858 12 15M12 17.7692V20.5385M15 15V16.5C15 17.9464 15.7837 18 17 18C17.5523 18 18 18.4477 18 19M16 21H15M18 15C19.4142 15 20.1213 15 20.5607 15.44C21 15.8799 21 16.5881 21 18.0043C21 19.4206 21 20.1287 20.5607 20.5687C20.24 20.8898 19.7767 20.9766 19 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-  </svg>
-);
-const CheckIcon = (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z" stroke="currentColor" strokeWidth="1.5" />
-    <path d="M8 12.75C8 12.75 9.6 13.6625 10.4 15C10.4 15 12.8 9.75 16 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-const LocationIcon = (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M13.6177 21.367C13.1841 21.773 12.6044 22 12.0011 22C11.3978 22 10.8182 21.773 10.3845 21.367C6.41302 17.626 1.09076 13.4469 3.68627 7.37966C5.08963 4.09916 8.45834 2 12.0011 2C15.5439 2 18.9126 4.09916 20.316 7.37966C22.9082 13.4393 17.599 17.6389 13.6177 21.367Z" stroke="currentColor" strokeWidth="1.5" />
-    <path d="M15.5 11C15.5 12.933 13.933 14.5 12 14.5C10.067 14.5 8.5 12.933 8.5 11C8.5 9.067 10.067 7.5 12 7.5C13.933 7.5 15.5 9.067 15.5 11Z" stroke="currentColor" strokeWidth="1.5" />
-  </svg>
-);
 const toTrader = (o) => ({
   name: o.advertiser_name,
   verified: o.advertiser_verified,
@@ -145,17 +122,35 @@ export default function App() {
   // que describe resultados (filtro, verbo, dirección del par) usa
   // effectiveSide; solo el SegmentedControl muestra side.
   const effectiveSide = cascadesSwapped ? (side === 'buy' ? 'sell' : 'buy') : side;
-  // Vista: 'market', 'swapped', 'profile', 'legal' o 'glossary'.
-  // /swapped, /perfil/:nombre, /legal y /glosario son vistas de la app
+  // Vista: 'home', 'market', 'swapped', 'profile', 'legal' o 'glossary'.
+  // /crypto/swapped, /crypto/perfil/:nombre, /crypto/legal y /crypto/glosario son vistas de la app
   // (no páginas estáticas): así mantienen el header y los enlaces se
   // comportan igual que en el mercado. La vista inicial sale de la URL
   // para que todas abran directas.
+  // Rutas: la raíz (/) es la homepage (una por dominio: la principal en
+  // peetoo.pages.dev y la del mercado en app.peetoo.pages.dev) y el
+  // mercado vive bajo /crypto/. Las URLs viejas (/swapped, /perfil/...,
+  // /legal, /glosario) redirigen a su equivalente bajo /crypto/ para que
+  // ningún enlace compartido se rompa. Todo con replaceState: no añade
+  // entradas al historial. La vista inicial ya sale normalizada, así que
+  // no hay parpadeo aunque la redirección ocurra durante el primer render.
   const pathToView = () => {
-    const path = window.location.pathname.replace(/\.html$/, '');
-    if (path === '/swapped') return { view: 'swapped', profile: '' };
-    if (path === '/legal') return { view: 'legal', profile: '' };
-    if (path === '/glosario') return { view: 'glossary', profile: '' };
-    const m = path.match(/^\/perfil\/(.+)$/);
+    let path = window.location.pathname.replace(/\.html$/, '');
+    if (path.length > 1) path = path.replace(/\/$/, '');
+    if (path === '/') return { view: 'home', profile: '' };
+    if (path === '/crypto') {
+      window.history.replaceState(null, '', '/crypto/');
+      return { view: 'market', profile: '' };
+    }
+    if (path === '/swapped' || path === '/legal' || path === '/glosario' || path.startsWith('/perfil/')) {
+      window.history.replaceState(null, '', `/crypto${path}`);
+      path = `/crypto${path}`;
+    }
+    const inner = path.startsWith('/crypto/') ? path.slice('/crypto'.length) : path;
+    if (inner === '/swapped') return { view: 'swapped', profile: '' };
+    if (inner === '/legal') return { view: 'legal', profile: '' };
+    if (inner === '/glosario') return { view: 'glossary', profile: '' };
+    const m = inner.match(/^\/perfil\/(.+)$/);
     if (m) return { view: 'profile', profile: decodeURIComponent(m[1]) };
     return { view: 'market', profile: '' };
   };
@@ -179,7 +174,7 @@ export default function App() {
   const goSwapped = (e) => {
     if (e) e.preventDefault();
     if (view === 'swapped') return;
-    window.history.pushState(null, '', '/swapped');
+    window.history.pushState(null, '', '/crypto/swapped');
     setView('swapped');
   };
   // Tarjetas del menú Swapped: llevan a la misma página (/swapped) con
@@ -197,7 +192,7 @@ export default function App() {
   const goInfoPage = (path, viewName) => {
     setBuyMenuOpen(false); setFiatMenuOpen(false); setSwappedMenuOpen(false); setHamburgerOpen(false);
     setQrModal(null);
-    window.history.pushState(null, '', path);
+    window.history.pushState(null, '', `/crypto${path}`);
     setView(viewName);
     window.scrollTo(0, 0);
   };
@@ -205,9 +200,9 @@ export default function App() {
   // primero navega; el mercado se renderiza tras el cambio de estado y
   // el desplazamiento lo hace el efecto de abajo.
   const goToMarket = () => {
-    if (view === 'swapped' || view === 'profile' || view === 'legal' || view === 'glossary') {
+    if (view === 'home' || view === 'swapped' || view === 'profile' || view === 'legal' || view === 'glossary') {
       pendingMarketScroll.current = true;
-      window.history.pushState(null, '', '/');
+      window.history.pushState(null, '', '/crypto/');
       setView('market');
       setQrModal(null);
     } else {
@@ -222,7 +217,7 @@ export default function App() {
     setProfileName(name);
     setProfilePage(1);
     setQrModal(null);
-    window.history.pushState(null, '', `/perfil/${encodeURIComponent(name)}`);
+    window.history.pushState(null, '', `/crypto/perfil/${encodeURIComponent(name)}`);
     setView('profile');
     window.scrollTo(0, 0);
   };
@@ -816,7 +811,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
         <div className="sub">{inProfile ? `1 ${o.buy_currency}` : priceNote(o)}</div>
       </div>
       <div className="offer-cell offer-chains" role="cell">{inProfile ? renderChains(o, 'all') : renderChains(o)}</div>
-      <div className="offer-cell offer-trader" role="cell">{inProfile ? <TraderCell trader={toTrader(o)} /> : <TraderCell trader={toTrader(o)} href={`/perfil/${o.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(o.advertiser_name); }} />}</div>
+      <div className="offer-cell offer-trader" role="cell">{inProfile ? <TraderCell trader={toTrader(o)} /> : <TraderCell trader={toTrader(o)} href={`/crypto/perfil/${o.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(o.advertiser_name); }} />}</div>
       <div className="offer-cell offer-actions" role="cell"><Button size="md" onClick={() => openModal(o)}>{inProfile ? (o.side === 'buy' ? 'Comprar' : 'Vender') : verb} {o.buy_currency}</Button></div>
     </div>
   );
@@ -1062,422 +1057,16 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
         )}
       </header>
 
-      {view === 'swapped' ? (
-        <main className="swapped-stage">
-          <div className="swapped-layout">
-            {/* Resplandor violeta de la página de Swapped: un div
-                absoluto detrás del contenido, como su .glow. */}
-            <div className="swapped-glow" aria-hidden="true" />
-            <div className="swapped-hero-text">
-              {/* El toggle Comprar/Vender va aquí, sobre el título,
-                  en el lugar del chip USDC (símbolo y nombre repetidos,
-                  sin sentido): el chip queda eliminado. */}
-              <SegmentedControl
-                ariaLabel="Comprar o vender"
-                options={[{ value: 'buy', label: 'Comprar' }, { value: 'sell', label: 'Vender' }]}
-                value={swappedSide}
-                onChange={setSwappedSide}
-                className="swapped-toggle"
-              />
-              <div className="swapped-hero-copy">
-                <Heading level="h1">{swappedContent.title}</Heading>
-                <Text tone="muted">{swappedContent.description}</Text>
-              </div>
-            </div>
-            {swappedSide === 'buy' ? (
-              <iframe src="https://widget.swapped.com/?currencyCode=USDC" title="Widget de Swapped" allow="clipboard-write" />
-            ) : (
-              // Sin widget de venta que incrustar: la propia página de
-              // Swapped (/sell/usdc) muestra este mismo aviso — las
-              // ventas están desactivadas temporalmente.
-              <section className="swapped-sell" aria-label="Ventas desactivadas">
-                <h2 className="swapped-sell-title">Las ventas de criptomonedas están desactivadas temporalmente</h2>
-                <p className="swapped-sell-text">Estamos trabajando para recuperar esta función en un plazo de dos semanas. Aún puedes comprar criptomonedas al instante con tu método de pago preferido.</p>
-              </section>
-            )}
-            <div className="swapped-rest">
-            <section className="swapped-steps" aria-label={swappedContent.stepsTitle}>
-              <Heading level="h2">{swappedContent.stepsTitle}</Heading>
-              <div className="swapped-steps-grid">
-                {swappedContent.steps.map((s) => (
-                  <article className="swapped-step" key={s.title}>
-                    <div className="swapped-step-visual"><SwappedStepVisual variant={s.visual} /></div>
-                    <div className="swapped-step-body">
-                      <h3 className="swapped-step-title">{s.title}</h3>
-                      <p className="swapped-step-text">{s.text}</p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-            <section className="swapped-methods" aria-label="Métodos de pago populares">
-              <Heading level="h2">Métodos de pago populares</Heading>
-              <div className="swapped-methods-grid">
-                {SWAPPED_METHODS.map((m) => (
-                  <span className={`swapped-method-card${m.startsWith('+') ? ' swapped-method-more' : ''}`} key={m}>
-                    {!m.startsWith('+') && (
-                      <span className="swapped-method-icon"><SwappedMethodIcon method={m} /></span>
-                    )}
-                    <span className="swapped-method-name">{m}</span>
-                  </span>
-                ))}
-              </div>
-            </section>
-          <section className="swapped-editorial" aria-label="Sobre USDC">
-            <div className="swapped-editorial-block">
-              <p className="swapped-editorial-text">{SWAPPED_EDITORIAL_INTRO}</p>
-              <h3 className="swapped-editorial-heading">{SWAPPED_EDITORIAL[0].heading}</h3>
-              <div className="swapped-editorial-paras">
-                {SWAPPED_EDITORIAL[0].paras.map((para, i) => (
-                  <p className="swapped-editorial-text" key={i}>{para}</p>
-                ))}
-              </div>
-            </div>
-            {SWAPPED_EDITORIAL.slice(1).map((s) => (
-              <div className="swapped-editorial-block" key={s.heading}>
-                <h3 className="swapped-editorial-heading">{s.heading}</h3>
-                <div className="swapped-editorial-paras">
-                  {s.paras.map((para, i) => (
-                    <p className="swapped-editorial-text" key={i}>{para}</p>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </section>
-          <section className="swapped-stats" ref={swappedStatsRef} aria-label="Estadísticas de mercado de USDC">
-            <h3 className="swapped-stats-heading">USDC (USDC) market stats</h3>
-            <p className="swapped-stats-intro">{SWAPPED_STATS.intro}</p>
-            <div className="swapped-stats-grid">
-              {SWAPPED_STATS.cells.map((c) => (
-                <div className="swapped-stat-cell" key={c.label}>
-                  <span className="swapped-stat-label">{c.label}</span>
-                  <span className="swapped-stat-value">{c.value}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-          <section className="swapped-info-card" aria-label="Precio de USDC">
-            <h3 className="swapped-info-heading">Precio de USDC (USDC), gráficos y estadísticas</h3>
-            <p className="swapped-info-text">{SWAPPED_PRECIO_TEXT}</p>
-            <div className="swapped-info-links">
-              <button type="button" className="swapped-info-link" onClick={() => swappedStatsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Explorar ↗</button>
-              <button type="button" className="swapped-info-link" onClick={() => { setSwappedSide('sell'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Vender USDC ↗</button>
-            </div>
-          </section>
-          <section className="swapped-info-card" aria-label="Recursos sobre USDC">
-            <h3 className="swapped-info-heading">Relevant resources for USDC</h3>
-            <p className="swapped-info-text">{SWAPPED_RESOURCES_TEXT}</p>
-            <div className="swapped-info-links">
-              {SWAPPED_RESOURCES_LINKS.map((l) => (
-                <a className="swapped-info-link" key={l.label} href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>
-              ))}
-            </div>
-          </section>
-          <section className="swapped-faq" aria-label="Preguntas frecuentes sobre USDC">
-            <Heading level="h2">Preguntas frecuentes sobre USDC</Heading>
-            <div className="swapped-faq-list">
-              {SWAPPED_FAQS.map((f, i) => (
-                <article className="swapped-faq-card" key={f.q}>
-                  <button type="button" className="swapped-faq-question" aria-expanded={swappedFaqOpen === i} onClick={() => setSwappedFaqOpen(swappedFaqOpen === i ? -1 : i)}>
-                    <span>{f.q}</span>
-                    <span className="swapped-faq-chevron" aria-hidden="true" />
-                  </button>
-                  {swappedFaqOpen === i && <p className="swapped-faq-answer">{f.a}</p>}
-                </article>
-              ))}
-            </div>
-          </section>
-            </div>
-          </div>
-          <section className="swapped-more" aria-label="Más criptos que compran nuestros clientes">
-            <Heading level="h2">Más criptos que compran nuestros clientes</Heading>
-            <div className="swapped-more-grid">
-              {SWAPPED_MORE_CRYPTOS.map((c) => (
-                <span className="swapped-more-card" key={c.ticker}>
-                  <span className="swapped-more-disc" style={c.logo ? undefined : { backgroundColor: c.color }}>{c.logo ? <img className="swapped-more-logo" src={c.logo} alt="" /> : c.ticker[0]}</span>
-                  <span className="swapped-more-name">Comprar {c.name} ({c.ticker})</span>
-                </span>
-              ))}
-            </div>
-          </section>
-        </main>
+      {view === 'home' ? (
+        <HomePage goToMarket={goToMarket} />
+      ) : view === 'swapped' ? (
+      <React.Suspense fallback={null}><SwappedView swappedSide={swappedSide} setSwappedSide={setSwappedSide} swappedContent={swappedContent} swappedStatsRef={swappedStatsRef} swappedFaqOpen={swappedFaqOpen} setSwappedFaqOpen={setSwappedFaqOpen} /></React.Suspense>
       ) : view === 'profile' ? (
-      <main className="profile-shell">
-        <section className="profile" aria-label="Perfil del anunciante">
-          {profileTrader ? (
-            <>
-              <div className="profile-layout">
-                <aside className="profile-side">
-                  <div className="profile-cover">
-                    <div className="profile-cover-banner" aria-hidden="true" />
-                    <div className="profile-cover-identity">
-                      <Avatar name={profileTrader.name} size={80} ringScore={profileTrader.completion} />
-                      <div className="profile-cover-name-row">
-                        <h1 className="profile-name">{profileTrader.name}</h1>
-                        {profileTrader.verified && <VerifiedBadge variant={profileTrader.verification} size={18} />}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="profile-side-block">
-                    <h3 className="profile-side-title">Métodos de pago</h3>
-                    <ul className="profile-side-list">
-                      {profilePayMethods.map((m) => {
-                        const dest = PAYMENT_DETAILS[profileTrader.name]?.[m] || m;
-                        const canShare = m !== 'Efectivo';
-                        return (
-                          <li key={m} className="profile-side-pay-row">
-                            <div className="profile-side-pay-head">
-                              <div className="profile-side-pay-method">{m}</div>
-                              {canShare && (
-                                <span className="profile-side-pay-actions">
-                                  <button type="button" className="profile-pay-btn" aria-label={copiedMethod === m ? '¡Copiado!' : `Copiar ${m}`} title={copiedMethod === m ? '¡Copiado!' : 'Copiar'} onClick={() => handleCopy(m, dest)}>
-                                    {copiedMethod === m ? CheckIcon : CopyIcon}
-                                  </button>
-                                  <button type="button" className="profile-pay-btn" aria-label={`Mostrar QR de ${m}`} title="Mostrar QR" onClick={() => setQrModal(m)}>
-                                    {QrIcon}
-                                  </button>
-                                  {copiedMethod === m && <span className="profile-pay-copied">Copiado</span>}
-                                </span>
-                              )}
-                            </div>
-                            <div className="profile-side-pay-dest">{dest}</div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                  <div className="profile-side-block">
-                    <h3 className="profile-side-title">Disponibilidad</h3>
-                    <div className="profile-chips">
-                      {profileHasCash && <span className="profile-chip">Presencial</span>}
-                      {profileHasOnline && <span className="profile-chip">En línea</span>}
-                    </div>
-                  </div>
-                  <div className="profile-side-block">
-                    <h3 className="profile-side-title">Ubicaciones</h3>
-                    {profileCashCities.length > 0 ? (
-                      <div className="profile-loc-scroll">
-                        {profileCashCities.map((city) => (
-                          <figure key={city} className="profile-loc-card">
-                            <img src={LOCATION_PRECISION[profileTrader.name] === 'exact' ? mapPinImg : mapZoneImg} alt={`Mapa de ${city}`} className="profile-loc-img" />
-                            <figcaption className="profile-loc-caption">{city} · {LOCATION_PRECISION[profileTrader.name] === 'exact' ? 'Punto exacto' : 'Zona aproximada'}</figcaption>
-                          </figure>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="profile-side-text">Sin ofertas presenciales</p>
-                    )}
-                  </div>
-                  <div className="profile-side-block">
-                    <h3 className="profile-side-title">Ofertas por moneda</h3>
-                    <ul className="profile-side-list">
-                      {(showAllCryptos ? profileCryptoCounts : profileCryptoCounts.slice(0, 3)).map((c) => (
-                        <li key={c.code} className="profile-side-row">
-                          {ASSETS[c.code]?.src ? <img src={ASSETS[c.code].src} alt="" className="profile-side-coin-img" /> : <span className="profile-side-coin" style={{ background: ASSETS[c.code]?.color }}>{ASSETS[c.code]?.symbol || c.code[0]}</span>}
-                          <span className="profile-side-code">{c.code}</span>
-                          <span className="profile-side-count">{c.count} {c.count === 1 ? 'oferta' : 'ofertas'}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    {profileCryptoCounts.length > 3 && (
-                      <button type="button" className="profile-side-more" onClick={() => setShowAllCryptos((v) => !v)}>
-                        {showAllCryptos ? 'Ver menos' : `Ver ${profileCryptoCounts.length - 3} más`}
-                      </button>
-                    )}
-                  </div>
-                  <div className="profile-side-block">
-                    <h3 className="profile-side-title">Ofertas por fiat</h3>
-                    <ul className="profile-side-list">
-                      {(showAllFiats ? profileFiatCounts : profileFiatCounts.slice(0, 3)).map((c) => (
-                        <li key={c.code} className="profile-side-row">
-                          {ASSETS[c.code]?.src ? <img src={ASSETS[c.code].src} alt="" className="profile-side-coin-img" /> : <span className="profile-side-coin" style={{ background: ASSETS[c.code]?.color }}>{ASSETS[c.code]?.symbol || c.code[0]}</span>}
-                          <span className="profile-side-code">{c.code}</span>
-                          <span className="profile-side-count">{c.count} {c.count === 1 ? 'oferta' : 'ofertas'}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    {profileFiatCounts.length > 3 && (
-                      <button type="button" className="profile-side-more" onClick={() => setShowAllFiats((v) => !v)}>
-                        {showAllFiats ? 'Ver menos' : `Ver ${profileFiatCounts.length - 3} más`}
-                      </button>
-                    )}
-                  </div>
-                  <div className="profile-side-actions">
-                    <Button size="md" onClick={scrollToOffers} className="profile-side-action">Comprar</Button>
-                    <Button size="md" variant="outline" onClick={scrollToOffers} className="profile-side-action">Vender</Button>
-                  </div>
-                </aside>
-                <div className="profile-main">
-                  <div className="profile-statcards">
-                    <div className="profile-statcard"><div className="profile-statcard-value">{profileTrader.trades.toLocaleString('es-ES')}</div><div className="profile-statcard-label">Operaciones</div></div>
-                    <div className="profile-statcard"><div className="profile-statcard-value">{profileOffers.length}</div><div className="profile-statcard-label">Ofertas activas</div></div>
-                    <div className="profile-statcard"><div className="profile-statcard-value">{profileBuyCount}</div><div className="profile-statcard-label">En compra</div></div>
-                    <div className="profile-statcard"><div className="profile-statcard-value">{profileSellCount}</div><div className="profile-statcard-label">En venta</div></div>
-                    <div className="profile-statcard"><div className="profile-statcard-value">{profilePayMethods.length}</div><div className="profile-statcard-label">Métodos</div></div>
-                    <div className="profile-statcard"><div className="profile-statcard-value">{profileChains.length}</div><div className="profile-statcard-label">Redes</div></div>
-                  </div>
-                  <div className="profile-row3">
-                    <div className="profile-card">
-                      <h3 className="profile-card-title">Reputación</h3>
-                      <div className="profile-gauge-wrap">
-                        <svg viewBox="0 0 160 160" className="profile-gauge-svg" aria-hidden="true">
-                          <circle cx="80" cy="80" r="64" fill="none" strokeWidth="12" strokeLinecap="round" transform="rotate(225 80 80)" style={{ stroke: 'var(--cds-border-strong)', strokeDasharray: `${0.75 * gaugeC} ${gaugeC}` }} />
-                          <circle cx="80" cy="80" r="64" fill="none" strokeWidth="12" strokeLinecap="round" transform="rotate(225 80 80)" style={{ stroke: 'var(--cds-accent)', strokeDasharray: `${(profileTrader.completion / 100) * 0.75 * gaugeC} ${gaugeC}` }} />
-                        </svg>
-                        <div className="profile-gauge-number">{profileTrader.completion}<span>%</span></div>
-                      </div>
-                      <p className="profile-card-sub">Porcentaje de operaciones completadas</p>
-                    </div>
-                    <div className="profile-card">
-                      <h3 className="profile-card-title">Resumen</h3>
-                      <div className="profile-summary-row">
-                        <span className="profile-summary-icon">{CheckIcon}</span>
-                        <div className="profile-summary-text">
-                          <div className="profile-summary-title">{profileTrader.verification === 'premium' ? 'Premium' : 'Verificado'}</div>
-                          <div className="profile-summary-sub">{profileTrader.verification === 'premium' ? 'Cuenta premium' : 'Cuenta verificada'}</div>
-                        </div>
-                      </div>
-                      <div className="profile-summary-row">
-                        <span className="profile-summary-icon">{ExchangeIcon}</span>
-                        <div className="profile-summary-text">
-                          <div className="profile-summary-title">Ofertas activas</div>
-                          <div className="profile-summary-sub">{profileOffers.length} en total · {profileBuyCount} compra · {profileSellCount} venta</div>
-                        </div>
-                      </div>
-                      <div className="profile-summary-row">
-                        <span className="profile-summary-icon">{LocationIcon}</span>
-                        <div className="profile-summary-text">
-                          <div className="profile-summary-title">Presenciales</div>
-                          <div className="profile-summary-sub">{profileCashCities.length > 0 ? `${profileCashCities.length} ${profileCashCities.length === 1 ? 'ciudad' : 'ciudades'}` : 'Sin ofertas presenciales'}</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="profile-card">
-                      <h3 className="profile-card-title">Comparativa</h3>
-                      <div className="profile-compare-row">
-                        <div className="profile-compare-label"><span>{profileTrader.name}</span><span>{profileTrader.completion}%</span></div>
-                        <div className="profile-compare-track"><div className="profile-compare-bar profile-compare-bar--me" style={{ width: `${profileTrader.completion}%` }} /></div>
-                      </div>
-                      <div className="profile-compare-row">
-                        <div className="profile-compare-label"><span>Otros anunciantes</span><span>{profileOthersAvg}%</span></div>
-                        <div className="profile-compare-track"><div className="profile-compare-bar profile-compare-bar--others" style={{ width: `${profileOthersAvg}%` }} /></div>
-                      </div>
-                      <p className="profile-card-sub">Media de completado de los demás anunciantes</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {qrModal && (
-                <Modal open={!!qrModal} onClose={() => setQrModal(null)} title={`QR de ${qrModal}`}>
-                  <div className="qr-modal-body">
-                    <div className="qr-modal-code">
-                      <QRCode value={PAYMENT_DETAILS[profileTrader.name]?.[qrModal] || qrModal} size={220} bgColor="#ffffff" fgColor="#000000" />
-                    </div>
-                    <p className="qr-modal-dest">{PAYMENT_DETAILS[profileTrader.name]?.[qrModal] || qrModal}</p>
-                    <Button size="md" onClick={() => handleCopy(qrModal, PAYMENT_DETAILS[profileTrader.name]?.[qrModal] || qrModal)}>
-                      {copiedMethod === qrModal ? '¡Copiado!' : 'Copiar destino'}
-                    </Button>
-                  </div>
-                </Modal>
-              )}
-              <h2 id="profile-offers" className="profile-offers-title">Ofertas de {profileTrader.name}</h2>
-              <div className="offer-list-wrap">
-                <div className="offer-list" role="table" aria-label={`Ofertas de ${profileTrader.name}`}>
-                  <div className="offer-head" role="row">
-                    <div className="offer-cell" role="columnheader">Das / Recibes</div>
-                    <div className="offer-cell" role="columnheader">Disponible / Min - Max</div>
-                    <div className="offer-cell" role="columnheader">Precio</div>
-                    <div className="offer-cell" role="columnheader">Red blockchain</div>
-                    <div className="offer-cell" role="columnheader">Anunciante</div>
-                    <div className="offer-cell" role="columnheader"><span className="sr-only">Acciones</span></div>
-                  </div>
-                  {profilePageOffers.map((o) => renderOfferRow(o, true))}
-                </div>
-              </div>
-              <div className="pager">
-                <Pagination page={profileCurrent} totalPages={profileTotalPages} onChange={setProfilePage} />
-                <Text tone="muted">Mostrando {profileFrom} - {profileTo} de {profileOffers.length} items</Text>
-              </div>
-            </>
-          ) : (
-            <div className="profile-notfound">
-              <Heading level="h1">Anunciante no encontrado</Heading>
-              <Text tone="muted">No existe un anunciante con ese nombre.</Text>
-              <Button size="lg" onClick={goToMarket}>Volver al mercado</Button>
-            </div>
-          )}
-        </section>
-      </main>
+      <React.Suspense fallback={null}><ProfileView profileTrader={profileTrader} profileOffers={profileOffers} profileBuyCount={profileBuyCount} profileSellCount={profileSellCount} profilePayMethods={profilePayMethods} profileChains={profileChains} profileHasCash={profileHasCash} profileHasOnline={profileHasOnline} profileCashCities={profileCashCities} profileCryptoCounts={profileCryptoCounts} profileFiatCounts={profileFiatCounts} profileOthersAvg={profileOthersAvg} gaugeC={gaugeC} profileCurrent={profileCurrent} profileTotalPages={profileTotalPages} profilePageOffers={profilePageOffers} profileFrom={profileFrom} profileTo={profileTo} showAllCryptos={showAllCryptos} setShowAllCryptos={setShowAllCryptos} showAllFiats={showAllFiats} setShowAllFiats={setShowAllFiats} copiedMethod={copiedMethod} qrModal={qrModal} setQrModal={setQrModal} handleCopy={handleCopy} scrollToOffers={scrollToOffers} setProfilePage={setProfilePage} goToMarket={goToMarket} renderOfferRow={renderOfferRow} /></React.Suspense>
       ) : view === 'legal' ? (
-      <main className="info-page">
-        <section aria-label="Legal">
-          <Heading level="h1">Legal</Heading>
-          <Text tone="muted">Última actualización: noviembre de 2026.</Text>
-          <section>
-            <Heading level="h2">Qué es peetoo</Heading>
-            <Text>peetoo es una demostración sin inicio de sesión de un mercado P2P: compra y venta de stablecoins entre personas, con fiat y métodos de pago. No es una plataforma en funcionamiento: no se ejecuta ninguna compraventa, no se mueve dinero real y no hay cuentas de usuario.</Text>
-          </section>
-          <section>
-            <Heading level="h2">Demo y datos de muestra</Heading>
-            <Text>Todo lo que ves son datos de muestra: las ofertas, los anunciantes, sus estadísticas, los destinos de pago y las tasas son ficticios o de referencia. La insignia «Demo · datos de muestra» del header lo señala en toda la app. Nada de lo mostrado constituye una oferta real ni un compromiso de compra o venta.</Text>
-          </section>
-          <section>
-            <Heading level="h2">Privacidad</Heading>
-            <Text>peetoo no pide ni guarda datos personales: no hay registro, inicio de sesión ni perfiles propios. La navegación no requiere identificarse y la app no recoge información de contacto, cuentas ni billeteras.</Text>
-          </section>
-          <section>
-            <Heading level="h2">Compras con Swapped</Heading>
-            <Text>La página de Swapped muestra el widget de un tercero (Swapped): sus términos, disponibilidad y funcionamiento son responsabilidad de Swapped. El lado Vender muestra su aviso porque Swapped tiene las ventas desactivadas temporalmente; peetoo no vende ni intermedia esas operaciones.</Text>
-          </section>
-          <section>
-            <Heading level="h2">Responsabilidad</Heading>
-            <Text>peetoo no custodia fondos, no ejecuta pagos y no ofrece asesoramiento financiero. Las tasas y precios de muestra no son cotizaciones en vivo ni una recomendación de compra o venta. Esta página puede actualizarse cuando el producto avance de fase.</Text>
-          </section>
-          <div className="info-back"><Button size="lg" onClick={goToMarket}>Volver al mercado</Button></div>
-        </section>
-      </main>
+      <React.Suspense fallback={null}><LegalPage goToMarket={goToMarket} /></React.Suspense>
       ) : view === 'glossary' ? (
-      <main className="info-page">
-        <section aria-label="Glosario">
-          <Heading level="h1">Glosario</Heading>
-          <Text tone="muted">Los términos del mercado P2P de peetoo, en pocas palabras.</Text>
-          <dl>
-            <dt>Anunciante</dt>
-            <dd>Persona que publica una oferta de compra o venta. En la demo, todos los anunciantes son ficticios.</dd>
-            <dt>Blockchain (red)</dt>
-            <dd>Red sobre la que se mueve una crypto (BNB Chain, Polygon, Base, Arbitrum, Optimism). Cada oferta indica en qué redes opera el anunciante.</dd>
-            <dt>Billetera</dt>
-            <dd>Medio con el que una persona guarda y envía sus cryptos. peetoo no crea ni gestiona billeteras.</dd>
-            <dt>Custodia</dt>
-            <dd>Quién guarda los fondos mientras se completa un intercambio. La demo de peetoo no custodia ni mueve fondos reales.</dd>
-            <dt>Disponible</dt>
-            <dd>Cantidad de crypto que el anunciante ofrece en una oferta.</dd>
-            <dt>Fiat</dt>
-            <dd>Moneda de curso legal: CUP, USD, EUR, MXN y CAD en peetoo.</dd>
-            <dt>KYC</dt>
-            <dd>Verificación de identidad que algunas plataformas piden antes de operar. La demo no pide ninguna.</dd>
-            <dt>Método de pago</dt>
-            <dd>Medio con el que se paga la pata fiat: Efectivo, Transferencia Bancaria, PayPal, Zelle, Etecsa, Clásica, Qvapay o TropiPay. Cada oferta tiene uno solo.</dd>
-            <dt>Min-Max</dt>
-            <dd>Límites en fiat de una oferta: la cantidad mínima y máxima que acepta el anunciante.</dd>
-            <dt>MLC</dt>
-            <dd>En peetoo, el ticker de USD por Transferencia Bancaria, no una moneda aparte.</dd>
-            <dt>Orden</dt>
-            <dd>La compra o venta que se crea desde una oferta, con su cantidad, precio y método. En la demo, la orden es solo una confirmación de muestra.</dd>
-            <dt>P2P</dt>
-            <dd>Intercambio directo entre personas, sin una casa de cambio central que fije el precio.</dd>
-            <dt>Precio</dt>
-            <dd>Unidades de fiat por cada unidad de crypto en una oferta. En la demo parte de tasas de referencia, no de cotizaciones en vivo.</dd>
-            <dt>Spread</dt>
-            <dd>Diferencia entre el precio de compra y el de venta. En peetoo, la compra lleva una pequeña prima y la venta un pequeño descuento.</dd>
-            <dt>Stablecoin</dt>
-            <dd>Crypto diseñada para mantener paridad con una fiat: USDT, USAT, USDC, PYUSD, ZLUSD y OUSD siguen al dólar; EURC, al euro.</dd>
-            <dt>Tasa informal</dt>
-            <dd>Referencia del mercado no oficial de divisas en Cuba, como la que publica elTOQUE a partir de ofertas de compra y venta.</dd>
-          </dl>
-          <div className="info-back"><Button size="lg" onClick={goToMarket}>Volver al mercado</Button></div>
-        </section>
-      </main>
+      <React.Suspense fallback={null}><GlossaryPage goToMarket={goToMarket} /></React.Suspense>
       ) : (
       <main className="shell">
         <Heading level="h1">Crypto</Heading>
@@ -1753,7 +1342,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
         {selected && !orderDone && (
           <div className="order-grid">
             <div className="order-info">
-              <TraderCell trader={toTrader(selected)} href={`/perfil/${selected.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(selected.advertiser_name); }} />
+              <TraderCell trader={toTrader(selected)} href={`/crypto/perfil/${selected.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(selected.advertiser_name); }} />
               <div className="order-meta">
                 <h5 className="order-meta-title">Información de la orden</h5>
                 <div className="order-meta-box">

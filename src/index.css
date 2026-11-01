@@ -726,3 +726,17 @@ body {
 @media (max-width: 800px) {
   .info-page { padding: 32px 24px 64px; }
 }
+
+/* Homepages placeholder (principal y mercado). */
+.home-page { max-width: 900px; margin: 0 auto; padding: 64px 24px 80px; }
+.home-hero { text-align: center; display: grid; gap: 16px; justify-items: center; }
+.home-cta-row { margin-top: 8px; }
+.home-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 48px; }
+.home-card { border: 1px solid var(--cds-border); border-radius: 16px; padding: 20px; }
+.home-card-title { font-weight: 700; color: var(--cds-ink); margin-bottom: 8px; }
+.home-card-text { color: var(--cds-muted); }
+.home-note { text-align: center; margin-top: 48px; color: var(--cds-muted); }
+@media (max-width: 720px) {
+  .home-page { padding: 40px 24px 64px; }
+  .home-cards { grid-template-columns: 1fr; }
+}
