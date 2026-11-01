@@ -374,7 +374,7 @@ body {
 
 /* El fondo pautado (PageBackground) es fijo con z-index 0: el contenido
    va por encima con position relative + z-index 1. */
-.shell, .app-footer { position: relative; z-index: 1; }
+.shell, .app-footer, .info-page, .home-page { position: relative; z-index: 1; }
 
 /* Filtros en una sola línea horizontal: sin salto de fila; en pantallas
    estrechas la fila se desplaza horizontalmente en vez de partirse. */
