@@ -1,0 +1,11 @@
+/* Grid — primitiva de rejilla; columnas y gap llegan por estilo. */
+.grid {
+  display: grid;
+  font-family: var(--cds-font-sans);
+}
+
+.alignStart { align-items: start; }
+.alignCenter { align-items: center; }
+.alignEnd { align-items: end; }
+.alignStretch { align-items: stretch; }
+.alignBaseline { align-items: baseline; }

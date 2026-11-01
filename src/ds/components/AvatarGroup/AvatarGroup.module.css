@@ -1,0 +1,48 @@
+.group {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--cds-font-sans);
+}
+
+.item {
+  position: relative;
+  display: inline-flex;
+  /* Solape de un tercio del diámetro: con solo 8px los círculos se
+     leían como anillos enlazados; con 1/3 cada disco queda claramente
+     encima del anterior. */
+  margin-left: calc(var(--ag-size, 36px) * -0.33);
+  border: 2px solid var(--cds-bg);
+  border-radius: var(--cds-radius-pill);
+  /* Fondo opaco detrás del disco: el fondo del Avatar es
+     --cds-accent-soft, un violeta al 12% (casi transparente), así que
+     sin este respaldo se veía a través de cada disco al avatar de
+     abajo y la pila se leía como anillos entrelazados, sobre todo en
+     la página de docs, donde el lienzo es claro. Con el fondo de
+     página como respaldo, el disco queda opaco y el solape tapa de
+     verdad al anterior, en ambos temas. */
+  background: var(--cds-bg);
+}
+
+.item:first-child {
+  margin-left: 0;
+}
+
+.more {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: calc(var(--ag-size, 36px) * -0.33);
+  /* El contador debe medir lo mismo que los avatares: el avatar mide
+     `px` + su anillo de 2px (40px en md), pero con el border-box
+     global el width del contador INCLUÍA el anillo y quedaba en 36px,
+     4px más pequeño. Con content-box, el width es el círculo y el
+     anillo se suma fuera, igual que en .item. */
+  box-sizing: content-box;
+  border: 2px solid var(--cds-bg);
+  border-radius: var(--cds-radius-pill);
+  background: var(--cds-surface-3);
+  color: var(--cds-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}

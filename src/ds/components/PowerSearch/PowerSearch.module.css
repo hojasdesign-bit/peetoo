@@ -1,0 +1,168 @@
+/* PowerSearch — barra con ámbito + panel de sugerencias/recientes. */
+.root {
+  position: relative;
+  width: 100%;
+  font-family: var(--cds-font-sans);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--cds-space-2);
+  height: 50px;
+  padding: 0 var(--cds-space-3);
+  border: 1px solid var(--cds-border);
+  border-radius: var(--cds-radius-lg);
+  background: var(--cds-input-bg);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.bar:focus-within {
+  border-color: var(--cds-accent);
+  box-shadow: var(--cds-focus-ring);
+}
+
+.scopeWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-right: var(--cds-space-3);
+  border-right: 1px solid var(--cds-border);
+  height: 100%;
+}
+
+.scope {
+  appearance: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--cds-ink);
+  font-family: inherit;
+  font-size: var(--cds-text-body-sm);
+  font-weight: 600;
+  cursor: pointer;
+  padding-right: 20px;
+}
+.scope option {
+  /* Las opciones nativas siempre se despliegan sobre la lista clara
+     del sistema operativo: tinta oscura fija vía token, no hex. */
+  color: var(--cds-cta-dark);
+}
+
+.chevron {
+  position: absolute;
+  right: var(--cds-space-3);
+  color: var(--cds-muted);
+  pointer-events: none;
+}
+
+.searchIcon {
+  color: var(--cds-muted);
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--cds-ink);
+  font-family: inherit;
+  font-size: var(--cds-text-body);
+}
+.input::placeholder {
+  color: var(--cds-faint);
+}
+
+.clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--cds-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.clear:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  color: var(--cds-ink);
+}
+
+.panel {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: var(--cds-space-2);
+  border: 1px solid var(--cds-border);
+  border-radius: var(--cds-radius-lg);
+  background: var(--cds-surface);
+  box-shadow: var(--cds-shadow-lg);
+}
+
+.section {
+  margin: 0;
+  padding: var(--cds-space-2) var(--cds-space-3);
+  color: var(--cds-faint);
+  font-size: var(--cds-text-caption);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cds-space-3);
+  width: 100%;
+  padding: 10px var(--cds-space-3);
+  border: 0;
+  border-radius: var(--cds-radius-md);
+  background: transparent;
+  color: var(--cds-ink);
+  font-family: inherit;
+  font-size: var(--cds-text-body-sm);
+  text-align: left;
+  cursor: pointer;
+}
+.rowActive {
+  background: var(--cds-accent-soft);
+}
+
+.rowLabel {
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowHint {
+  color: var(--cds-muted);
+  font-size: var(--cds-text-caption);
+  flex-shrink: 0;
+}
+
+.empty {
+  margin: 0;
+  padding: var(--cds-space-4) var(--cds-space-3);
+  color: var(--cds-muted);
+  font-size: var(--cds-text-body-sm);
+}
+
+.footer {
+  margin: var(--cds-space-2) 0 0;
+  padding: var(--cds-space-2) var(--cds-space-3) var(--cds-space-1);
+  border-top: 1px solid var(--cds-border);
+  color: var(--cds-faint);
+  font-size: var(--cds-text-caption);
+}

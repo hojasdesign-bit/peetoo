@@ -1,0 +1,86 @@
+/* SideNav — columna de navegación vertical. */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  font-family: var(--cds-font-sans);
+}
+
+.section {
+  margin: var(--cds-space-4) 0 var(--cds-space-1);
+  padding: 0 var(--cds-space-3);
+  color: var(--cds-faint);
+  font-size: var(--cds-text-caption);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.section:first-child {
+  margin-top: 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--cds-space-3);
+  width: 100%;
+  padding: 10px var(--cds-space-3);
+  border: 0;
+  border-radius: var(--cds-radius-md);
+  background: transparent;
+  color: var(--cds-muted);
+  font-family: inherit;
+  font-size: var(--cds-text-body-sm);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+.item:hover:not(:disabled) {
+  background: var(--cds-surface-2);
+  color: var(--cds-ink);
+}
+.item:focus-visible {
+  outline: none;
+  box-shadow: var(--cds-focus-ring);
+}
+.item:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.active {
+  background: var(--cds-surface-3);
+  color: var(--cds-ink);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--cds-accent);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--cds-radius-pill);
+  background: var(--cds-accent);
+  color: var(--cds-on-accent);
+  font-size: var(--cds-text-micro);
+  font-weight: 700;
+  flex-shrink: 0;
+}

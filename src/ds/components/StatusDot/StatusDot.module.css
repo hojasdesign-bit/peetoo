@@ -1,0 +1,48 @@
+.dot {
+  display: inline-block;
+  flex-shrink: 0;
+  border-radius: var(--cds-radius-pill);
+}
+
+.sm {
+  width: 8px;
+  height: 8px;
+}
+
+.md {
+  width: 12px;
+  height: 12px;
+}
+
+.online {
+  background: var(--cds-success);
+}
+
+.live {
+  background: var(--cds-accent);
+  animation: cds-statusdot-pulse 1.8s ease-out infinite;
+}
+
+.busy {
+  background: var(--cds-warning);
+}
+
+.offline {
+  background: var(--cds-faint);
+}
+
+.danger {
+  background: var(--cds-danger);
+}
+
+@keyframes cds-statusdot-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--cds-accent) 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}

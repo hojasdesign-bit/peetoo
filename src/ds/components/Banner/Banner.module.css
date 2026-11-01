@@ -1,0 +1,90 @@
+/* Banner — franja a ancho completo: tinte de variante + barra lateral
+   de acento, sin borde perimetral ni radio (eso es Alert). */
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--cds-space-3);
+  width: 100%;
+  padding: var(--cds-space-3) var(--cds-space-4);
+  border-left: 4px solid;
+  font-family: var(--cds-font-sans);
+  font-size: var(--cds-text-body-sm);
+  line-height: 1.5;
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin: 0 0 2px;
+  font-weight: 700;
+  font-size: var(--cds-text-body-sm);
+  color: var(--cds-ink);
+}
+
+.text {
+  margin: 0;
+  color: var(--cds-ink-2);
+}
+.text p { margin: 0; }
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--cds-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+.close:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  color: var(--cds-ink);
+}
+.close:focus-visible {
+  outline: none;
+  box-shadow: var(--cds-focus-ring);
+}
+
+/* ---- Variantes ---- */
+.info {
+  background: color-mix(in srgb, var(--cds-info) 10%, transparent);
+  border-left-color: var(--cds-info);
+}
+.info .icon { color: var(--cds-info); }
+
+.success {
+  background: color-mix(in srgb, var(--cds-success) 10%, transparent);
+  border-left-color: var(--cds-success);
+}
+.success .icon { color: var(--cds-success); }
+
+.warning {
+  background: color-mix(in srgb, var(--cds-warning) 10%, transparent);
+  border-left-color: var(--cds-warning);
+}
+.warning .icon { color: var(--cds-warning); }
+
+.danger {
+  background: color-mix(in srgb, var(--cds-danger) 10%, transparent);
+  border-left-color: var(--cds-danger);
+}
+.danger .icon { color: var(--cds-danger); }
