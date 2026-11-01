@@ -212,6 +212,7 @@ body {
 .swapped-editorial { width: 635px; max-width: 100%; align-self: flex-start; display: flex; flex-direction: column; gap: 40px; }
 .swapped-editorial-block { display: flex; flex-direction: column; gap: 10px; }
 .swapped-editorial-heading { font-size: 22px; font-weight: 700; line-height: 30px; margin: 0; color: #ffffff; }
+.swapped-editorial-block:first-child .swapped-editorial-heading { margin-top: 30px; }
 .swapped-editorial-paras { display: flex; flex-direction: column; gap: 20px; }
 .swapped-editorial-text { font-size: 18px; line-height: 26px; margin: 0; color: #ffffff; }
 .swapped-stats { width: 670px; max-width: 100%; align-self: flex-start; background: rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; gap: 20px; box-sizing: border-box; }
@@ -332,6 +333,9 @@ body {
      del widget), así que el top es la misma regla de 76px. */
   .swapped-glow { position: absolute; right: 0; top: 76px; width: 390px; height: 227px; margin: 0; }
   .swapped-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "text" "widget" "rest"; justify-items: center; } /* minmax(0,1fr): el 1fr solo tiene mínimo automático y el aviso de venta (382px) ensanchaba la pista en móvil */
+  /* En móvil la página empezaba muy abajo (H1 a 239px): el aire de 90px
+     era para igualar swapped.com en escritorio; aquí baja a 32px. */
+  .swapped-stage { padding-top: 32px; }
   .swapped-hero-text, .swapped-rest { width: 100%; }
   .swapped-layout > iframe, .swapped-layout > .swapped-sell { position: static; }
   .swapped-steps-grid { grid-template-columns: 1fr; }
