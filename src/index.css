@@ -103,7 +103,7 @@ body {
    min-width: 0 solo no bastó: el margin: 0 auto de .shell y .topbar
    también anula el estirado, así que llevan ancho definido (con el
    max-width 1200 + centrado intactos en escritorio). */
-.topbar, .shell, .swapped-stage, .app-footer { min-width: 0; width: 100%; }
+.topbar, .shell, .swapped-stage, .info-page, .app-footer { min-width: 0; width: 100%; }
 .swapped-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 40px; max-width: 1120px; margin: 0 auto; padding: 90px 24px 60px; } /* aire arriba como la original: el título cae a ~223px como en swapped.com */
 .swapped-stage iframe { width: 382px; max-width: 100%; height: 500px; border: 0; border-radius: 28px; background: #fff; }
 /* El toggle va a 220px (botones iguales de 104px), no a 400px fijos:
@@ -475,7 +475,8 @@ body {
 }
 .foot-left { display: flex; align-items: center; gap: 6px; }
 .foot-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.foot-link { color: var(--cds-muted); }
+.foot-link { color: var(--cds-muted); text-decoration: none; cursor: pointer; }
+.foot-link:hover { color: var(--cds-ink); }
 
 @media (max-width: 768px) {
   .order-grid { grid-template-columns: 1fr; }
@@ -715,3 +716,13 @@ body {
 .order-map { margin-top: 24px; }
 .order-map-img { width: 100%; height: auto; display: block; border-radius: 16px; border: 1px solid var(--cds-border); }
 .order-map-caption { margin: 8px 0 0; color: var(--cds-muted); font-size: var(--cds-text-body-sm); }
+/* Páginas internas (Legal y Glosario). */
+.info-page { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+.info-page > section > section { margin-top: 32px; }
+.info-page dl { margin: 32px 0 0; display: grid; gap: 20px; }
+.info-page dt { font-weight: 700; color: var(--cds-ink); }
+.info-page dd { margin: 4px 0 0; color: var(--cds-muted); line-height: 1.6; }
+.info-page .info-back { margin-top: 40px; }
+@media (max-width: 800px) {
+  .info-page { padding: 32px 24px 64px; }
+}

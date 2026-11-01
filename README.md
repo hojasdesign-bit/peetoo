@@ -85,13 +85,17 @@ producto real. Aquí no hay menú lateral: hay tablas, filtros y un modal.
 ## Datos de muestra
 
 Todo lo que ves son **datos de solo muestra**: 84 ofertas demo, una por
-cada par crypto×fiat (7 cryptos × 6 fiats) en compra y en venta, con un
+cada par crypto×fiat (7 cryptos × 5 fiats, USD duplicado por la ex-MLC) en compra y en venta, con un
 único método de pago por oferta (8 en total: Efectivo, PayPal, Transferencia
 Bancaria y Zelle para todas las monedas, más Etecsa solo para CUP y
 Clásica, Qvapay y TropiPay solo para USD; MLC es el ticker de USD por Transferencia Bancaria) y las redes
 rotadas para que cada red aparezca con cada crypto. Los anunciantes son ficticios, sin
-carteras ni datos personales, y los precios siguen la convención demo
-(~1,0x), no son tasas reales. Tiles de fiat aclarados: Etecsa es método + CUP
+carteras ni datos personales, y los precios parten de las tasas informales
+de elTOQUE del 1 nov 2026 (USD 890, EUR 970, CAD 553,30, MXN 52,69 CUP;
+EURC a 970 CUP, resto de stablecoins a 890 CUP) con el spread anterior
+conservado (compra con prima, venta con descuento); los límites min/max
+en fiat se reescalaron con la misma tasa. Siguen siendo datos de muestra,
+no tasas en vivo. Tiles de fiat aclarados: Etecsa es método + CUP
 (ticker CuPetec, 1 venta), Clásica es método + USD (USDcls, 1 venta),
 Qvapay es método + USD (USDqp, 1 venta) y TropiPay es método + USD (USDtp, 1 venta);
 MLC es el ticker de USD por Transferencia Bancaria (7 ventas). PayPal es método + USD (USDpp,

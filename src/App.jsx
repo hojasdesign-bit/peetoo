@@ -145,14 +145,16 @@ export default function App() {
   // que describe resultados (filtro, verbo, dirección del par) usa
   // effectiveSide; solo el SegmentedControl muestra side.
   const effectiveSide = cascadesSwapped ? (side === 'buy' ? 'sell' : 'buy') : side;
-  // Vista: 'market', 'swapped' o 'profile'. /swapped y /perfil/:nombre
-  // son vistas de la app (no páginas estáticas): así mantienen el
-  // header y los enlaces se comportan igual que en el mercado. La vista
-  // inicial sale de la URL para que /swapped y /perfil/:nombre abran
-  // directos.
+  // Vista: 'market', 'swapped', 'profile', 'legal' o 'glossary'.
+  // /swapped, /perfil/:nombre, /legal y /glosario son vistas de la app
+  // (no páginas estáticas): así mantienen el header y los enlaces se
+  // comportan igual que en el mercado. La vista inicial sale de la URL
+  // para que todas abran directas.
   const pathToView = () => {
     const path = window.location.pathname.replace(/\.html$/, '');
     if (path === '/swapped') return { view: 'swapped', profile: '' };
+    if (path === '/legal') return { view: 'legal', profile: '' };
+    if (path === '/glosario') return { view: 'glossary', profile: '' };
     const m = path.match(/^\/perfil\/(.+)$/);
     if (m) return { view: 'profile', profile: decodeURIComponent(m[1]) };
     return { view: 'market', profile: '' };
@@ -188,11 +190,22 @@ export default function App() {
     setHamburgerOpen(false);
     goSwapped();
   };
+  // Páginas internas (Legal y Glosario): vistas de la app como /swapped
+  // y /perfil/:nombre, con header y footer, abribles directas por URL
+  // (el _redirects de Pages sirve index.html). Blog y redes quedan
+  // para fase 3; el Login, para la integración con OpenFort (fase 2).
+  const goInfoPage = (path, viewName) => {
+    setBuyMenuOpen(false); setFiatMenuOpen(false); setSwappedMenuOpen(false); setHamburgerOpen(false);
+    setQrModal(null);
+    window.history.pushState(null, '', path);
+    setView(viewName);
+    window.scrollTo(0, 0);
+  };
   // Ir al mercado y desplazarlo a la vista: desde la vista del widget
   // primero navega; el mercado se renderiza tras el cambio de estado y
   // el desplazamiento lo hace el efecto de abajo.
   const goToMarket = () => {
-    if (view === 'swapped' || view === 'profile') {
+    if (view === 'swapped' || view === 'profile' || view === 'legal' || view === 'glossary') {
       pendingMarketScroll.current = true;
       window.history.pushState(null, '', '/');
       setView('market');
@@ -255,8 +268,9 @@ export default function App() {
   // como respaldo; en móvil (≤720px) la variante acordeón del propio
   // DropdownMenu. Los botones de moneda son los MenuCoinButton del DS
   // (símbolo en círculo de color + «Comprar X» + código).
-  // Enlaces informativos SIN acción (de momento) y redes de EJEMPLO
-  // (las reales las especificará él y sustituirán a estas). Los iconos
+  // Enlaces informativos (Glosario y Legal navegan a sus páginas;
+  // Blog queda para fase 3) y redes de EJEMPLO (las reales las
+  // especificará él y sustituirán a estas; también fase 3). Los iconos
   // son Simple Icons (CC0) incrustados, 20px, currentColor.
   const socialIcon = (d) => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={d} /></svg>
@@ -324,15 +338,22 @@ export default function App() {
   // va en la fila del header y el panel contiene las dos secciones
   // desplegables + el enlace a Swapped + la insignia Demo.
   const [hamburgerOpen, setHamburgerOpen] = React.useState(false);
-  // Pie de enlaces informativos sin acción + redes de ejemplo:
-  // en escritorio cierra el panel Swapped; en móvil es el bloque único
+  // Pie de enlaces informativos + redes de ejemplo: Glosario y Legal
+  // navegan a sus páginas internas; Blog y redes quedan pendientes
+  // (fase 3) y solo cierran el panel. En móvil es el bloque único
   // fuera de los submenús, dentro del cajón.
   const closeInfoFoot = (e) => { e.preventDefault(); setSwappedMenuOpen(false); setHamburgerOpen(false); };
+  const onInfoFootNavigate = (e, link) => {
+    e.preventDefault();
+    if (link.label === 'Glosario') goInfoPage('/glosario', 'glossary');
+    else if (link.label === 'Legal') goInfoPage('/legal', 'legal');
+    else closeInfoFoot(e);
+  };
   const renderInfoFoot = (wrapClass) => (
     <div className={wrapClass}>
       <span className="swapped-foot-links">
         {INFO_LINKS.map((link) => (
-          <a key={link.label} href="#" className="swapped-foot-link" role="menuitem" onClick={closeInfoFoot}>
+          <a key={link.label} href="#" className="swapped-foot-link" role="menuitem" onClick={(e) => onInfoFootNavigate(e, link)}>
             {link.label}
           </a>
         ))}
@@ -412,6 +433,10 @@ export default function App() {
       clearFilters(); goToMarket();
     } else if (label.includes('Otras monedas')) {
       clearFilters(); setSide('buy'); goToMarket();
+    } else if (label.includes('Glosario')) {
+      goInfoPage('/glosario', 'glossary');
+    } else if (label.includes('Legal')) {
+      goInfoPage('/legal', 'legal');
     }
   };
 
@@ -509,6 +534,10 @@ export default function App() {
       clearFilters(); setCascadesSwapped(true); setSide('buy'); goToMarket();
     } else if (label.includes('Todas las ofertas')) {
       clearFilters(); goToMarket();
+    } else if (label.includes('Glosario')) {
+      goInfoPage('/glosario', 'glossary');
+    } else if (label.includes('Legal')) {
+      goInfoPage('/legal', 'legal');
     }
   };
 
@@ -1379,6 +1408,76 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
           )}
         </section>
       </main>
+      ) : view === 'legal' ? (
+      <main className="info-page">
+        <section aria-label="Legal">
+          <Heading level="h1">Legal</Heading>
+          <Text tone="muted">Última actualización: noviembre de 2026.</Text>
+          <section>
+            <Heading level="h2">Qué es peetoo</Heading>
+            <Text>peetoo es una demostración sin inicio de sesión de un mercado P2P: compra y venta de stablecoins entre personas, con fiat y métodos de pago. No es una plataforma en funcionamiento: no se ejecuta ninguna compraventa, no se mueve dinero real y no hay cuentas de usuario.</Text>
+          </section>
+          <section>
+            <Heading level="h2">Demo y datos de muestra</Heading>
+            <Text>Todo lo que ves son datos de muestra: las ofertas, los anunciantes, sus estadísticas, los destinos de pago y las tasas son ficticios o de referencia. La insignia «Demo · datos de muestra» del header lo señala en toda la app. Nada de lo mostrado constituye una oferta real ni un compromiso de compra o venta.</Text>
+          </section>
+          <section>
+            <Heading level="h2">Privacidad</Heading>
+            <Text>peetoo no pide ni guarda datos personales: no hay registro, inicio de sesión ni perfiles propios. La navegación no requiere identificarse y la app no recoge información de contacto, cuentas ni billeteras.</Text>
+          </section>
+          <section>
+            <Heading level="h2">Compras con Swapped</Heading>
+            <Text>La página de Swapped muestra el widget de un tercero (Swapped): sus términos, disponibilidad y funcionamiento son responsabilidad de Swapped. El lado Vender muestra su aviso porque Swapped tiene las ventas desactivadas temporalmente; peetoo no vende ni intermedia esas operaciones.</Text>
+          </section>
+          <section>
+            <Heading level="h2">Responsabilidad</Heading>
+            <Text>peetoo no custodia fondos, no ejecuta pagos y no ofrece asesoramiento financiero. Las tasas y precios de muestra no son cotizaciones en vivo ni una recomendación de compra o venta. Esta página puede actualizarse cuando el producto avance de fase.</Text>
+          </section>
+          <div className="info-back"><Button size="lg" onClick={goToMarket}>Volver al mercado</Button></div>
+        </section>
+      </main>
+      ) : view === 'glossary' ? (
+      <main className="info-page">
+        <section aria-label="Glosario">
+          <Heading level="h1">Glosario</Heading>
+          <Text tone="muted">Los términos del mercado P2P de peetoo, en pocas palabras.</Text>
+          <dl>
+            <dt>Anunciante</dt>
+            <dd>Persona que publica una oferta de compra o venta. En la demo, todos los anunciantes son ficticios.</dd>
+            <dt>Blockchain (red)</dt>
+            <dd>Red sobre la que se mueve una crypto (BNB Chain, Polygon, Base, Arbitrum, Optimism). Cada oferta indica en qué redes opera el anunciante.</dd>
+            <dt>Billetera</dt>
+            <dd>Medio con el que una persona guarda y envía sus cryptos. peetoo no crea ni gestiona billeteras.</dd>
+            <dt>Custodia</dt>
+            <dd>Quién guarda los fondos mientras se completa un intercambio. La demo de peetoo no custodia ni mueve fondos reales.</dd>
+            <dt>Disponible</dt>
+            <dd>Cantidad de crypto que el anunciante ofrece en una oferta.</dd>
+            <dt>Fiat</dt>
+            <dd>Moneda de curso legal: CUP, USD, EUR, MXN y CAD en peetoo.</dd>
+            <dt>KYC</dt>
+            <dd>Verificación de identidad que algunas plataformas piden antes de operar. La demo no pide ninguna.</dd>
+            <dt>Método de pago</dt>
+            <dd>Medio con el que se paga la pata fiat: Efectivo, Transferencia Bancaria, PayPal, Zelle, Etecsa, Clásica, Qvapay o TropiPay. Cada oferta tiene uno solo.</dd>
+            <dt>Min-Max</dt>
+            <dd>Límites en fiat de una oferta: la cantidad mínima y máxima que acepta el anunciante.</dd>
+            <dt>MLC</dt>
+            <dd>En peetoo, el ticker de USD por Transferencia Bancaria, no una moneda aparte.</dd>
+            <dt>Orden</dt>
+            <dd>La compra o venta que se crea desde una oferta, con su cantidad, precio y método. En la demo, la orden es solo una confirmación de muestra.</dd>
+            <dt>P2P</dt>
+            <dd>Intercambio directo entre personas, sin una casa de cambio central que fije el precio.</dd>
+            <dt>Precio</dt>
+            <dd>Unidades de fiat por cada unidad de crypto en una oferta. En la demo parte de tasas de referencia, no de cotizaciones en vivo.</dd>
+            <dt>Spread</dt>
+            <dd>Diferencia entre el precio de compra y el de venta. En peetoo, la compra lleva una pequeña prima y la venta un pequeño descuento.</dd>
+            <dt>Stablecoin</dt>
+            <dd>Crypto diseñada para mantener paridad con una fiat: USDT, USAT, USDC, PYUSD, ZLUSD y OUSD siguen al dólar; EURC, al euro.</dd>
+            <dt>Tasa informal</dt>
+            <dd>Referencia del mercado no oficial de divisas en Cuba, como la que publica elTOQUE a partir de ofertas de compra y venta.</dd>
+          </dl>
+          <div className="info-back"><Button size="lg" onClick={goToMarket}>Volver al mercado</Button></div>
+        </section>
+      </main>
       ) : (
       <main className="shell">
         <Heading level="h1">Crypto</Heading>
@@ -1633,9 +1732,9 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
             <img src={botIcon} alt="" className="ui-icon-sm" />
           </span>
           <span className="foot-right">
-            <span className="foot-link">Legal Notice</span>
+            <a className="foot-link" href="/legal" onClick={(e) => { e.preventDefault(); goInfoPage('/legal', 'legal'); }}>Legal Notice</a>
             <span aria-hidden="true">•</span>
-            <span className="foot-link">Privacy Policy</span>
+            <a className="foot-link" href="/legal" onClick={(e) => { e.preventDefault(); goInfoPage('/legal', 'legal'); }}>Privacy Policy</a>
             <SegmentedControl
               ariaLabel="Tema"
               options={[
