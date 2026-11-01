@@ -170,7 +170,6 @@ export default function App() {
   // FAQ de la página de Swapped: la primera abierta, como en la referencia.
   const [swappedFaqOpen, setSwappedFaqOpen] = React.useState(0);
   const swappedStatsRef = React.useRef(null);
-  const pendingMarketScroll = React.useRef(false);
   const goSwapped = (e) => {
     if (e) e.preventDefault();
     if (view === 'swapped') return;
@@ -196,17 +195,15 @@ export default function App() {
     setView(viewName);
     window.scrollTo(0, 0);
   };
-  // Ir al mercado y desplazarlo a la vista: desde la vista del widget
-  // primero navega; el mercado se renderiza tras el cambio de estado y
-  // el desplazamiento lo hace el efecto de abajo.
+  // Ir al mercado SIN desplazar: ni al aplicar un filtro desde el menú
+  // estando ya en el mercado, ni al cambiar de vista (perfil, /swapped,
+  // Legal, Glosario): la página queda donde estaba. A petición suya,
+  // goToMarket no hace scroll en ningún camino.
   const goToMarket = () => {
     if (view === 'home' || view === 'swapped' || view === 'profile' || view === 'legal' || view === 'glossary') {
-      pendingMarketScroll.current = true;
       window.history.pushState(null, '', '/crypto/');
       setView('market');
       setQrModal(null);
-    } else {
-      document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
   // Ir al perfil público de un anunciante: cierra el modal si estaba
@@ -234,12 +231,6 @@ export default function App() {
       window.setTimeout(() => setCopiedMethod((c) => (c === m ? null : c)), 2000);
     }
   };
-  React.useEffect(() => {
-    if (view === 'market' && pendingMarketScroll.current) {
-      pendingMarketScroll.current = false;
-      document.querySelector('.market')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [view]);
   React.useEffect(() => {
     const onPop = () => {
       const p = pathToView();
