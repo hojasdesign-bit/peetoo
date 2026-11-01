@@ -1029,8 +1029,6 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
             {/* En móvil, enlaces y redes una sola vez, fuera de los submenús */}
             {renderInfoFoot('drawer-info-foot')}
             <span className="drawer-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
-            {/* Botón de login, sin acción por el momento */}
-            <button type="button" className="drawer-login">Login</button>
           </nav>
         )}
       </header>
