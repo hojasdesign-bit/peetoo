@@ -937,6 +937,11 @@ body {
   padding: 24px 0;
 }
 .glossary-page .info-back { margin-top: 40px; }
+/* Las tarjetas y los enlaces del lateral son <a>: el subrayado global
+   de a:hover (base.css) les gana en especificidad al text-decoration
+   de la tarjeta, así que se anula aquí, solo en el glosario, sin tocar
+   la regla global (igual que el arreglo del TraderCell en #83). */
+.glossary-page a:hover { text-decoration: none; }
 
 /* Detalle: cuerpo 742 + lateral 280, hueco 50; el lateral va primero en móvil. */
 .glossary-detail-body {
