@@ -22,6 +22,7 @@ import { PageBackground } from './ds/components/PageBackground/PageBackground.js
 import { DropdownMenu } from './ds/components/DropdownMenu/DropdownMenu.jsx';
 import { MenuLinkColumn } from './ds/components/MenuLinkColumn/MenuLinkColumn.jsx';
 import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC, PAYMENT_DETAILS, LOCATION_PRECISION } from './data/offers.js';
+import { GLOSSARY_TERMS } from './data/glossary.js';
 import { SWAPPED_EDITORIAL_INTRO, SWAPPED_EDITORIAL, SWAPPED_STATS, SWAPPED_PRECIO_TEXT, SWAPPED_RESOURCES_TEXT, SWAPPED_RESOURCES_LINKS, SWAPPED_FAQS, SWAPPED_MORE_CRYPTOS, SWAPPED_METHODS } from './data/swappedPage.js';
 import { SwappedStepVisual } from './components/SwappedStepVisuals.jsx';
 import { SwappedMethodIcon } from './components/SwappedMethodIcon.jsx';
@@ -47,6 +48,7 @@ const SwappedView = React.lazy(() => import('./views/SwappedView.jsx'));
 const ProfileView = React.lazy(() => import('./views/ProfileView.jsx'));
 const LegalPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.LegalPage })));
 const GlossaryPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.GlossaryPage })));
+const GlossaryTermPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.GlossaryTermPage })));
 
 /**
  * peetoo · Mercado Crypto.
@@ -123,7 +125,7 @@ export default function App() {
   // que describe resultados (filtro, verbo, dirección del par) usa
   // effectiveSide; solo el SegmentedControl muestra side.
   const effectiveSide = cascadesSwapped ? (side === 'buy' ? 'sell' : 'buy') : side;
-  // Vista: 'home', 'market', 'swapped', 'profile', 'legal' o 'glossary'.
+  // Vista: 'home', 'market', 'swapped', 'profile', 'legal', 'glossary' o 'glossary-term'.
   // /crypto/swapped, /crypto/perfil/:nombre, /crypto/legal y /crypto/glosario son vistas de la app
   // (no páginas estáticas): así mantienen el header y los enlaces se
   // comportan igual que en el mercado. La vista inicial sale de la URL
@@ -143,7 +145,7 @@ export default function App() {
       window.history.replaceState(null, '', '/crypto/');
       return { view: 'market', profile: '' };
     }
-    if (path === '/swapped' || path === '/legal' || path === '/glosario' || path.startsWith('/perfil/')) {
+    if (path === '/swapped' || path === '/legal' || path === '/glosario' || path.startsWith('/glosario/') || path.startsWith('/perfil/')) {
       window.history.replaceState(null, '', `/crypto${path}`);
       path = `/crypto${path}`;
     }
@@ -151,6 +153,8 @@ export default function App() {
     if (inner === '/swapped') return { view: 'swapped', profile: '' };
     if (inner === '/legal') return { view: 'legal', profile: '' };
     if (inner === '/glosario') return { view: 'glossary', profile: '' };
+    const gm = inner.match(/^\/glosario\/(.+)$/);
+    if (gm) return { view: 'glossary-term', profile: '', glossaryTerm: decodeURIComponent(gm[1]) };
     const m = inner.match(/^\/perfil\/(.+)$/);
     if (m) return { view: 'profile', profile: decodeURIComponent(m[1]) };
     return { view: 'market', profile: '' };
@@ -158,6 +162,7 @@ export default function App() {
   const initialView = pathToView();
   const [view, setView] = React.useState(initialView.view);
   const [profileName, setProfileName] = React.useState(initialView.profile);
+  const [glossaryTerm, setGlossaryTerm] = React.useState(initialView.glossaryTerm || '');
   const [profilePage, setProfilePage] = React.useState(1);
   const [showAllCryptos, setShowAllCryptos] = React.useState(false);
   const [showAllFiats, setShowAllFiats] = React.useState(false);
@@ -189,6 +194,21 @@ export default function App() {
   // y /perfil/:nombre, con header y footer, abribles directas por URL
   // (el _redirects de Pages sirve index.html). Blog y redes quedan
   // para fase 3; el Login, para la integración con OpenFort (fase 2).
+  // Página de un término del glosario: cierra los menús y navega sin
+  // recargar, como las demás páginas internas.
+  const goGlossaryTerm = (slug) => {
+    setBuyMenuOpen(false); setFiatMenuOpen(false); setSwappedMenuOpen(false); setHamburgerOpen(false);
+    setQrModal(null);
+    window.history.pushState(null, '', `/crypto/glosario/${slug}`);
+    setGlossaryTerm(slug);
+    setView('glossary-term');
+    window.scrollTo(0, 0);
+  };
+  const goToGlossary = () => {
+    window.history.pushState(null, '', '/crypto/glosario');
+    setView('glossary');
+    window.scrollTo(0, 0);
+  };
   const goInfoPage = (path, viewName) => {
     setBuyMenuOpen(false); setFiatMenuOpen(false); setSwappedMenuOpen(false); setHamburgerOpen(false);
     setQrModal(null);
@@ -201,7 +221,7 @@ export default function App() {
   // Legal, Glosario): la página queda donde estaba. A petición suya,
   // goToMarket no hace scroll en ningún camino.
   const goToMarket = () => {
-    if (view === 'home' || view === 'swapped' || view === 'profile' || view === 'legal' || view === 'glossary') {
+    if (view === 'home' || view === 'swapped' || view === 'profile' || view === 'legal' || view === 'glossary' || view === 'glossary-term') {
       window.history.pushState(null, '', '/crypto/');
       setView('market');
       setQrModal(null);
@@ -917,7 +937,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
     <div className={`app${view === 'swapped' ? ' app-swapped' : ''}`}>
       {/* En /swapped el fondo es plano como en la página de Swapped
           (#101010 sin resplandor); en el resto sigue el PageBackground. */}
-      <PageBackground glow={view !== 'swapped'} />
+      <PageBackground glow={view !== 'swapped' && view !== 'glossary' && view !== 'glossary-term'} />
       <header
         className="topbar"
         ref={buyMenuRef}
@@ -1067,7 +1087,9 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
       ) : view === 'legal' ? (
       <React.Suspense fallback={null}><LegalPage goToMarket={goToMarket} /></React.Suspense>
       ) : view === 'glossary' ? (
-      <React.Suspense fallback={null}><GlossaryPage goToMarket={goToMarket} /></React.Suspense>
+      <React.Suspense fallback={null}><GlossaryPage goToMarket={goToMarket} onTerm={goGlossaryTerm} /></React.Suspense>
+            ) : view === 'glossary-term' ? (
+      <React.Suspense fallback={null}><GlossaryTermPage term={GLOSSARY_TERMS.find((t) => t.slug === glossaryTerm) || null} goToMarket={goToMarket} goToGlossary={goToGlossary} onTerm={goGlossaryTerm} /></React.Suspense>
       ) : (
       <main className="shell">
         <Heading level="h1">Crypto</Heading>

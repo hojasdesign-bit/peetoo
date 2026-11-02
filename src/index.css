@@ -103,7 +103,7 @@ body {
    min-width: 0 solo no bastó: el margin: 0 auto de .shell y .topbar
    también anula el estirado, así que llevan ancho definido (con el
    max-width 1200 + centrado intactos en escritorio). */
-.topbar, .shell, .swapped-stage, .info-page, .app-footer { min-width: 0; width: 100%; }
+.topbar, .shell, .swapped-stage, .info-page, .glossary-page, .app-footer { min-width: 0; width: 100%; }
 .swapped-stage { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; gap: 40px; max-width: 1120px; margin: 0 auto; padding: 90px 24px 60px; } /* aire arriba como la original: el título cae a ~223px como en swapped.com */
 .swapped-stage iframe { width: 382px; max-width: 100%; height: 500px; border: 0; border-radius: 28px; background: #fff; }
 /* El toggle va a 220px (botones iguales de 104px), no a 400px fijos:
@@ -367,7 +367,7 @@ body {
 
 /* El fondo pautado (PageBackground) es fijo con z-index 0: el contenido
    va por encima con position relative + z-index 1. */
-.shell, .app-footer, .info-page, .home-page { position: relative; z-index: 1; }
+.shell, .app-footer, .info-page, .home-page, .glossary-page { position: relative; z-index: 1; }
 
 /* Filtros en una sola línea horizontal: sin salto de fila; en pantallas
    estrechas la fila se desplaza horizontalmente en vez de partirse. */
@@ -732,4 +732,321 @@ body {
 @media (max-width: 720px) {
   .home-page { padding: 40px 24px 64px; }
   .home-cards { grid-template-columns: 1fr; }
+}
+
+/* ============ Glosario (estructura y diseño de swapped.com/glossary) ============
+   Medidas de la referencia, en Satoshi (la fuente del DS): héroe centrado
+   628, subtítulo 530, lista 1072, letra 88 + margen 70, tarjetas 678,
+   radio 20, detalle 742 + lateral 280. La referencia es solo oscura:
+   el tema claro invierte los mismos valores (tinta sobre fondo claro).
+   El héroe no copia el padding de 216px de la referencia: allí compensa
+   una cabecera fija; la de peetoo no lo es, así que el héroe centra su
+   contenido en 550px y el título cae en la misma zona. */
+.glossary-page {
+  --g-ink: #ffffff;
+  --g-paper: #f5f5f5;
+  --g-muted: #c5c5c5;
+  --g-card: rgba(255, 255, 255, 0.06);
+  --g-card-hover: rgba(255, 255, 255, 0.10);
+  --g-border: rgba(255, 255, 255, 0.12);
+  --g-letter-border: #202020;
+  --g-faint: rgba(255, 255, 255, 0.40);
+  --g-brand-soft: #a78bfa;
+  font-family: var(--cds-font-sans);
+  color: var(--g-ink);
+  padding-bottom: 0;
+}
+[data-theme="claro"] .glossary-page {
+  --g-ink: #101010;
+  --g-paper: #101010;
+  --g-muted: #5c5c66;
+  --g-card: rgba(16, 16, 16, 0.06);
+  --g-card-hover: rgba(16, 16, 16, 0.10);
+  --g-border: rgba(16, 16, 16, 0.12);
+  --g-letter-border: #dcdce0;
+  --g-faint: rgba(16, 16, 16, 0.40);
+  --g-brand-soft: #4608e3;
+}
+
+/* Héroe: columna centrada 628, hueco 24, título 60/72 (40/50 en móvil). */
+.glossary-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 550px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  text-align: center;
+  padding: 40px 28px;
+}
+.glossary-hero-glow {
+  position: absolute;
+  left: 50%;
+  top: 60px;
+  transform: translateX(-50%);
+  width: 460px;
+  height: 296px;
+  background: radial-gradient(closest-side, rgba(124, 58, 237, 0.55), rgba(94, 23, 235, 0.35) 55%, transparent 72%);
+  filter: blur(100px);
+  pointer-events: none;
+}
+[data-theme="claro"] .glossary-hero-glow { opacity: 0.28; }
+.glossary-hero-grid {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 1200px;
+  max-width: none;
+  height: 376px;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 80px 80px;
+  -webkit-mask-image: radial-gradient(50% 50%, black 31.25%, transparent 70%);
+  mask-image: radial-gradient(50% 50%, black 31.25%, transparent 70%);
+  pointer-events: none;
+}
+[data-theme="claro"] .glossary-hero-grid {
+  background-image:
+    linear-gradient(rgba(16, 16, 16, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 16, 16, 0.08) 1px, transparent 1px);
+}
+.glossary-hero h1 {
+  position: relative;
+  width: 100%;
+  max-width: 628px;
+  margin: 0;
+  font-size: 60px;
+  line-height: 72px;
+  font-weight: 700;
+}
+.glossary-hero p {
+  position: relative;
+  width: 100%;
+  max-width: 530px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--g-paper);
+}
+
+/* Lista: 1072 centrada, hueco 39 entre buscador, filtro y grupos. */
+.glossary-list {
+  max-width: 1072px;
+  margin: 0 auto;
+  padding: 70px 28px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 39px;
+}
+.glossary-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--g-card);
+  border-radius: 12px;
+  padding: 17px 16px;
+}
+.glossary-search-icon { width: 16px; height: 16px; flex-shrink: 0; color: var(--g-faint); }
+.glossary-search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  padding: 0;
+  font: inherit;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--g-ink);
+}
+.glossary-search input::placeholder { color: var(--g-faint); }
+.glossary-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.glossary-filter button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid var(--g-letter-border);
+  background: transparent;
+  color: var(--g-muted);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.glossary-filter button:first-child { width: auto; padding: 0 8px; }
+.glossary-filter button.active { border-color: var(--g-ink); color: var(--g-ink); }
+.glossary-filter button:disabled { opacity: 0.4; cursor: default; }
+.glossary-groups { display: flex; flex-direction: column; gap: 41px; width: 100%; }
+.glossary-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-top: 1px solid var(--g-border);
+  padding-top: 41px;
+}
+.glossary-group:first-child { border-top: 0; padding-top: 0; }
+.glossary-group h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 500;
+}
+.glossary-cards { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+.glossary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--g-card);
+  border-radius: 20px;
+  padding: 24px;
+  color: var(--g-ink);
+  text-decoration: none;
+  transition: background-color 200ms;
+}
+.glossary-card:hover { background: var(--g-card-hover); }
+.glossary-card h3 { margin: 0; font-size: 20px; line-height: 26px; font-weight: 500; }
+.glossary-card p { margin: 0; font-size: 16px; line-height: 22px; font-weight: 500; color: var(--g-muted); }
+.glossary-more {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+}
+.glossary-arrow { width: 17px; height: 17px; }
+.glossary-empty {
+  margin: 0;
+  text-align: center;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--g-muted);
+  padding: 24px 0;
+}
+.glossary-page .info-back { margin-top: 40px; }
+
+/* Detalle: cuerpo 742 + lateral 280, hueco 50; el lateral va primero en móvil. */
+.glossary-detail-body {
+  max-width: 1072px;
+  margin: 0 auto;
+  padding: 64px 28px 0;
+}
+.glossary-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 60px;
+}
+.glossary-article { display: flex; flex-direction: column; gap: 40px; min-width: 0; }
+.glossary-article > p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 25.6px;
+  letter-spacing: -0.02em;
+}
+.glossary-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 32px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(70, 8, 227, 0.45), rgba(70, 8, 227, 0.15), rgba(70, 8, 227, 0.45));
+}
+.glossary-cta h2 { margin: 0 0 8px; font-size: 24px; line-height: 32px; font-weight: 700; }
+.glossary-cta p { margin: 0; font-size: 16px; line-height: 22px; color: var(--g-paper); }
+.glossary-aside { order: -1; min-width: 0; }
+.glossary-toc {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--g-card);
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+}
+.glossary-toc h3 { margin: 0; font-size: 18px; line-height: 24px; font-weight: 500; }
+.glossary-toc a {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--g-paper);
+  text-decoration: none;
+  transition: color 200ms;
+}
+.glossary-toc a:hover { color: var(--g-brand-soft); }
+.glossary-detail { max-width: 1072px; margin: 0 auto; padding: 96px 28px 80px; }
+.glossary-detail h1 { margin: 0 0 16px; font-size: 40px; line-height: 50px; font-weight: 700; }
+.glossary-detail p { margin: 0; font-size: 16px; line-height: 22px; color: var(--g-muted); }
+
+/* Otros términos: título 24/32 negrita, rejilla 1/2/3 columnas, hueco 20. */
+.glossary-others {
+  max-width: 1072px;
+  margin: 0 auto;
+  padding: 50px 28px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.glossary-others h2 { margin: 0; font-size: 24px; line-height: 32px; font-weight: 700; }
+.glossary-others-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+.glossary-other-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: var(--g-card);
+  border-radius: 20px;
+  padding: 24px;
+  color: var(--g-ink);
+  text-decoration: none;
+  transition: background-color 200ms;
+}
+.glossary-other-card:hover { background: var(--g-card-hover); }
+.glossary-other-card h3 { margin: 0 0 12px; font-size: 20px; line-height: 26px; font-weight: 700; }
+.glossary-other-card p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--g-paper);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.glossary-other-card .glossary-more { font-weight: 700; gap: 4px; }
+
+@media (min-width: 768px) {
+  .glossary-list { padding-left: 39px; padding-right: 39px; }
+  .glossary-detail-body { padding-left: 39px; padding-right: 39px; }
+  .glossary-others { padding-left: 39px; padding-right: 39px; }
+  .glossary-others-grid { grid-template-columns: 1fr 1fr; }
+  .glossary-toc { width: 280px; }
+}
+@media (max-width: 767px) {
+  .glossary-hero { min-height: 480px; }
+  .glossary-hero h1 { font-size: 40px; line-height: 50px; }
+}
+@media (min-width: 1024px) {
+  .glossary-list { padding: 109px 0 80px; }
+  .glossary-group { flex-direction: row; gap: 0; }
+  .glossary-group h2 { width: 88px; flex-shrink: 0; margin: 16px 0 0 70px; }
+  .glossary-cards { width: 678px; }
+  .glossary-detail-body { padding: 114px 0 0; }
+  .glossary-detail-grid { grid-template-columns: 742px 280px; column-gap: 50px; align-items: start; }
+  .glossary-aside { order: 0; position: sticky; top: 120px; }
+  .glossary-cta { flex-direction: row; align-items: center; justify-content: space-between; }
+  .glossary-others { padding: 98px 0 80px; }
+  .glossary-others-grid { grid-template-columns: 1fr 1fr 1fr; }
 }
