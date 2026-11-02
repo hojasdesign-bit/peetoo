@@ -16,7 +16,7 @@
   top: 100%;
   left: 50%;
   z-index: 50;
-  width: min(1200px, calc(100vw - 40px)); /* mínimo el ancho de la tabla (1152): panel 1200 en escritorio, con guarda de viewport */
+  width: min(1150px, calc(100vw - 50px)); /* el mismo ancho de la tabla (1150 renderizados; la guarda reproduce su fórmula) */
   background: var(--mh-bg);
   border: 0;
   border-radius: 10px;
