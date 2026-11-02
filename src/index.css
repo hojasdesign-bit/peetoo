@@ -961,6 +961,26 @@ body {
   line-height: 25.6px;
   letter-spacing: -0.02em;
 }
+.glossary-article section { display: flex; flex-direction: column; gap: 20px; }
+.glossary-article h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 42px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+.glossary-article section p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 25.6px;
+  letter-spacing: -0.02em;
+}
+.glossary-dateline {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--g-muted);
+}
 .glossary-cta {
   display: flex;
   flex-direction: column;
@@ -1042,6 +1062,9 @@ body {
 @media (max-width: 767px) {
   .glossary-hero { min-height: 480px; }
   .glossary-hero h1 { font-size: 40px; line-height: 50px; }
+  /* En móvil la referencia no se midió: el h2 del artículo baja al
+     tamaño de sección (24/32) en vez de mantener 30/42. */
+  .glossary-article h2 { font-size: 24px; line-height: 32px; }
 }
 @media (min-width: 1024px) {
   .glossary-list { padding: 109px 0 80px; }

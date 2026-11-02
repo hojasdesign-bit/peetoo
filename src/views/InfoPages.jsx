@@ -1,6 +1,4 @@
 import React from 'react';
-import { Heading } from '../ds/components/Heading/Heading.jsx';
-import { Text } from '../ds/components/Text/Text.jsx';
 import { Button } from '../ds/components/Button/Button.jsx';
 import { GLOSSARY_TERMS } from '../data/glossary.js';
 
@@ -46,33 +44,71 @@ function GlossaryCard({ t, onTerm }) {
 
 // Páginas internas: JSX movido tal cual desde App.jsx, sin cambios.
 // Solo reciben goToMarket (botón «Volver al mercado»).
-export function LegalPage({ goToMarket }) {
+export function LegalPage({ goToMarket, goToGlossary }) {
+  // Misma plantilla de página de contenido que el detalle del glosario
+  // (héroe + cuerpo 742 + lateral 280 fijo); el texto no cambia.
+  // Sin CTA: una página legal no vende nada; el botón de vuelta basta.
   return (
-      <main className="info-page">
-        <section aria-label="Legal">
-          <Heading level="h1">Legal</Heading>
-          <Text tone="muted">Última actualización: noviembre de 2026.</Text>
-          <section>
-            <Heading level="h2">Qué es peetoo</Heading>
-            <Text>peetoo es una demostración sin inicio de sesión de un mercado P2P: compra y venta de stablecoins entre personas, con fiat y métodos de pago. No es una plataforma en funcionamiento: no se ejecuta ninguna compraventa, no se mueve dinero real y no hay cuentas de usuario.</Text>
-          </section>
-          <section>
-            <Heading level="h2">Demo y datos de muestra</Heading>
-            <Text>Todo lo que ves son datos de muestra: las ofertas, los anunciantes, sus estadísticas, los destinos de pago y las tasas son ficticios o de referencia. La insignia «Demo · datos de muestra» del header lo señala en toda la app. Nada de lo mostrado constituye una oferta real ni un compromiso de compra o venta.</Text>
-          </section>
-          <section>
-            <Heading level="h2">Privacidad</Heading>
-            <Text>peetoo no pide ni guarda datos personales: no hay registro, inicio de sesión ni perfiles propios. La navegación no requiere identificarse y la app no recoge información de contacto, cuentas ni billeteras.</Text>
-          </section>
-          <section>
-            <Heading level="h2">Compras con Swapped</Heading>
-            <Text>La página de Swapped muestra el widget de un tercero (Swapped): sus términos, disponibilidad y funcionamiento son responsabilidad de Swapped. El lado Vender muestra su aviso porque Swapped tiene las ventas desactivadas temporalmente; peetoo no vende ni intermedia esas operaciones.</Text>
-          </section>
-          <section>
-            <Heading level="h2">Responsabilidad</Heading>
-            <Text>peetoo no custodia fondos, no ejecuta pagos y no ofrece asesoramiento financiero. Las tasas y precios de muestra no son cotizaciones en vivo ni una recomendación de compra o venta. Esta página puede actualizarse cuando el producto avance de fase.</Text>
-          </section>
-          <div className="info-back"><Button size="lg" onClick={goToMarket}>Volver al mercado</Button></div>
+      <main className="glossary-page">
+        <div className="glossary-hero">
+          <div className="glossary-hero-glow" aria-hidden="true" />
+          <div className="glossary-hero-grid" aria-hidden="true" />
+          <h1>Legal</h1>
+          <p>Qué es peetoo, qué datos muestra la demo y qué no hace.</p>
+        </div>
+        <div className="glossary-detail-body">
+          <div className="glossary-detail-grid">
+            <div className="glossary-article">
+              <p className="glossary-dateline">Última actualización: noviembre de 2026.</p>
+              <section id="que-es-peetoo">
+                <h2>Qué es peetoo</h2>
+                <p>peetoo es una demostración sin inicio de sesión de un mercado P2P: compra y venta de stablecoins entre personas, con fiat y métodos de pago. No es una plataforma en funcionamiento: no se ejecuta ninguna compraventa, no se mueve dinero real y no hay cuentas de usuario.</p>
+              </section>
+              <section id="demo-y-datos-de-muestra">
+                <h2>Demo y datos de muestra</h2>
+                <p>Todo lo que ves son datos de muestra: las ofertas, los anunciantes, sus estadísticas, los destinos de pago y las tasas son ficticios o de referencia. La insignia «Demo · datos de muestra» del header lo señala en toda la app. Nada de lo mostrado constituye una oferta real ni un compromiso de compra o venta.</p>
+              </section>
+              <section id="privacidad">
+                <h2>Privacidad</h2>
+                <p>peetoo no pide ni guarda datos personales: no hay registro, inicio de sesión ni perfiles propios. La navegación no requiere identificarse y la app no recoge información de contacto, cuentas ni billeteras.</p>
+              </section>
+              <section id="compras-con-swapped">
+                <h2>Compras con Swapped</h2>
+                <p>La página de Swapped muestra el widget de un tercero (Swapped): sus términos, disponibilidad y funcionamiento son responsabilidad de Swapped. El lado Vender muestra su aviso porque Swapped tiene las ventas desactivadas temporalmente; peetoo no vende ni intermedia esas operaciones.</p>
+              </section>
+              <section id="responsabilidad">
+                <h2>Responsabilidad</h2>
+                <p>peetoo no custodia fondos, no ejecuta pagos y no ofrece asesoramiento financiero. Las tasas y precios de muestra no son cotizaciones en vivo ni una recomendación de compra o venta. Esta página puede actualizarse cuando el producto avance de fase.</p>
+              </section>
+              <div className="info-back"><Button size="lg" onClick={goToMarket}>Volver al mercado</Button></div>
+            </div>
+            <aside className="glossary-aside">
+              <nav className="glossary-toc" aria-label="En esta página">
+                <h3>En esta página</h3>
+                <a href="#que-es-peetoo">Qué es peetoo</a>
+                <a href="#demo-y-datos-de-muestra">Demo y datos de muestra</a>
+                <a href="#privacidad">Privacidad</a>
+                <a href="#compras-con-swapped">Compras con Swapped</a>
+                <a href="#responsabilidad">Responsabilidad</a>
+              </nav>
+            </aside>
+          </div>
+        </div>
+        <section id="otras-paginas" className="glossary-others" aria-label="Otras páginas">
+          <h2>Otras páginas</h2>
+          <div className="glossary-others-grid">
+            <a
+              className="glossary-other-card"
+              href="/crypto/glosario"
+              onClick={(e) => { e.preventDefault(); goToGlossary(); }}
+            >
+              <div>
+                <h3>Glosario</h3>
+                <p>Los términos del mercado P2P de peetoo, en pocas palabras.</p>
+              </div>
+              <span className="glossary-more">Leer más <ArrowIcon /></span>
+            </a>
+          </div>
         </section>
       </main>
   );

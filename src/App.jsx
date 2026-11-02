@@ -935,9 +935,10 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
 
   return (
     <div className={`app${view === 'swapped' ? ' app-swapped' : ''}`}>
-      {/* En /swapped el fondo es plano como en la página de Swapped
-          (#101010 sin resplandor); en el resto sigue el PageBackground. */}
-      <PageBackground glow={view !== 'swapped' && view !== 'glossary' && view !== 'glossary-term'} />
+      {/* En /swapped, el glosario y Legal el fondo es plano como en
+          las páginas de Swapped (#101010 sin resplandor); en el resto
+          sigue el PageBackground. */}
+      <PageBackground glow={view !== 'swapped' && view !== 'glossary' && view !== 'glossary-term' && view !== 'legal'} />
       <header
         className="topbar"
         ref={buyMenuRef}
@@ -1085,7 +1086,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
       ) : view === 'profile' ? (
       <React.Suspense fallback={null}><ProfileView profileTrader={profileTrader} profileOffers={profileOffers} profileBuyCount={profileBuyCount} profileSellCount={profileSellCount} profilePayMethods={profilePayMethods} profileChains={profileChains} profileHasCash={profileHasCash} profileHasOnline={profileHasOnline} profileCashCities={profileCashCities} profileCryptoCounts={profileCryptoCounts} profileFiatCounts={profileFiatCounts} profileOthersAvg={profileOthersAvg} gaugeC={gaugeC} profileCurrent={profileCurrent} profileTotalPages={profileTotalPages} profilePageOffers={profilePageOffers} profileFrom={profileFrom} profileTo={profileTo} showAllCryptos={showAllCryptos} setShowAllCryptos={setShowAllCryptos} showAllFiats={showAllFiats} setShowAllFiats={setShowAllFiats} copiedMethod={copiedMethod} qrModal={qrModal} setQrModal={setQrModal} handleCopy={handleCopy} scrollToOffers={scrollToOffers} setProfilePage={setProfilePage} goToMarket={goToMarket} renderOfferRow={renderOfferRow} /></React.Suspense>
       ) : view === 'legal' ? (
-      <React.Suspense fallback={null}><LegalPage goToMarket={goToMarket} /></React.Suspense>
+      <React.Suspense fallback={null}><LegalPage goToMarket={goToMarket} goToGlossary={goToGlossary} /></React.Suspense>
       ) : view === 'glossary' ? (
       <React.Suspense fallback={null}><GlossaryPage goToMarket={goToMarket} onTerm={goGlossaryTerm} /></React.Suspense>
             ) : view === 'glossary-term' ? (
