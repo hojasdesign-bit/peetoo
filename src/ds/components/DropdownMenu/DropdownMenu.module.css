@@ -16,7 +16,7 @@
   top: 100%;
   left: 50%;
   z-index: 50;
-  width: min(1150px, calc(100vw - 50px)); /* el mismo ancho de la tabla (1150 renderizados; la guarda reproduce su fórmula) */
+  width: min(1152px, calc(100vw - 48px)); /* 2px más ancha que la tabla (1150 renderizados): 1px de más por lado */
   background: var(--mh-bg);
   border: 0;
   border-radius: 10px;

@@ -8,7 +8,7 @@ import { MenuLinkColumn } from '../MenuLinkColumn/MenuLinkColumn.jsx';
 
 /**
  * DropdownMenu — el panel mega de la cabecera, con la geometría exacta
- * de la referencia: 1150px (el ancho exacto de la tabla) centrado en el header, padding 10, radio 10,
+ * de la referencia: 1152px (2px más ancha que la tabla) centrado en el header, padding 10, radio 10,
  * y tres rejillas según el contenido (monedas 366px 1fr 144px;
  * tarjetas y enlaces 1fr 144px). Se compone de MenuIntro,
  * MenuCoinButton, MenuCard, MenuBanner, MenuLinkColumn y MenuSocials.
