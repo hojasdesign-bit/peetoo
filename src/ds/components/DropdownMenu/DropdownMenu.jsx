@@ -8,7 +8,7 @@ import { MenuLinkColumn } from '../MenuLinkColumn/MenuLinkColumn.jsx';
 
 /**
  * DropdownMenu — el panel mega de la cabecera, con la geometría exacta
- * de la referencia: 1100px centrado en el header, padding 10, radio 10,
+ * de la referencia: 1200px centrado en el header, padding 10, radio 10,
  * y tres rejillas según el contenido (monedas 366px 1fr 144px;
  * tarjetas y enlaces 1fr 144px). Se compone de MenuIntro,
  * MenuCoinButton, MenuCard, MenuBanner, MenuLinkColumn y MenuSocials.
@@ -26,7 +26,7 @@ export function DropdownMenu({ dropdown = {}, mobile = false, open = true, onNav
         {coins && (
           <div className={styles.coins}>
             {coins.map((coin) => (
-              <MenuCoinButton key={coin.code} {...coin} onClick={onNavigate} />
+              <MenuCoinButton key={coin.code || coin.label} {...coin} onClick={onNavigate} />
             ))}
           </div>
         )}
@@ -41,7 +41,7 @@ export function DropdownMenu({ dropdown = {}, mobile = false, open = true, onNav
           </div>
         )}
         {primaryLinks && <MenuLinkColumn links={primaryLinks} mobile={mobile} onNavigate={onNavigate} />}
-        {(links || socials) && <MenuLinkColumn links={links || []} socials={socials} mobile={mobile} onNavigate={onNavigate} />}
+        {(links?.length || socials) && <MenuLinkColumn links={links || []} socials={socials} mobile={mobile} onNavigate={onNavigate} />}
       </div>
     </div>
   );

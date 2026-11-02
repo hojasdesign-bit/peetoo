@@ -20,6 +20,7 @@ import { OverflowChips } from './ds/components/OverflowChips/OverflowChips.jsx';
 import { NetworkChip } from './ds/components/NetworkChip/NetworkChip.jsx';
 import { PageBackground } from './ds/components/PageBackground/PageBackground.jsx';
 import { DropdownMenu } from './ds/components/DropdownMenu/DropdownMenu.jsx';
+import { MenuLinkColumn } from './ds/components/MenuLinkColumn/MenuLinkColumn.jsx';
 import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC, PAYMENT_DETAILS, LOCATION_PRECISION } from './data/offers.js';
 import { SWAPPED_EDITORIAL_INTRO, SWAPPED_EDITORIAL, SWAPPED_STATS, SWAPPED_PRECIO_TEXT, SWAPPED_RESOURCES_TEXT, SWAPPED_RESOURCES_LINKS, SWAPPED_FAQS, SWAPPED_MORE_CRYPTOS, SWAPPED_METHODS } from './data/swappedPage.js';
 import { SwappedStepVisual } from './components/SwappedStepVisuals.jsx';
@@ -288,13 +289,15 @@ export default function App() {
       // hay logo propio del token publicado.
       { symbol: 'Z', color: '#6d1ed4', label: 'Comprar ZLUSD', code: 'ZLUSD', src: zelleIcon },
       { symbol: 'O', color: '#3a3a44', label: 'Comprar OUSD', code: 'OUSD', src: ousdIcon },
-      // Último tile: no es una moneda; abre el mercado de compra sin
+      // Penúltimo tile: no es una moneda; abre el mercado de compra sin
       // filtro de moneda (código vacío → rama de etiqueta en onBuyMenuNavigate).
       { symbol: '+', color: '#3a3a44', label: 'Otras monedas', code: '' },
+      // Última opción: todas las ofertas, sin filtro (código vacío →
+      // rama de etiqueta; antes vivía en la columna lateral).
+      { symbol: '≡', color: '#3a3a44', label: 'Todas las ofertas', code: '' },
     ],
     links: [
       { label: 'Vender crypto' },
-      { label: 'Todas las ofertas' },
       ...INFO_LINKS,
     ],
     socials: EXAMPLE_SOCIALS,
@@ -331,8 +334,11 @@ export default function App() {
   const closeInfoFoot = (e) => { e.preventDefault(); setSwappedMenuOpen(false); setHamburgerOpen(false); };
   const onInfoFootNavigate = (e, link) => {
     e.preventDefault();
-    if (link.label === 'Glosario') goInfoPage('/glosario', 'glossary');
-    else if (link.label === 'Legal') goInfoPage('/legal', 'legal');
+    // Sin link (columna lateral del panel Swapped) la etiqueta sale del
+    // propio enlace pulsado, como en los manejadores de los otros menús.
+    const label = link?.label || e.currentTarget.textContent.trim();
+    if (label === 'Glosario') goInfoPage('/glosario', 'glossary');
+    else if (label === 'Legal') goInfoPage('/legal', 'legal');
     else closeInfoFoot(e);
   };
   const renderInfoFoot = (wrapClass) => (
@@ -458,12 +464,14 @@ export default function App() {
       { symbol: '$', color: '#2E7D32', label: 'Comprar MLC', code: 'MLC', src: usdPng, method: 'Transferencia Bancaria', currency: 'USD' },
       { symbol: '$', color: '#2E7D32', label: 'Comprar Qvapay', code: 'USDqp', src: usdPng, method: 'Qvapay', currency: 'USD' },
       { symbol: 'T', color: '#f5cc4e', label: 'Comprar TropiPay', code: 'USDtp', src: tropipayIcon, method: 'TropiPay', currency: 'USD' },
-      // Último tile: quita solo el filtro de fiat (código vacío → rama
-      // de etiqueta en onFiatMenuNavigate), sin tocar el resto.
+      // Penúltimo tile: quita solo el filtro de fiat (código vacío →
+      // rama de etiqueta en onFiatMenuNavigate), sin tocar el resto.
       { symbol: '+', color: '#3a3a44', label: 'Todas las fiat', code: '' },
+      // Última opción: todas las ofertas, sin filtro (código vacío →
+      // rama de etiqueta; antes vivía en la columna lateral).
+      { symbol: '≡', color: '#3a3a44', label: 'Todas las ofertas', code: '' },
     ],
     links: [
-      { label: 'Todas las ofertas' },
       ...INFO_LINKS,
     ],
     socials: EXAMPLE_SOCIALS,
@@ -991,7 +999,9 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               <span className="swapped-card-title">Vender</span>
               <span className="swapped-card-desc">Vende tu cripto y recibe el dinero con tu método de pago preferido.</span>
             </button>
-            {renderInfoFoot('swapped-panel-foot')}
+            {/* Enlaces + redes en la columna lateral, como en los otros
+                menús, no en un pie abajo (el pie solo queda en el cajón móvil). */}
+            <MenuLinkColumn links={INFO_LINKS} socials={EXAMPLE_SOCIALS} onNavigate={onInfoFootNavigate} />
           </div>
         )}
         {hamburgerOpen && isNarrow && (

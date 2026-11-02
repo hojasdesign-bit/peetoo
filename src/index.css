@@ -264,8 +264,8 @@ body {
 .swapped-panel {
   position: absolute; top: 100%; left: 50%; z-index: 50;
   transform: translate(-50%, 0);
-  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-  width: min(1100px, calc(100vw - 40px));
+  display: grid; grid-template-columns: 1fr 1fr 144px; gap: 16px;
+  width: min(1200px, calc(100vw - 40px)); /* mínimo el ancho de la tabla, como los otros menús */
   background: #101010; border-radius: 16px; padding: 16px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
@@ -284,13 +284,6 @@ body {
 /* En el cajón móvil las tarjetas van apiladas, no en panel absoluto. */
 .swapped-drawer-cards { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 8px 10px; }
 
-/* Pie del submenú Swapped (escritorio): enlaces + Seguir, a todo el
-   ancho del panel, con separador superior. */
-.swapped-panel-foot {
-  grid-column: 1 / -1;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  border-top: 1px solid var(--cds-border); padding-top: 16px;
-}
 .swapped-foot-links { display: flex; gap: 24px; flex-wrap: wrap; }
 .swapped-foot-link { color: var(--cds-ink); text-decoration: none; font-size: 16px; font-weight: 500; line-height: 24px; white-space: nowrap; }
 .swapped-foot-link:hover { color: var(--cds-accent-hover); }
