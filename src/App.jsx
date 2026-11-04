@@ -28,8 +28,6 @@ import { SWAPPED_EDITORIAL_INTRO, SWAPPED_EDITORIAL, SWAPPED_STATS, SWAPPED_PREC
 import { SwappedStepVisual } from './components/SwappedStepVisuals.jsx';
 import { SwappedMethodIcon } from './components/SwappedMethodIcon.jsx';
 import logoUrl from './assets/logo.svg';
-import mapPinImg from './assets/maps/map-pin.svg';
-import mapZoneImg from './assets/maps/map-zone.svg';
 import checkIcon from './assets/icons/check.svg';
 import botIcon from './assets/icons/bot.svg';
 import usdcIcon from './assets/coins/usdc.svg';
@@ -1567,24 +1565,18 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                     { label: 'Disponible:', value: `${fmt(selected.available)} ${selected.buy_currency}` },
                     { label: 'Método de compra:', value: selected.buy_method },
                     { label: 'Método de venta:', value: selected.sell_method },
-                    ...(toTrader(selected).avgCompletion != null ? [{ label: 'Tiempo promedio de finalización:', value: `~${toTrader(selected).avgCompletion} min` }] : []),
+                    ...(toTrader(selected).avgCompletion != null ? [{ label: 'Finalización promedio:', value: `~${toTrader(selected).avgCompletion} min` }] : []),
                     ...((selected.buy_method === 'Efectivo' || selected.sell_method === 'Efectivo') ? [{ label: 'Ubicación:', value: offerLocation(selected) }] : []),
                   ] : [
                     { label: 'Límite:', value: `${fmt(selected.min_amount)} - ${fmt(selected.max_amount)} ${selected.sell_currency}` },
                     { label: 'Disponible:', value: `${fmt(selected.available)} ${selected.buy_currency}` },
                     { label: 'Método de pago:', value: selected.payment_method },
-                    ...(toTrader(selected).avgCompletion != null ? [{ label: 'Tiempo promedio de finalización:', value: `~${toTrader(selected).avgCompletion} min` }] : []),
+                    ...(toTrader(selected).avgCompletion != null ? [{ label: 'Finalización promedio:', value: `~${toTrader(selected).avgCompletion} min` }] : []),
                     ...(selected.payment_method === 'Efectivo' ? [{ label: 'Ubicación:', value: offerLocation(selected) }] : []),
                     { label: 'Blockchains:', value: selected.blockchains.join(', ') },
                   ]} />
                 </div>
               </div>
-              {((isDivisaOffer(selected) && (selected.buy_method === 'Efectivo' || selected.sell_method === 'Efectivo')) || (!isDivisaOffer(selected) && selected.payment_method === 'Efectivo')) && (
-                <div className="order-map">
-                  <img src={LOCATION_PRECISION[selected.advertiser_name] === 'exact' ? mapPinImg : mapZoneImg} alt={`Mapa de ${offerLocation(selected)}`} className="order-map-img" />
-                  <p className="order-map-caption">{offerLocation(selected)} · {LOCATION_PRECISION[selected.advertiser_name] === 'exact' ? 'Punto exacto configurado por el anunciante' : 'Zona aproximada: el anunciante solo compartió la ciudad'}</p>
-                </div>
-              )}
               <p className="legal">Al proceder, confirmas que leíste y aceptaste el aviso legal de intercambio.</p>
             </div>
             <div className="order-form">
