@@ -442,7 +442,8 @@ body {
   .offer-amounts .amount { font-weight: 600; display: flex; align-items: center; gap: 6px; }
   .offer-price { grid-area: price; text-align: left; }
   .offer-price .price { display: inline-block; position: relative; font-size: 16px; font-weight: 600; }
-  .offer-price .price .offer-method-badge { position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 6px; }
+  .offer-price .price > .offer-method-badge { position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 6px; }
+  .offer-price .price .offer-method-badges { position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 6px; display: inline-flex; gap: 4px; }
   .offer-chains { grid-area: chains; }
   .offer-row-divisa {
     grid-template-areas:

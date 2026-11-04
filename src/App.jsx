@@ -903,7 +903,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
             <div className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</div>
           </div>
           <div className="offer-cell offer-price" role="cell">
-            <div className="price"><span className="price-value" title={inProfile ? undefined : priceTitle(o)}>{inProfile ? `${fmt2(o.price)} ${o.sell_currency}` : priceMain(o)}</span></div>
+            <div className="price"><span className="price-value" title={inProfile ? undefined : priceTitle(o)}>{inProfile ? `${fmt2(o.price)} ${o.sell_currency}` : priceMain(o)}</span> <span className="offer-method-badges"><span className="offer-method-badge">{methodBadgeLabel(o.buy_method)}</span> <span className="offer-method-badge">{methodBadgeLabel(o.sell_method)}</span></span></div>
             <div className="sub">{inProfile ? `1 ${o.buy_currency}` : priceNote(o)}</div>
           </div>
           <div className="offer-cell offer-trader" role="cell">{inProfile ? <TraderCell trader={toTrader(o)} /> : <TraderCell trader={toTrader(o)} href={`/crypto/perfil/${o.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(o.advertiser_name); }} />}</div>
