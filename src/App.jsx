@@ -1567,11 +1567,13 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                     { label: 'Disponible:', value: `${fmt(selected.available)} ${selected.buy_currency}` },
                     { label: 'Método de compra:', value: selected.buy_method },
                     { label: 'Método de venta:', value: selected.sell_method },
+                    ...(toTrader(selected).avgCompletion != null ? [{ label: 'Tiempo promedio de finalización:', value: `~${toTrader(selected).avgCompletion} min` }] : []),
                     ...((selected.buy_method === 'Efectivo' || selected.sell_method === 'Efectivo') ? [{ label: 'Ubicación:', value: offerLocation(selected) }] : []),
                   ] : [
                     { label: 'Límite:', value: `${fmt(selected.min_amount)} - ${fmt(selected.max_amount)} ${selected.sell_currency}` },
                     { label: 'Disponible:', value: `${fmt(selected.available)} ${selected.buy_currency}` },
                     { label: 'Método de pago:', value: selected.payment_method },
+                    ...(toTrader(selected).avgCompletion != null ? [{ label: 'Tiempo promedio de finalización:', value: `~${toTrader(selected).avgCompletion} min` }] : []),
                     ...(selected.payment_method === 'Efectivo' ? [{ label: 'Ubicación:', value: offerLocation(selected) }] : []),
                     { label: 'Blockchains:', value: selected.blockchains.join(', ') },
                   ]} />
