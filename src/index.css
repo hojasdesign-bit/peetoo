@@ -23,7 +23,9 @@ body {
 /* Fila en tres zonas iguales (1fr auto 1fr): el menú queda centrado
    de verdad, el logo a la izquierda y Demo + Login a la derecha. */
 .topbar-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; width: 100%; }
-.brand { display: flex; align-items: center; justify-self: start; }
+.brand { display: flex; align-items: center; justify-self: start; gap: 16px; }
+.brand .market-seg { width: auto; }
+.drawer-market-seg { margin-bottom: 12px; }
 .logo-img { height: 28px; width: auto; display: block; }
 .topbar-center { display: flex; align-items: center; gap: 12px; justify-self: center; }
 .topbar-right { display: flex; align-items: center; gap: 12px; justify-self: end; }
@@ -75,6 +77,7 @@ body {
   .topbar-center { display: none; }
   .topbar-right { display: flex; margin-left: auto; }
   .topbar-demo { display: none; }
+  .brand .market-seg { display: none; }
   .topbar-burger {
     display: inline-flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
     width: 40px; height: 40px; flex: none;

@@ -143,7 +143,11 @@ export default function App() {
     if (path === '/') return { view: 'home', profile: '' };
     if (path === '/crypto') {
       window.history.replaceState(null, '', '/crypto/');
-      return { view: 'market', profile: '' };
+      return { view: 'market', profile: '', segment: 'crypto' };
+    }
+    if (path === '/divisa') {
+      window.history.replaceState(null, '', '/divisa/');
+      return { view: 'market', profile: '', segment: 'divisa' };
     }
     if (path === '/swapped' || path === '/legal' || path === '/glosario' || path.startsWith('/glosario/') || path.startsWith('/perfil/')) {
       window.history.replaceState(null, '', `/crypto${path}`);
@@ -161,6 +165,10 @@ export default function App() {
   };
   const initialView = pathToView();
   const [view, setView] = React.useState(initialView.view);
+  // Segmento del mercado del header (junto al logo): 'crypto' o
+  // 'divisa'. Solo lo cambian la URL inicial, el atrás/adelante y el
+  // propio interruptor; las vistas internas no lo tocan.
+  const [marketSegment, setMarketSegment] = React.useState(initialView.segment || 'crypto');
   const [profileName, setProfileName] = React.useState(initialView.profile);
   const [glossaryTerm, setGlossaryTerm] = React.useState(initialView.glossaryTerm || '');
   const [profilePage, setProfilePage] = React.useState(1);
@@ -222,10 +230,25 @@ export default function App() {
   // goToMarket no hace scroll en ningún camino.
   const goToMarket = () => {
     if (view === 'home' || view === 'swapped' || view === 'profile' || view === 'legal' || view === 'glossary' || view === 'glossary-term') {
-      window.history.pushState(null, '', '/crypto/');
+      window.history.pushState(null, '', `/${marketSegment}/`);
       setView('market');
       setQrModal(null);
     }
+  };
+  // Interruptor del header (junto al logo): cambia de mercado Crypto
+  // a Divisa y viceversa. Solo cambia el segmento de la URL (/crypto/
+  // o /divisa/); como los menús, parte de filtros limpios, y en Divisa
+  // el par arranca con la fiat a la izquierda (la vista fiat del
+  // original), sin tocar el toggle Comprar/Vender ni inventar ofertas.
+  const goToMarketSegment = (seg) => {
+    if (seg === marketSegment && view === 'market') return;
+    setBuyMenuOpen(false); setFiatMenuOpen(false); setSwappedMenuOpen(false); setHamburgerOpen(false);
+    setQrModal(null);
+    clearFilters();
+    setCascadesSwapped(seg === 'divisa');
+    setMarketSegment(seg);
+    window.history.pushState(null, '', `/${seg}/`);
+    setView('market');
   };
   // Ir al perfil público de un anunciante: cierra el modal si estaba
   // abierto y navega sin recargar (el mercado queda intacto detrás).
@@ -256,6 +279,7 @@ export default function App() {
     const onPop = () => {
       const p = pathToView();
       setView(p.view);
+      if (p.segment) setMarketSegment(p.segment);
       setProfileName(p.profile);
       setProfilePage(1);
       setQrModal(null);
@@ -948,6 +972,13 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
         <div className="topbar-row">
           <span className="brand">
             <img src={logoUrl} alt="Zeroo" className="logo-img" />
+            <SegmentedControl
+              ariaLabel="Mercado Crypto o Divisa"
+              options={[{ value: 'crypto', label: 'Crypto' }, { value: 'divisa', label: 'Divisa' }]}
+              value={marketSegment}
+              onChange={goToMarketSegment}
+              className="market-seg"
+            />
           </span>
           <span className="topbar-center">
             <span className="buy-menu" onMouseEnter={openBuyMenu}>
@@ -1027,6 +1058,13 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
         )}
         {hamburgerOpen && isNarrow && (
           <nav className="topbar-drawer" aria-label="Menú">
+            <SegmentedControl
+              ariaLabel="Mercado Crypto o Divisa"
+              options={[{ value: 'crypto', label: 'Crypto' }, { value: 'divisa', label: 'Divisa' }]}
+              value={marketSegment}
+              onChange={goToMarketSegment}
+              className="drawer-market-seg"
+            />
             <button
               type="button"
               className="drawer-section"
@@ -1093,8 +1131,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
       <React.Suspense fallback={null}><GlossaryTermPage term={GLOSSARY_TERMS.find((t) => t.slug === glossaryTerm) || null} goToMarket={goToMarket} goToGlossary={goToGlossary} onTerm={goGlossaryTerm} /></React.Suspense>
       ) : (
       <main className="shell">
-        <Heading level="h1">Crypto</Heading>
-        <Text tone="muted">Compra y vende USDC y USDT directamente entre personas.</Text>
+        <Heading level="h1">{marketSegment === 'divisa' ? 'Divisa' : 'Crypto'}</Heading>
+        <Text tone="muted">{marketSegment === 'divisa' ? 'Cambia USD, EUR, CUP y MLC entre personas sin intermediarios.' : 'Compra y vende USDC y USDT directamente entre personas.'}</Text>
 
         <section className="market" aria-label="Ofertas del mercado">
           <div className={isNarrow ? 'filters filters-mobile' : 'filters'}>
