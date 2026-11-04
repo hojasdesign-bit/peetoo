@@ -22,6 +22,7 @@ import { PageBackground } from './ds/components/PageBackground/PageBackground.js
 import { DropdownMenu } from './ds/components/DropdownMenu/DropdownMenu.jsx';
 import { MenuLinkColumn } from './ds/components/MenuLinkColumn/MenuLinkColumn.jsx';
 import { OFFERS, ASSETS, CHAIN_SHORT, CHAIN_COLORS, CHAIN_SRC, PAYMENT_DETAILS, LOCATION_PRECISION } from './data/offers.js';
+import { DIVISA_OFFERS } from './data/divisaOffers.js';
 import { GLOSSARY_TERMS } from './data/glossary.js';
 import { SWAPPED_EDITORIAL_INTRO, SWAPPED_EDITORIAL, SWAPPED_STATS, SWAPPED_PRECIO_TEXT, SWAPPED_RESOURCES_TEXT, SWAPPED_RESOURCES_LINKS, SWAPPED_FAQS, SWAPPED_MORE_CRYPTOS, SWAPPED_METHODS } from './data/swappedPage.js';
 import { SwappedStepVisual } from './components/SwappedStepVisuals.jsx';
@@ -91,6 +92,12 @@ export default function App() {
   const [payment, setPayment] = React.useState('all');
   const [chain, setChain] = React.useState('all');
   const [sellCurrency, setSellCurrency] = React.useState('all');
+  // Mercado Divisa: las dos patas son método + moneda (sin red). Estados
+  // propios; Crypto sigue con buyCurrency/payment/chain/sellCurrency.
+  const [dBuyMethod, setDBuyMethod] = React.useState('all');
+  const [dBuyFiat, setDBuyFiat] = React.useState('all');
+  const [dSellMethod, setDSellMethod] = React.useState('all');
+  const [dSellFiat, setDSellFiat] = React.useState('all');
   const [page, setPage] = React.useState(1);
   // El ordenar va en
   // la barra (no dentro del agrupador) y el agrupador lleva solo
@@ -235,6 +242,17 @@ export default function App() {
       setQrModal(null);
     }
   };
+  // Menús del centro (Comprar crypto / Comprar fiat): son del mercado
+  // Crypto; desde Divisa cambian el segmento a Crypto. Si ya se está
+  // en el mercado Crypto, no añade otra entrada al historial.
+  const goToCryptoMarket = () => {
+    if (!(marketSegment === 'crypto' && view === 'market')) {
+      window.history.pushState(null, '', '/crypto/');
+      setView('market');
+    }
+    setMarketSegment('crypto');
+    setQrModal(null);
+  };
   // Interruptor del header (junto al logo): cambia de mercado Crypto
   // a Divisa y viceversa. Solo cambia el segmento de la URL (/crypto/
   // o /divisa/); como los menús, parte de filtros limpios, y en Divisa
@@ -245,7 +263,6 @@ export default function App() {
     setBuyMenuOpen(false); setFiatMenuOpen(false); setSwappedMenuOpen(false); setHamburgerOpen(false);
     setQrModal(null);
     clearFilters();
-    setCascadesSwapped(seg === 'divisa');
     setMarketSegment(seg);
     window.history.pushState(null, '', `/${seg}/`);
     setView('market');
@@ -445,7 +462,7 @@ export default function App() {
     clearFilters();
     setSide('buy'); setBuyCurrency(code); setChain('all'); setPage(1);
     setBuyMenuOpen(false);
-    goToMarket();
+    goToCryptoMarket();
   };
   // El DropdownMenu entrega un único onNavigate con el evento: los
   // botones de moneda llevan el código en su tercer span y los enlaces
@@ -464,11 +481,11 @@ export default function App() {
     }
     const label = el.textContent.trim();
     if (label.includes('Vender crypto')) {
-      clearFilters(); setSide('sell'); goToMarket();
+      clearFilters(); setSide('sell'); goToCryptoMarket();
     } else if (label.includes('Todas las ofertas')) {
-      clearFilters(); goToMarket();
+      clearFilters(); goToCryptoMarket();
     } else if (label.includes('Otras monedas')) {
-      clearFilters(); setSide('buy'); goToMarket();
+      clearFilters(); setSide('buy'); goToCryptoMarket();
     } else if (label.includes('Glosario')) {
       goInfoPage('/glosario', 'glossary');
     } else if (label.includes('Legal')) {
@@ -550,7 +567,7 @@ export default function App() {
     setSellCurrency(coin.currency ?? (cashToCurrency[code] || code));
     setPage(1);
     setFiatMenuOpen(false);
-    goToMarket();
+    goToCryptoMarket();
   };
   // Igual que onBuyMenuNavigate: el código va en el tercer span del
   // botón de moneda; el tile «Todas las fiat» lleva el código vacío y
@@ -569,9 +586,9 @@ export default function App() {
     if (label.includes('Todas las fiat')) {
       // Igual que los demás tiles del menú Comprar fiat: sin filtro de
       // fiat, pero en el lado Comprar y con ofertas de venta.
-      clearFilters(); setCascadesSwapped(true); setSide('buy'); goToMarket();
+      clearFilters(); setCascadesSwapped(true); setSide('buy'); goToCryptoMarket();
     } else if (label.includes('Todas las ofertas')) {
-      clearFilters(); goToMarket();
+      clearFilters(); goToCryptoMarket();
     } else if (label.includes('Glosario')) {
       goInfoPage('/glosario', 'glossary');
     } else if (label.includes('Legal')) {
@@ -625,14 +642,35 @@ export default function App() {
     return curs.map((c) => ({ value: c, label: c }));
   };
 
+  // Divisa: métodos y monedas por pata (las dos patas son fiat, sin red).
+  const divisaMethods = uniq([...DIVISA_OFFERS.map((o) => o.buy_method), ...DIVISA_OFFERS.map((o) => o.sell_method)]);
+  const currenciesForDivisaMethod = (method, leg) => {
+    const curKey = leg === 'buy' ? 'buy_currency' : 'sell_currency';
+    const metKey = leg === 'buy' ? 'buy_method' : 'sell_method';
+    const curs = method === 'all'
+      ? uniq(DIVISA_OFFERS.map((o) => o[curKey]))
+      : uniq(DIVISA_OFFERS.filter((o) => o[metKey] === method).map((o) => o[curKey]));
+    const sel = leg === 'buy' ? dBuyFiat : dSellFiat;
+    if (sel !== 'all' && !curs.includes(sel)) curs.push(sel);
+    return curs.map((c) => ({ value: c, label: c }));
+  };
+
   // Misma lógica de filtrado que MarketOffers del repo original.
   const parsedAmount = Number.parseFloat(amount);
-  const filtered = OFFERS.filter((o) => {
+  const isDivisaMarket = marketSegment === 'divisa';
+  const filtered = (isDivisaMarket ? DIVISA_OFFERS : OFFERS).filter((o) => {
     if (o.side !== effectiveSide) return false;
-    if (buyCurrency !== 'all' && o.buy_currency !== buyCurrency) return false;
-    if (payment !== 'all' && o.payment_method !== payment) return false;
-    if (chain !== 'all' && !o.blockchains.includes(chain)) return false;
-    if (sellCurrency !== 'all' && o.sell_currency !== sellCurrency) return false;
+    if (isDivisaMarket) {
+      if (dBuyMethod !== 'all' && o.buy_method !== dBuyMethod) return false;
+      if (dBuyFiat !== 'all' && o.buy_currency !== dBuyFiat) return false;
+      if (dSellMethod !== 'all' && o.sell_method !== dSellMethod) return false;
+      if (dSellFiat !== 'all' && o.sell_currency !== dSellFiat) return false;
+    } else {
+      if (buyCurrency !== 'all' && o.buy_currency !== buyCurrency) return false;
+      if (payment !== 'all' && o.payment_method !== payment) return false;
+      if (chain !== 'all' && !o.blockchains.includes(chain)) return false;
+      if (sellCurrency !== 'all' && o.sell_currency !== sellCurrency) return false;
+    }
     // filtros ocultos del agrupador (la ubicación es un dato
     // derivado: no existe en la oferta ni se muestra en la tabla).
     if (locationFilter !== 'all' && offerLocation(o) !== locationFilter) return false;
@@ -642,11 +680,11 @@ export default function App() {
     if (depositFilter === 'no' && o.deposit_made) return false;
     if (!Number.isNaN(parsedAmount) && parsedAmount > 0) {
       // La cantidad se busca en la moneda del SEGUNDO CascadeField: con
-      // el orden por defecto [crypto, fiat] es fiat y se compara directa
-      // con el rango mín-máx; con los campos intercambiados [fiat,
-      // crypto] es crypto y se convierte por el precio de la oferta
-      // (misma conversión que PriceCell: precio × cantidad) antes de
-      // comparar con el rango.
+      // el orden por defecto es la pata de venta y se compara directa
+      // con el rango mín-máx; con los campos intercambiados es la pata
+      // de compra y se convierte por el precio de la oferta (misma
+      // conversión que PriceCell: precio × cantidad) antes de comparar
+      // con el rango. Vale para Crypto y para Divisa.
       const fiatAmount = cascadesSwapped ? parsedAmount * o.price : parsedAmount;
       if (fiatAmount < o.min_amount || fiatAmount > o.max_amount) return false;
     }
@@ -705,6 +743,7 @@ export default function App() {
   const updEvent = (setter, clean) => (e) => { setter(clean ? clean(e.target.value) : e.target.value); setPage(1); };
   const clearFilters = () => {
     setBuyCurrency('all'); setAmount(''); setPayment('all'); setSellCurrency('all'); setChain('all'); setPage(1);
+    setDBuyMethod('all'); setDBuyFiat('all'); setDSellMethod('all'); setDSellFiat('all');
     // Restaurar el orden por defecto: las selecciones del menú y el
     // botón Eliminar filtros parten de cero, y con el orden restaurado
     // el lado efectivo vuelve a ser el del toggle (si no, el menú
@@ -839,10 +878,38 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
     return tile ? { code: tile.code, symbol: tile.symbol, color: tile.color, src: tile.src } : ASSETS[o.sell_currency];
   };
 
+  // Oferta Divisa: se reconoce por tener método en las dos patas (las
+  // ofertas Crypto tienen un solo payment_method). Su pata se dibuja
+  // con el tile de su método + moneda, o la foto de la moneda.
+  const isDivisaOffer = (o) => o && o.buy_method !== undefined;
+  const divisaLegAsset = (o, currency) => {
+    const method = currency === o.buy_currency ? o.buy_method : o.sell_method;
+    const tile = fiatDropdown.coins.find((c) => c.method === method && c.currency === currency);
+    return tile ? { code: tile.code, symbol: tile.symbol, color: tile.color, src: tile.src } : ASSETS[currency];
+  };
+
   // Etiqueta corta solo para el badge (el resto usa el nombre completo).
   const methodBadgeLabel = (m) => m === 'Efectivo' ? 'Cash' : m === 'Transferencia Bancaria' ? 'Bank' : m;
 
-  const renderOfferRow = (o, inProfile = false) => (
+  const renderOfferRow = (o, inProfile = false) => {
+    if (isDivisaOffer(o)) {
+      return (
+        <div key={o.id} className="offer-row offer-row-divisa" role="row">
+          <div className="offer-cell offer-pair" role="cell" title={`${o.buy_method} ${o.buy_currency} · ${o.sell_method} ${o.sell_currency}`}><AssetPair from={divisaLegAsset(o, o.sell_currency)} to={divisaLegAsset(o, o.buy_currency)} reverse={inProfile ? o.side === 'sell' : effectiveSide === 'sell'} size={44} /></div>
+          <div className="offer-cell offer-amounts" role="cell">
+            <div className="amount">{fmt(o.available)} {o.buy_currency} {o.deposit_made && DepositIcon}</div>
+            <div className="sub">{fmt(o.min_amount)} ~ {fmt(o.max_amount)} {o.sell_currency}</div>
+          </div>
+          <div className="offer-cell offer-price" role="cell">
+            <div className="price"><span className="price-value" title={inProfile ? undefined : priceTitle(o)}>{inProfile ? `${fmt2(o.price)} ${o.sell_currency}` : priceMain(o)}</span></div>
+            <div className="sub">{inProfile ? `1 ${o.buy_currency}` : priceNote(o)}</div>
+          </div>
+          <div className="offer-cell offer-trader" role="cell">{inProfile ? <TraderCell trader={toTrader(o)} /> : <TraderCell trader={toTrader(o)} href={`/crypto/perfil/${o.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(o.advertiser_name); }} />}</div>
+          <div className="offer-cell offer-actions" role="cell"><Button size="md" onClick={() => openModal(o)}>{inProfile ? (o.side === 'buy' ? 'Comprar' : 'Vender') : verb} {o.buy_currency}</Button></div>
+        </div>
+      );
+    }
+    return (
     <div key={o.id} className="offer-row" role="row">
       <div className="offer-cell offer-pair" role="cell"><AssetPair from={fiatLegAsset(o)} to={ASSETS[o.buy_currency]} reverse={inProfile ? o.side === 'sell' : effectiveSide === 'sell'} size={44} /></div>
       <div className="offer-cell offer-amounts" role="cell">
@@ -857,7 +924,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
       <div className="offer-cell offer-trader" role="cell">{inProfile ? <TraderCell trader={toTrader(o)} /> : <TraderCell trader={toTrader(o)} href={`/crypto/perfil/${o.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(o.advertiser_name); }} />}</div>
       <div className="offer-cell offer-actions" role="cell"><Button size="md" onClick={() => openModal(o)}>{inProfile ? (o.side === 'buy' ? 'Comprar' : 'Vender') : verb} {o.buy_currency}</Button></div>
     </div>
-  );
+    );
+  };
 
   // Los dos pares del filtro, como objetos de props: cada par sigue
   // ligado a su dominio (crypto: red+moneda; fiat: método+moneda) y los
@@ -889,6 +957,42 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
     value: { first: payment, second: sellCurrency === 'all' ? null : sellCurrency },
     onChange: ({ first, second }) => { setPayment(first ?? 'all'); setSellCurrency(second ?? 'all'); setPage(1); },
   };
+  const dBuyPair = {
+    firstPlaceholder: 'Método',
+    firstAriaLabel: 'Método de pago',
+    options: [{ value: 'all', label: 'Cualquier método' }, ...divisaMethods.map((c) => ({ value: c, label: c }))],
+    optionsFor: (m) => currenciesForDivisaMethod(m, 'buy'),
+    value: { first: dBuyMethod, second: dBuyFiat === 'all' ? null : dBuyFiat },
+    onChange: ({ first, second }) => { setDBuyMethod(first ?? 'all'); setDBuyFiat(second ?? 'all'); setPage(1); },
+  };
+  const dSellPair = {
+    firstPlaceholder: 'Método',
+    firstAriaLabel: 'Método de pago',
+    options: [{ value: 'all', label: 'Cualquier método' }, ...divisaMethods.map((c) => ({ value: c, label: c }))],
+    optionsFor: (m) => currenciesForDivisaMethod(m, 'sell'),
+    value: { first: dSellMethod, second: dSellFiat === 'all' ? null : dSellFiat },
+    onChange: ({ first, second }) => { setDSellMethod(first ?? 'all'); setDSellFiat(second ?? 'all'); setPage(1); },
+  };
+  const leftDivisaPair = cascadesSwapped ? dSellPair : dBuyPair;
+  const rightDivisaPair = cascadesSwapped ? dBuyPair : dSellPair;
+  const leftDivisaCascade = (
+    <CascadeField
+      key={cascadesSwapped ? 'divisa-sell' : 'divisa-buy'}
+      className="filter-cascade"
+      secondPlaceholder={side === 'buy' ? 'Comprar' : 'Vender'}
+      secondAriaLabel={side === 'buy' ? 'Moneda a comprar' : 'Moneda a vender'}
+      {...leftDivisaPair}
+    />
+  );
+  const rightDivisaCascade = (
+    <CascadeField
+      key={cascadesSwapped ? 'divisa-buy' : 'divisa-sell'}
+      className="filter-cascade"
+      secondPlaceholder={side === 'buy' ? 'Vender' : 'Comprar'}
+      secondAriaLabel={side === 'buy' ? 'Moneda a vender' : 'Moneda a comprar'}
+      {...rightDivisaPair}
+    />
+  );
   const leftPair = cascadesSwapped ? fiatPair : cryptoPair;
   const rightPair = cascadesSwapped ? cryptoPair : fiatPair;
   const leftCascade = (
@@ -913,8 +1017,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
     <Button
       onClick={swapCascadesOrder}
       className="filter-swap"
-      aria-label="Alternar la cantidad entre fiat y crypto"
-      title="Alternar la cantidad entre fiat y crypto"
+      aria-label={marketSegment === 'divisa' ? 'Intercambiar las dos divisas' : 'Alternar la cantidad entre fiat y crypto'}
+      title={marketSegment === 'divisa' ? 'Intercambiar las dos divisas' : 'Alternar la cantidad entre fiat y crypto'}
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M19.9999 17L3.99994 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -953,9 +1057,12 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
   // del botón de icono de Más filtros).
   const moreFiltersCount = [locationFilter, rankingFilter, advertiserFilter, depositFilter].filter((v) => v !== 'all').length
     + (isNarrow && sortBy !== 'price-asc' ? 1 : 0)
-    + (isNarrow && chain !== 'all' ? 1 : 0)
-    + (isNarrow && payment !== 'all' ? 1 : 0)
-    + (isNarrow && (side === 'buy' ? sellCurrency : buyCurrency) !== 'all' ? 1 : 0);
+    + (isNarrow && marketSegment === 'divisa' && dBuyMethod !== 'all' ? 1 : 0)
+    + (isNarrow && marketSegment === 'divisa' && dSellMethod !== 'all' ? 1 : 0)
+    + (isNarrow && marketSegment === 'divisa' && (side === 'buy' ? dSellFiat : dBuyFiat) !== 'all' ? 1 : 0)
+    + (isNarrow && marketSegment !== 'divisa' && chain !== 'all' ? 1 : 0)
+    + (isNarrow && marketSegment !== 'divisa' && payment !== 'all' ? 1 : 0)
+    + (isNarrow && marketSegment !== 'divisa' && (side === 'buy' ? sellCurrency : buyCurrency) !== 'all' ? 1 : 0);
 
   return (
     <div className={`app${view === 'swapped' ? ' app-swapped' : ''}`}>
@@ -1169,7 +1276,17 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                     onChange={updEvent(setAmount, (v) => v.replace(/[^0-9.]/g, ''))}
                     className="filter-amount"
                   />
-                  {side === 'buy' ? (
+                  {marketSegment === 'divisa' ? (
+                    <select
+                      className="filters-mobile-currency"
+                      aria-label="Moneda a comprar"
+                      value={side === 'buy' ? dBuyFiat : dSellFiat}
+                      onChange={(e) => { side === 'buy' ? setDBuyFiat(e.target.value) : setDSellFiat(e.target.value); setPage(1); }}
+                    >
+                      <option value="all">Comprar</option>
+                      {(side === 'buy' ? currenciesForDivisaMethod(dBuyMethod, 'buy') : currenciesForDivisaMethod(dSellMethod, 'sell')).map((c) => (<option key={c.value} value={c.value}>{c.label}</option>))}
+                    </select>
+                  ) : side === 'buy' ? (
                     <select
                       className="filters-mobile-currency"
                       aria-label="Moneda a comprar"
@@ -1210,7 +1327,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               onChange={updEvent(setAmount, (v) => v.replace(/[^0-9.]/g, ''))}
               className="filter-amount"
             />
-            {leftCascade}{swapButton}{rightCascade}
+            {isDivisaMarket ? leftDivisaCascade : leftCascade}{swapButton}{isDivisaMarket ? rightDivisaCascade : rightCascade}
             {/* el botón Eliminar filtros sale de la barra; en
                 su lugar va este agrupador de filtros ocultos, con la
                 opción de restablecer dentro del panel. Queda al final
@@ -1282,30 +1399,61 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                         <option value="rating-desc">Valoración ↓</option>
                       </select>
                     </label>
-                    <label className="more-filters-field">
-                      <span>Red blockchain</span>
-                      <select value={chain} onChange={(e) => { setChain(e.target.value); setPage(1); }}>
-                        <option value="all">Cualquier blockchain</option>
-                        {chainOptions.map((c) => (<option key={c} value={c}>{c}</option>))}
-                      </select>
-                    </label>
-                    <label className="more-filters-field">
-                      <span>Método</span>
-                      <select value={payment} onChange={(e) => { setPayment(e.target.value); setPage(1); }}>
-                        <option value="all">Cualquier método</option>
-                        {paymentOptions.map((c) => (<option key={c} value={c}>{c}</option>))}
-                      </select>
-                    </label>
-                    <label className="more-filters-field">
-                      <span>Moneda a vender</span>
-                      <select
-                        value={side === 'buy' ? sellCurrency : buyCurrency}
-                        onChange={(e) => { side === 'buy' ? setSellCurrency(e.target.value) : setBuyCurrency(e.target.value); setPage(1); }}
-                      >
-                        <option value="all">Vender</option>
-                        {(side === 'buy' ? currenciesForMethod(payment) : currenciesForChain(chain)).map((c) => (<option key={c.value} value={c.value}>{c.label}</option>))}
-                      </select>
-                    </label>
+                    {marketSegment === 'divisa' ? (
+                      <>
+                        <label className="more-filters-field">
+                          <span>Método a comprar</span>
+                          <select value={dBuyMethod} onChange={(e) => { setDBuyMethod(e.target.value); setPage(1); }}>
+                            <option value="all">Cualquier método</option>
+                            {divisaMethods.map((c) => (<option key={c} value={c}>{c}</option>))}
+                          </select>
+                        </label>
+                        <label className="more-filters-field">
+                          <span>Método a vender</span>
+                          <select value={dSellMethod} onChange={(e) => { setDSellMethod(e.target.value); setPage(1); }}>
+                            <option value="all">Cualquier método</option>
+                            {divisaMethods.map((c) => (<option key={c} value={c}>{c}</option>))}
+                          </select>
+                        </label>
+                        <label className="more-filters-field">
+                          <span>Moneda a vender</span>
+                          <select
+                            value={side === 'buy' ? dSellFiat : dBuyFiat}
+                            onChange={(e) => { side === 'buy' ? setDSellFiat(e.target.value) : setDBuyFiat(e.target.value); setPage(1); }}
+                          >
+                            <option value="all">Vender</option>
+                            {(side === 'buy' ? currenciesForDivisaMethod(dSellMethod, 'sell') : currenciesForDivisaMethod(dBuyMethod, 'buy')).map((c) => (<option key={c.value} value={c.value}>{c.label}</option>))}
+                          </select>
+                        </label>
+                      </>
+                    ) : (
+                      <>
+                        <label className="more-filters-field">
+                          <span>Red blockchain</span>
+                          <select value={chain} onChange={(e) => { setChain(e.target.value); setPage(1); }}>
+                            <option value="all">Cualquier blockchain</option>
+                            {chainOptions.map((c) => (<option key={c} value={c}>{c}</option>))}
+                          </select>
+                        </label>
+                        <label className="more-filters-field">
+                          <span>Método</span>
+                          <select value={payment} onChange={(e) => { setPayment(e.target.value); setPage(1); }}>
+                            <option value="all">Cualquier método</option>
+                            {paymentOptions.map((c) => (<option key={c} value={c}>{c}</option>))}
+                          </select>
+                        </label>
+                        <label className="more-filters-field">
+                          <span>Moneda a vender</span>
+                          <select
+                            value={side === 'buy' ? sellCurrency : buyCurrency}
+                            onChange={(e) => { side === 'buy' ? setSellCurrency(e.target.value) : setBuyCurrency(e.target.value); setPage(1); }}
+                          >
+                            <option value="all">Vender</option>
+                            {(side === 'buy' ? currenciesForMethod(payment) : currenciesForChain(chain)).map((c) => (<option key={c.value} value={c.value}>{c.label}</option>))}
+                          </select>
+                        </label>
+                      </>
+                    )}
                   </>
                 )}
                 <label className="more-filters-field">
@@ -1357,7 +1505,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                 <div className="offer-cell" role="columnheader">Das / Recibes</div>
                 <div className="offer-cell" role="columnheader">Disponible / Min - Max</div>
                 <div className="offer-cell" role="columnheader">Precio</div>
-                <div className="offer-cell" role="columnheader">Red blockchain</div>
+                {!isDivisaMarket && (<div className="offer-cell" role="columnheader">Red blockchain</div>)}
                 <div className="offer-cell" role="columnheader">Anunciante</div>
                 <div className="offer-cell" role="columnheader"><span className="sr-only">Acciones</span></div>
               </div>
@@ -1408,7 +1556,13 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               <div className="order-meta">
                 <h5 className="order-meta-title">Información de la orden</h5>
                 <div className="order-meta-box">
-                  <MetadataList items={[
+                  <MetadataList items={isDivisaOffer(selected) ? [
+                    { label: 'Límite:', value: `${fmt(selected.min_amount)} - ${fmt(selected.max_amount)} ${selected.sell_currency}` },
+                    { label: 'Disponible:', value: `${fmt(selected.available)} ${selected.buy_currency}` },
+                    { label: 'Método de compra:', value: selected.buy_method },
+                    { label: 'Método de venta:', value: selected.sell_method },
+                    ...((selected.buy_method === 'Efectivo' || selected.sell_method === 'Efectivo') ? [{ label: 'Ubicación:', value: offerLocation(selected) }] : []),
+                  ] : [
                     { label: 'Límite:', value: `${fmt(selected.min_amount)} - ${fmt(selected.max_amount)} ${selected.sell_currency}` },
                     { label: 'Disponible:', value: `${fmt(selected.available)} ${selected.buy_currency}` },
                     { label: 'Método de pago:', value: selected.payment_method },
@@ -1417,7 +1571,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   ]} />
                 </div>
               </div>
-              {selected.payment_method === 'Efectivo' && (
+              {((isDivisaOffer(selected) && (selected.buy_method === 'Efectivo' || selected.sell_method === 'Efectivo')) || (!isDivisaOffer(selected) && selected.payment_method === 'Efectivo')) && (
                 <div className="order-map">
                   <img src={LOCATION_PRECISION[selected.advertiser_name] === 'exact' ? mapPinImg : mapZoneImg} alt={`Mapa de ${offerLocation(selected)}`} className="order-map-img" />
                   <p className="order-map-caption">{offerLocation(selected)} · {LOCATION_PRECISION[selected.advertiser_name] === 'exact' ? 'Punto exacto configurado por el anunciante' : 'Zona aproximada: el anunciante solo compartió la ciudad'}</p>
@@ -1429,8 +1583,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               <SwapPair
                 payLabel="Das"
                 receiveLabel="Recibes"
-                payCurrency={swapDasCode === selected.sell_currency ? fiatLegAsset(selected) : ASSETS[swapDasCode]}
-                receiveCurrency={swapRecibesCode === selected.sell_currency ? fiatLegAsset(selected) : ASSETS[swapRecibesCode]}
+                payCurrency={isDivisaOffer(selected) ? divisaLegAsset(selected, swapDasCode) : (swapDasCode === selected.sell_currency ? fiatLegAsset(selected) : ASSETS[swapDasCode])}
+                receiveCurrency={isDivisaOffer(selected) ? divisaLegAsset(selected, swapRecibesCode) : (swapRecibesCode === selected.sell_currency ? fiatLegAsset(selected) : ASSETS[swapRecibesCode])}
                 payAmount={modalAmount}
                 onPayAmountChange={(e) => setModalAmount(e.target.value.replace(/[^0-9.]/g, ''))}
                 receiveAmount={fmt(swapRecibesAmt)}

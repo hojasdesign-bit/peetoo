@@ -444,6 +444,12 @@ body {
   .offer-price .price { display: inline-block; position: relative; font-size: 16px; font-weight: 600; }
   .offer-price .price .offer-method-badge { position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 6px; }
   .offer-chains { grid-area: chains; }
+  .offer-row-divisa {
+    grid-template-areas:
+      "pair trader"
+      "amounts amounts"
+      "price actions";
+  }
   .offer-trader { grid-area: trader; }
   .offer-actions { grid-area: actions; text-align: right; white-space: nowrap; align-self: center; }
 }
