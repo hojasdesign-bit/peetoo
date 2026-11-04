@@ -413,7 +413,7 @@ body {
 .offer-cell:first-child { padding-left: 24px; }
 .offer-cell:last-child { padding-right: 24px; }
 .offer-actions { text-align: right; white-space: nowrap; }
-.offer-method-badge { display: inline-block; vertical-align: middle; font-size: 10px; font-weight: 600; line-height: 1; padding: 4px 6px; border-radius: 6px; border: 1px solid var(--cds-border-strong); color: var(--cds-ink); white-space: nowrap; } /* tamaño móvil también en escritorio, a petición suya */
+.offer-method-badge { display: inline-block; vertical-align: middle; font-size: 10px; font-weight: 600; line-height: 1; padding: 2px 6px; border-radius: 6px; border: 1px solid var(--cds-border-strong); color: var(--cds-ink); white-space: nowrap; } /* alto a la altura del texto del precio, a petición suya */
 .offer-list .amount { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .offer-list .price { font-size: 14px; font-weight: 600; }
 
