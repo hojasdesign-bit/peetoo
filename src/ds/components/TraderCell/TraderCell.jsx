@@ -9,6 +9,14 @@ export const ExchangeIcon = (
   <path d="M16.9767 19.5C19.4017 17.8876 21 15.1305 21 12C21 7.02944 16.9706 3 12 3C11.3126 3 10.6432 3.07706 10 3.22302M16.9767 19.5V16M16.9767 19.5H20.5M7 4.51555C4.58803 6.13007 3 8.87958 3 12C3 16.9706 7.02944 21 12 21C12.6874 21 13.3568 20.9229 14 20.777M7 4.51555V8M7 4.51555H3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
+// clock-01 de HugeIcons (paquete oficial @hugeicons/core-free-icons),
+// mismo grosor 1.5 que ExchangeIcon y ThumbIcon.
+export const ClockIcon = (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M12 8V12L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 export const ThumbIcon = (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
   <path d="M2 12.5C2 11.3954 2.89543 10.5 4 10.5C5.65685 10.5 7 11.8431 7 13.5V17.5C7 19.1569 5.65685 20.5 4 20.5C2.89543 20.5 2 19.6046 2 18.5V12.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -22,7 +30,7 @@ export const ThumbIcon = (
  * con operaciones y porcentaje completado. Con `href` enlaza al perfil.
  */
 export function TraderCell({ trader = {}, href, className = '', ...rest }) {
-  const { name = '', avatarSrc, verified = false, verification = 'standard', tier, trades, completion, score, online } = trader;
+  const { name = '', avatarSrc, verified = false, verification = 'standard', tier, trades, completion, avgCompletion, score, online } = trader;
   const Tag = href ? 'a' : 'div';
   return (
     <Tag href={href} className={cn(styles.cell, href && styles.link, className)} {...rest}>
@@ -33,7 +41,7 @@ export function TraderCell({ trader = {}, href, className = '', ...rest }) {
           {verified && <VerifiedBadge variant={verification} size={15} />}
           {tier && <span className={styles.tier}>{tier}</span>}
         </span>
-        {(trades != null || completion != null) && (
+        {(trades != null || completion != null || avgCompletion != null) && (
           <span className={styles.meta}>
             {trades != null && (
               <span className={styles.metaItem}>
@@ -45,6 +53,12 @@ export function TraderCell({ trader = {}, href, className = '', ...rest }) {
               <span className={styles.metaItem}>
                 {ThumbIcon}
                 {completion}%
+              </span>
+            )}
+            {avgCompletion != null && (
+              <span className={styles.metaItem} title={`Tiempo promedio de finalización: ~${avgCompletion} min`}>
+                {ClockIcon}
+                ~{avgCompletion} min
               </span>
             )}
           </span>

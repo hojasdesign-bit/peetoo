@@ -11,12 +11,13 @@ export function SegmentedControl({
   value,
   onChange,
   tone = 'neutral',
+  size = 'md',
   ariaLabel,
   className = '',
   ...rest
 }) {
   return (
-    <div className={cn(styles.root, className)} role="tablist" aria-label={ariaLabel} {...rest}>
+    <div className={cn(styles.root, size === 'sm' && styles.small, className)} role="tablist" aria-label={ariaLabel} {...rest}>
       {options.map((opt) => {
         const active = opt.value === value;
         return (

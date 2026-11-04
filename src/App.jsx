@@ -71,12 +71,16 @@ const abbrevNum = (n) => {
   return fmt2(n);
 };
 const uniq = (arr) => [...new Set(arr)].sort();
+// Tiempo promedio de finalización por anunciante, en minutos (dato demo,
+// igual que las operaciones y el porcentaje: no viene de las ofertas).
+const AVG_COMPLETION_MIN = { criptoblue: 2, yosusenador: 4, tucambioalpoars: 7, habana_p2p: 3, caribe_crypto: 9 };
 const toTrader = (o) => ({
   name: o.advertiser_name,
   verified: o.advertiser_verified,
   verification: o.advertiser_premium ? 'premium' : 'standard',
   trades: o.advertiser_trades,
   completion: o.advertiser_completion,
+  avgCompletion: AVG_COMPLETION_MIN[o.advertiser_name] ?? null,
 });
 const DepositIcon = (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-label="Depósito en garantía realizado">
@@ -1084,6 +1088,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               options={[{ value: 'crypto', label: 'Crypto' }, { value: 'divisa', label: 'Divisa' }]}
               value={marketSegment}
               onChange={goToMarketSegment}
+              size="sm"
               className="market-seg"
             />
           </span>
@@ -1170,6 +1175,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               options={[{ value: 'crypto', label: 'Crypto' }, { value: 'divisa', label: 'Divisa' }]}
               value={marketSegment}
               onChange={goToMarketSegment}
+              size="sm"
               className="drawer-market-seg"
             />
             <button

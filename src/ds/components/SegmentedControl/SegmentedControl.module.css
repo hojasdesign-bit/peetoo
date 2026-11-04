@@ -26,6 +26,10 @@
 }
 
 .seg:hover { color: var(--cds-ink); }
+
+/* Variante compacta: solo para el interruptor Crypto/Divisa. */
+.small { padding: 3px; }
+.small .seg { height: 30px; padding: 0 12px; font-size: var(--cds-text-body-sm); }
 .seg:focus-visible { outline: none; box-shadow: var(--cds-focus-ring); }
 
 .active {
