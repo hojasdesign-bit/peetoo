@@ -151,15 +151,17 @@ export default function App() {
     if (path.length > 1) path = path.replace(/\/$/, '');
     if (path === '/') return { view: 'home', profile: '' };
     if (path === '/crypto') {
-      window.history.replaceState(null, '', '/crypto/');
+      // Se ejecuta en cada render: conservar la query (?oferta=id) al
+      // normalizar, o el enlace profundo y el modal la perderían.
+      window.history.replaceState(null, '', `/crypto/${window.location.search}`);
       return { view: 'market', profile: '', segment: 'crypto' };
     }
     if (path === '/divisa') {
-      window.history.replaceState(null, '', '/divisa/');
+      window.history.replaceState(null, '', `/divisa/${window.location.search}`);
       return { view: 'market', profile: '', segment: 'divisa' };
     }
     if (path === '/swapped' || path === '/legal' || path === '/glosario' || path.startsWith('/glosario/') || path.startsWith('/perfil/')) {
-      window.history.replaceState(null, '', `/crypto${path}`);
+      window.history.replaceState(null, '', `/crypto${path}${window.location.search}`);
       path = `/crypto${path}`;
     }
     const inner = path.startsWith('/crypto/') ? path.slice('/crypto'.length) : path;
@@ -306,10 +308,59 @@ export default function App() {
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
+
   const [selected, setSelected] = React.useState(null);
   const [modalAmount, setModalAmount] = React.useState('');
   const [modalChain, setModalChain] = React.useState('');
   const [orderDone, setOrderDone] = React.useState(false);
+  // Desplegable «•••» del modal de la orden (compartir, detalles, perfil,
+  // favoritos, denunciar, bloquear) + enlace profundo a la oferta.
+  const [moreOpen, setMoreOpen] = React.useState(false);
+  const [copiedAction, setCopiedAction] = React.useState(null);
+  const [reportView, setReportView] = React.useState(null);
+  const [reportReason, setReportReason] = React.useState('');
+  const [reportNote, setReportNote] = React.useState('');
+  const [favorites, setFavorites] = React.useState(() => { try { return JSON.parse(window.localStorage.getItem('peetoo:favoritos') || '[]'); } catch { return []; } });
+  const [blockedNames, setBlockedNames] = React.useState(() => { try { return JSON.parse(window.localStorage.getItem('peetoo:bloqueados') || '[]'); } catch { return []; } });
+  const moreRef = React.useRef(null);
+  const [morePos, setMorePos] = React.useState(null);
+  // Enlace profundo a una oferta (?oferta=id): abre su modal al cargar.
+  React.useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('oferta');
+    if (!id) return;
+    const o = OFFERS.find((x) => String(x.id) === id) || DIVISA_OFFERS.find((x) => String(x.id) === id);
+    if (!o) return;
+    const seg = isDivisaOffer(o) ? 'divisa' : 'crypto';
+    if (initialView.view !== 'market' || (initialView.segment || 'crypto') !== seg) {
+      setMarketSegment(seg);
+      setView('market');
+      window.history.replaceState(null, '', `/${seg}/?oferta=${o.id}`);
+    }
+    openModal(o);
+  }, []);
+  // El menú es fixed (como el panel de filtros): si quedara dentro
+  // del cuerpo desplazable del modal, el overflow lo recortaría al
+  // abrir hacia arriba. Se ancla al rect del botón «•••».
+  const toggleMore = (e) => {
+    if (moreOpen) { setMoreOpen(false); return; }
+    const r = e.currentTarget.getBoundingClientRect();
+    setMorePos({ bottom: Math.round(window.innerHeight - r.top + 8), right: Math.round(window.innerWidth - r.right) });
+    setMoreOpen(true);
+  };
+  // El desplegable «•••» cierra al pulsar fuera, con Escape, al
+  // desplazar el modal o al cambiar el tamaño de la ventana (el menú
+  // fijo no sigue al botón).
+  React.useEffect(() => {
+    if (!moreOpen) return;
+    const onDown = (e) => { if (moreRef.current && !moreRef.current.contains(e.target)) setMoreOpen(false); };
+    const onKey = (e) => { if (e.key === 'Escape') setMoreOpen(false); };
+    const onScroll = () => setMoreOpen(false);
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', onScroll);
+    return () => { document.removeEventListener('pointerdown', onDown); document.removeEventListener('keydown', onKey); document.removeEventListener('scroll', onScroll, true); window.removeEventListener('resize', onScroll); };
+  }, [moreOpen]);
   const [theme, setTheme] = React.useState('oscuro');
 
   // Submenú «Comprar crypto» del header: la versión planteada en el DS
@@ -661,6 +712,7 @@ export default function App() {
   const parsedAmount = Number.parseFloat(amount);
   const isDivisaMarket = marketSegment === 'divisa';
   const filtered = (isDivisaMarket ? DIVISA_OFFERS : OFFERS).filter((o) => {
+    if (blockedNames.includes(o.advertiser_name)) return false;
     if (o.side !== effectiveSide) return false;
     if (isDivisaMarket) {
       if (dBuyMethod !== 'all' && o.buy_method !== dBuyMethod) return false;
@@ -811,8 +863,64 @@ export default function App() {
   const verb = effectiveSide === 'buy' ? 'Comprar' : 'Vender';
   const openModal = (o) => {
     setSelected(o); setModalAmount(''); setModalChain(o.blockchains[0] || ''); setOrderDone(false);
+    setReportView(null); setReportReason(''); setReportNote(''); setMoreOpen(false);
+    const u = new URL(window.location.href);
+    u.searchParams.set('oferta', String(o.id));
+    window.history.replaceState(null, '', `${u.pathname}${u.search}`);
   };
-  const closeModal = () => { setSelected(null); setOrderDone(false); };
+  const closeModal = () => {
+    setSelected(null); setOrderDone(false); setMoreOpen(false); setReportView(null);
+    const u = new URL(window.location.href);
+    u.searchParams.delete('oferta');
+    window.history.replaceState(null, '', `${u.pathname}${u.search}`);
+  };
+  // Enlace profundo y textos para compartir una oferta concreta.
+  const offerUrl = (o) => `${window.location.origin}/${isDivisaOffer(o) ? 'divisa' : 'crypto'}/?oferta=${o.id}`;
+  const offerShareText = (o) => isDivisaOffer(o)
+    ? `Oferta en peetoo: 1 ${o.buy_currency} = ${fmt2(o.price)} ${o.sell_currency} con ${o.advertiser_name} (venta por ${o.sell_method}, compra por ${o.buy_method})`
+    : `Oferta en peetoo: 1 ${o.buy_currency} = ${fmt2(o.price)} ${o.sell_currency} con ${o.advertiser_name} (${o.payment_method})`;
+  const offerDetailsText = (o) => [
+    `Oferta en peetoo — ${o.advertiser_name}`,
+    `1 ${o.buy_currency} = ${fmt2(o.price)} ${o.sell_currency}`,
+    `Límite: ${fmt(o.min_amount)} - ${fmt(o.max_amount)} ${o.sell_currency}`,
+    `Disponible: ${fmt(o.available)} ${o.buy_currency}`,
+    isDivisaOffer(o) ? `Métodos: compra ${o.buy_method}, venta ${o.sell_method}` : `Método de pago: ${o.payment_method}`,
+    offerUrl(o),
+  ].join('\n');
+  const copyAction = async (kind, text) => {
+    if (await copyText(text)) {
+      setCopiedAction(kind);
+      window.setTimeout(() => setCopiedAction((c) => (c === kind ? null : c)), 2000);
+    }
+  };
+  const shareWhatsApp = () => { if (!selected) return; window.open(`https://wa.me/?text=${encodeURIComponent(`${offerShareText(selected)} ${offerUrl(selected)}`)}`, '_blank', 'noopener'); setMoreOpen(false); };
+  const shareTelegram = () => { if (!selected) return; window.open(`https://t.me/share/url?url=${encodeURIComponent(offerUrl(selected))}&text=${encodeURIComponent(offerShareText(selected))}`, '_blank', 'noopener'); setMoreOpen(false); };
+  const toggleFavorite = () => {
+    if (!selected) return;
+    setFavorites((f) => {
+      const next = f.includes(selected.id) ? f.filter((id) => id !== selected.id) : [...f, selected.id];
+      try { window.localStorage.setItem('peetoo:favoritos', JSON.stringify(next)); } catch { /* sin almacenamiento */ }
+      return next;
+    });
+  };
+  const toggleBlock = () => {
+    if (!selected) return;
+    setBlockedNames((b) => {
+      const next = b.includes(selected.advertiser_name) ? b.filter((n) => n !== selected.advertiser_name) : [...b, selected.advertiser_name];
+      try { window.localStorage.setItem('peetoo:bloqueados', JSON.stringify(next)); } catch { /* sin almacenamiento */ }
+      return next;
+    });
+  };
+  const REPORT_REASONS = ['Precio falso o engañoso', 'Posible estafa', 'Spam o contenido inapropiado', 'El anunciante no responde', 'Otro motivo'];
+  const submitReport = () => {
+    if (!selected || !reportReason) return;
+    try {
+      const list = JSON.parse(window.localStorage.getItem('peetoo:reportes') || '[]');
+      list.push({ oferta: selected.id, anunciante: selected.advertiser_name, motivo: reportReason, nota: reportNote, fecha: new Date().toISOString() });
+      window.localStorage.setItem('peetoo:reportes', JSON.stringify(list));
+    } catch { /* sin almacenamiento */ }
+    setReportView('done');
+  };
   const modalParsed = Number.parseFloat(modalAmount);
 
 // Lado de la orden en el modal: en el mercado coincide con el lado
@@ -1552,8 +1660,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
         </div>
       </footer>
 
-      <Modal open={!!selected} onClose={closeModal} size="lg" title={selected ? (orderDone ? 'Orden creada' : `${view === 'profile' ? (selected.side === 'buy' ? 'Comprar' : 'Vender') : verb} ${selected.buy_currency}`) : ''}>
-        {selected && !orderDone && (
+      <Modal open={!!selected} onClose={closeModal} size="lg" title={selected ? (reportView ? 'Denunciar oferta' : (orderDone ? 'Orden creada' : `${view === 'profile' ? (selected.side === 'buy' ? 'Comprar' : 'Vender') : verb} ${selected.buy_currency}`)) : ''}>
+        {selected && !orderDone && reportView === null && (
           <div className="order-grid">
             <div className="order-info">
               <TraderCell trader={toTrader(selected)} href={`/crypto/perfil/${selected.advertiser_name}`} onClick={(e) => { e.preventDefault(); goToTrader(selected.advertiser_name); }} />
@@ -1601,8 +1709,57 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               {modalAmount && !modalValid && (
                 <Text tone="muted">El monto debe estar entre {fmt(swapDasMin)} y {fmt(swapDasMax)} {swapDasCode}.</Text>
               )}
-              <Button size="lg" disabled={!modalValid} onClick={() => setOrderDone(true)}>Comenzar intercambio</Button>
+              <div className="order-actions">
+                <Button size="lg" disabled={!modalValid} onClick={() => setOrderDone(true)}>Comenzar intercambio</Button>
+                <div className="order-more" ref={moreRef}>
+                  <button type="button" className="order-more-btn" aria-label="Más opciones" aria-haspopup="menu" aria-expanded={moreOpen} onClick={toggleMore}>•••</button>
+                  {moreOpen && (
+                    <div className="order-more-menu" role="menu" style={morePos ? { bottom: morePos.bottom, right: morePos.right } : undefined}>
+                      <p className="order-more-label">Compartir</p>
+                      <button type="button" role="menuitem" onClick={shareWhatsApp}>Compartir por WhatsApp</button>
+                      <button type="button" role="menuitem" onClick={shareTelegram}>Compartir por Telegram</button>
+                      <button type="button" role="menuitem" onClick={() => copyAction('link', offerUrl(selected))}>{copiedAction === 'link' ? '¡Enlace copiado!' : 'Copiar enlace de la oferta'}</button>
+                      <hr className="order-more-sep" />
+                      <button type="button" role="menuitem" onClick={() => copyAction('details', offerDetailsText(selected))}>{copiedAction === 'details' ? '¡Detalles copiados!' : 'Copiar detalles de la oferta'}</button>
+                      <button type="button" role="menuitem" onClick={() => { setMoreOpen(false); goToTrader(selected.advertiser_name); }}>Ver perfil del anunciante</button>
+                      <button type="button" role="menuitem" onClick={toggleFavorite}>{favorites.includes(selected.id) ? 'Quitar de favoritos' : 'Guardar en favoritos'}</button>
+                      <hr className="order-more-sep" />
+                      <button type="button" role="menuitem" className="is-danger" onClick={() => { setMoreOpen(false); setReportView('form'); }}>Denunciar oferta</button>
+                      <button type="button" role="menuitem" className="is-danger" onClick={toggleBlock}>{blockedNames.includes(selected.advertiser_name) ? 'Desbloquear anunciante' : 'Bloquear anunciante'}</button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
+          </div>
+        )}
+        {selected && !orderDone && reportView !== null && (
+          <div className="order-report">
+            <Text>Denuncia la oferta de {selected.advertiser_name} — 1 {selected.buy_currency} = {fmt2(selected.price)} {selected.sell_currency}.</Text>
+            {reportView === 'form' && (
+              <>
+                <div className="order-report-reasons" role="radiogroup" aria-label="Motivo de la denuncia">
+                  {REPORT_REASONS.map((r) => (
+                    <button type="button" key={r} role="radio" aria-checked={reportReason === r} className={reportReason === r ? 'is-selected' : ''} onClick={() => setReportReason(r)}>{r}</button>
+                  ))}
+                </div>
+                <textarea className="order-report-note" value={reportNote} onChange={(e) => setReportNote(e.target.value)} placeholder="Detalles (opcional)" rows={3} />
+                <div className="order-report-actions">
+                  <Button size="lg" disabled={!reportReason} onClick={submitReport}>Enviar reporte</Button>
+                  <Button size="lg" variant="secondary" onClick={() => setReportView(null)}>Volver a la oferta</Button>
+                </div>
+              </>
+            )}
+            {reportView === 'done' && (
+              <>
+                <Text>Reporte enviado. Lo revisaremos.</Text>
+                <Text tone="muted">Demo: el reporte queda guardado en este navegador.</Text>
+                <div className="order-report-actions">
+                  <Button size="lg" variant="secondary" onClick={() => setReportView(null)}>Volver a la oferta</Button>
+                  <Button size="lg" onClick={closeModal}>Cerrar</Button>
+                </div>
+              </>
+            )}
           </div>
         )}
         {selected && orderDone && (
