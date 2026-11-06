@@ -58,6 +58,21 @@ const GLYPHS = {
       <path d="M13 2 L5 14 h6 l-2 8 8 -12 h-6 l2 -8" />
     </Glyph>
   ),
+  // Genéricos añadidos para la página de retiro con QvaPay.
+  Efectivo: (
+    <Glyph>
+      <rect x="2" y="6" width="20" height="12" rx="2" />
+      <circle cx="12" cy="12" r="3" />
+      <path d="M5.5 9.5 h.01 M18.5 14.5 h.01" />
+    </Glyph>
+  ),
+  Cripto: (
+    <Glyph>
+      <rect x="2" y="6" width="20" height="14" rx="2" />
+      <path d="M2 10 h20" />
+      <circle cx="17" cy="15" r="1.6" fill="currentColor" stroke="none" />
+    </Glyph>
+  ),
 };
 
 export function SwappedMethodIcon({ method }) {

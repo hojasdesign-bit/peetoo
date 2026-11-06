@@ -44,6 +44,7 @@ import { cupPng, usdPng, eurPng, mxnPng, cadPng } from './assets/coins/fiat-imag
 import placeholderGenericIcon from './assets/coins/placeholder-generic.svg';
 import { HomePage } from './views/HomePages.jsx';
 const SwappedView = React.lazy(() => import('./views/SwappedView.jsx'));
+const QvapayView = React.lazy(() => import('./views/QvapayView.jsx'));
 const ProfileView = React.lazy(() => import('./views/ProfileView.jsx'));
 const LegalPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.LegalPage })));
 const GlossaryPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.GlossaryPage })));
@@ -156,7 +157,7 @@ export default function App() {
   // que describe resultados (filtro, verbo, dirección del par) usa
   // effectiveSide; solo el SegmentedControl muestra side.
   const effectiveSide = cascadesSwapped ? (side === 'buy' ? 'sell' : 'buy') : side;
-  // Vista: 'home', 'market', 'swapped', 'profile', 'legal', 'glossary' o 'glossary-term'.
+  // Vista: 'home', 'market', 'swapped', 'qvapay', 'profile', 'legal', 'glossary' o 'glossary-term'.
   // /crypto/swapped, /crypto/perfil/:nombre, /crypto/legal y /crypto/glosario son vistas de la app
   // (no páginas estáticas): así mantienen el header y los enlaces se
   // comportan igual que en el mercado. La vista inicial sale de la URL
@@ -182,12 +183,14 @@ export default function App() {
       window.history.replaceState(null, '', `/divisa/${window.location.search}`);
       return { view: 'market', profile: '', segment: 'divisa' };
     }
-    if (path === '/swapped' || path === '/legal' || path === '/glosario' || path.startsWith('/glosario/') || path.startsWith('/perfil/')) {
+    if (path === '/swapped' || path === '/qvapay' || path === '/qvapay/efectivo' || path === '/legal' || path === '/glosario' || path.startsWith('/glosario/') || path.startsWith('/perfil/')) {
       window.history.replaceState(null, '', `/crypto${path}${window.location.search}`);
       path = `/crypto${path}`;
     }
     const inner = path.startsWith('/crypto/') ? path.slice('/crypto'.length) : path;
     if (inner === '/swapped') return { view: 'swapped', profile: '' };
+    if (inner === '/qvapay') return { view: 'qvapay', profile: '', qvapayVariant: 'general' };
+    if (inner === '/qvapay/efectivo') return { view: 'qvapay', profile: '', qvapayVariant: 'cash' };
     if (inner === '/legal') return { view: 'legal', profile: '' };
     if (inner === '/glosario') return { view: 'glossary', profile: '' };
     const gm = inner.match(/^\/glosario\/(.+)$/);
@@ -204,6 +207,7 @@ export default function App() {
   const [marketSegment, setMarketSegment] = React.useState(initialView.segment || 'crypto');
   const [profileName, setProfileName] = React.useState(initialView.profile);
   const [glossaryTerm, setGlossaryTerm] = React.useState(initialView.glossaryTerm || '');
+  const [qvapayVariant, setQvapayVariant] = React.useState(initialView.qvapayVariant || 'general');
   const [profilePage, setProfilePage] = React.useState(1);
   const [showAllCryptos, setShowAllCryptos] = React.useState(false);
   const [showAllFiats, setShowAllFiats] = React.useState(false);
@@ -230,6 +234,13 @@ export default function App() {
     setSwappedMenuOpen(false);
     setHamburgerOpen(false);
     goSwapped();
+  };
+  // Toggle de la página de QvaPay: cambia entre la versión general y
+  // la de solo efectivo, con su propia ruta.
+  const goToQvapay = (variant) => {
+    setQvapayVariant(variant);
+    window.history.pushState(null, '', variant === 'cash' ? '/crypto/qvapay/efectivo' : '/crypto/qvapay');
+    setView('qvapay');
   };
   // Páginas internas (Legal y Glosario): vistas de la app como /swapped
   // y /perfil/:nombre, con header y footer, abribles directas por URL
@@ -1197,11 +1208,11 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
     + (isNarrow && marketSegment !== 'divisa' && (side === 'buy' ? sellCurrency : buyCurrency) !== 'all' ? 1 : 0);
 
   return (
-    <div className={`app${view === 'swapped' ? ' app-swapped' : ''}`}>
+    <div className={`app${view === 'swapped' ? ' app-swapped' : ''}${view === 'qvapay' ? ' app-qvapay' : ''}`}>
       {/* En /swapped, el glosario y Legal el fondo es plano como en
           las páginas de Swapped (#101010 sin resplandor); en el resto
           sigue el PageBackground. */}
-      <PageBackground glow={view !== 'swapped' && view !== 'glossary' && view !== 'glossary-term' && view !== 'legal'} />
+      <PageBackground glow={view !== 'swapped' && view !== 'qvapay' && view !== 'glossary' && view !== 'glossary-term' && view !== 'legal'} />
       <header
         className="topbar"
         ref={buyMenuRef}
@@ -1362,6 +1373,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
         <HomePage goToMarket={goToMarket} />
       ) : view === 'swapped' ? (
       <React.Suspense fallback={null}><SwappedView swappedSide={swappedSide} setSwappedSide={setSwappedSide} swappedContent={swappedContent} swappedStatsRef={swappedStatsRef} swappedFaqOpen={swappedFaqOpen} setSwappedFaqOpen={setSwappedFaqOpen} /></React.Suspense>
+      ) : view === 'qvapay' ? (
+      <React.Suspense fallback={null}><QvapayView variant={qvapayVariant} onChangeVariant={goToQvapay} /></React.Suspense>
       ) : view === 'profile' ? (
       <React.Suspense fallback={null}><ProfileView profileTrader={profileTrader} profileOffers={profileOffers} profileBuyCount={profileBuyCount} profileSellCount={profileSellCount} profilePayMethods={profilePayMethods} profileChains={profileChains} profileHasCash={profileHasCash} profileHasOnline={profileHasOnline} profileCashCities={profileCashCities} profileCryptoCounts={profileCryptoCounts} profileFiatCounts={profileFiatCounts} profileOthersAvg={profileOthersAvg} gaugeC={gaugeC} profileCurrent={profileCurrent} profileTotalPages={profileTotalPages} profilePageOffers={profilePageOffers} profileFrom={profileFrom} profileTo={profileTo} showAllCryptos={showAllCryptos} setShowAllCryptos={setShowAllCryptos} showAllFiats={showAllFiats} setShowAllFiats={setShowAllFiats} copiedMethod={copiedMethod} qrModal={qrModal} setQrModal={setQrModal} handleCopy={handleCopy} scrollToOffers={scrollToOffers} setProfilePage={setProfilePage} goToMarket={goToMarket} renderOfferRow={renderOfferRow} /></React.Suspense>
       ) : view === 'legal' ? (
