@@ -373,7 +373,6 @@ export default function QvapayWidget() {
                     )}
                     <span className="qv-chev" aria-hidden="true" />
                   </button>
-                  {recipientMode === 'saved' && <p className="qv-saved-note">Datos gestionados en QvaPay · no se editan aquí.</p>}
                 </>
               ) : (
                 <p className="qv-saved-note">Sin contactos guardados para este método.</p>
