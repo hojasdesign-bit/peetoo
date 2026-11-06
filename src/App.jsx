@@ -183,14 +183,18 @@ export default function App() {
       window.history.replaceState(null, '', `/divisa/${window.location.search}`);
       return { view: 'market', profile: '', segment: 'divisa' };
     }
-    if (path === '/swapped' || path === '/qvapay' || path === '/qvapay/efectivo' || path === '/legal' || path === '/glosario' || path.startsWith('/glosario/') || path.startsWith('/perfil/')) {
+    if (path === '/swapped' || path === '/qvapay' || path === '/legal' || path === '/glosario' || path.startsWith('/glosario/') || path.startsWith('/perfil/')) {
       window.history.replaceState(null, '', `/crypto${path}${window.location.search}`);
       path = `/crypto${path}`;
     }
     const inner = path.startsWith('/crypto/') ? path.slice('/crypto'.length) : path;
     if (inner === '/swapped') return { view: 'swapped', profile: '' };
-    if (inner === '/qvapay') return { view: 'qvapay', profile: '', qvapayVariant: 'general' };
-    if (inner === '/qvapay/efectivo') return { view: 'qvapay', profile: '', qvapayVariant: 'cash' };
+    if (inner === '/qvapay/efectivo') {
+      // La versión solo efectivo era una prueba: redirige al retiro general.
+      window.history.replaceState(null, '', `/crypto/qvapay${window.location.search}`);
+      return { view: 'qvapay', profile: '' };
+    }
+    if (inner === '/qvapay') return { view: 'qvapay', profile: '' };
     if (inner === '/legal') return { view: 'legal', profile: '' };
     if (inner === '/glosario') return { view: 'glossary', profile: '' };
     const gm = inner.match(/^\/glosario\/(.+)$/);
@@ -207,7 +211,6 @@ export default function App() {
   const [marketSegment, setMarketSegment] = React.useState(initialView.segment || 'crypto');
   const [profileName, setProfileName] = React.useState(initialView.profile);
   const [glossaryTerm, setGlossaryTerm] = React.useState(initialView.glossaryTerm || '');
-  const [qvapayVariant, setQvapayVariant] = React.useState(initialView.qvapayVariant || 'general');
   const [profilePage, setProfilePage] = React.useState(1);
   const [showAllCryptos, setShowAllCryptos] = React.useState(false);
   const [showAllFiats, setShowAllFiats] = React.useState(false);
@@ -235,11 +238,10 @@ export default function App() {
     setHamburgerOpen(false);
     goSwapped();
   };
-  // Toggle de la página de QvaPay: cambia entre la versión general y
-  // la de solo efectivo, con su propia ruta.
-  const goToQvapay = (variant) => {
-    setQvapayVariant(variant);
-    window.history.pushState(null, '', variant === 'cash' ? '/crypto/qvapay/efectivo' : '/crypto/qvapay');
+  // Ir a la página de retiro con QvaPay (una sola versión, la general).
+  const goToQvapay = () => {
+    setBuyMenuOpen(false); setFiatMenuOpen(false); setSwappedMenuOpen(false); setHamburgerOpen(false);
+    window.history.pushState(null, '', '/crypto/qvapay');
     setView('qvapay');
   };
   // Páginas internas (Legal y Glosario): vistas de la app como /swapped
@@ -1268,6 +1270,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                 <span className="swapped-menu-chev" aria-hidden="true" />
               </button>
             </span>
+            <a href="/crypto/qvapay" className="topbar-link" onClick={(e) => { e.preventDefault(); goToQvapay(); }}>QvaPay</a>
           </span>
           <span className="topbar-right">
             <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
@@ -1362,6 +1365,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                 </button>
               </div>
             )}
+            <a href="/crypto/qvapay" className="drawer-link" onClick={(e) => { e.preventDefault(); goToQvapay(); }}>QvaPay</a>
             {/* En móvil, enlaces y redes una sola vez, fuera de los submenús */}
             {renderInfoFoot('drawer-info-foot')}
             <span className="drawer-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
@@ -1374,7 +1378,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
       ) : view === 'swapped' ? (
       <React.Suspense fallback={null}><SwappedView swappedSide={swappedSide} setSwappedSide={setSwappedSide} swappedContent={swappedContent} swappedStatsRef={swappedStatsRef} swappedFaqOpen={swappedFaqOpen} setSwappedFaqOpen={setSwappedFaqOpen} /></React.Suspense>
       ) : view === 'qvapay' ? (
-      <React.Suspense fallback={null}><QvapayView variant={qvapayVariant} onChangeVariant={goToQvapay} /></React.Suspense>
+      <React.Suspense fallback={null}><QvapayView /></React.Suspense>
       ) : view === 'profile' ? (
       <React.Suspense fallback={null}><ProfileView profileTrader={profileTrader} profileOffers={profileOffers} profileBuyCount={profileBuyCount} profileSellCount={profileSellCount} profilePayMethods={profilePayMethods} profileChains={profileChains} profileHasCash={profileHasCash} profileHasOnline={profileHasOnline} profileCashCities={profileCashCities} profileCryptoCounts={profileCryptoCounts} profileFiatCounts={profileFiatCounts} profileOthersAvg={profileOthersAvg} gaugeC={gaugeC} profileCurrent={profileCurrent} profileTotalPages={profileTotalPages} profilePageOffers={profilePageOffers} profileFrom={profileFrom} profileTo={profileTo} showAllCryptos={showAllCryptos} setShowAllCryptos={setShowAllCryptos} showAllFiats={showAllFiats} setShowAllFiats={setShowAllFiats} copiedMethod={copiedMethod} qrModal={qrModal} setQrModal={setQrModal} handleCopy={handleCopy} scrollToOffers={scrollToOffers} setProfilePage={setProfilePage} goToMarket={goToMarket} renderOfferRow={renderOfferRow} /></React.Suspense>
       ) : view === 'legal' ? (

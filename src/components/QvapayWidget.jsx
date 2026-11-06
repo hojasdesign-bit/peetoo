@@ -5,9 +5,7 @@ import {
   QVAPAY_PROVINCES,
   qvapayMunicipalities,
   qvapayZone,
-  cashZoneCharge,
   cashReceive,
-  cashBrutoFor,
   fmtUsd,
 } from '../data/qvapay.js';
 
@@ -15,9 +13,10 @@ import {
 // (1 Monto, 2 Destinatario, 3 Confirmar), con los estilos del widget
 // del clon de Swapped. El destinatario es un contacto guardado (sus
 // datos se gestionan fuera, en QvaPay) u otra persona, cuyo formulario
-// vive solo en su paso. Demo: no llama a la API de QvaPay ni envía
-// ningún retiro real; los importes de efectivo sí se calculan con la
-// fórmula y el tarifario reales de la documentación.
+// vive solo en su paso. Una sola versión: el retiro general (el monto
+// es el bruto que se debita del saldo). Demo: no llama a la API de
+// QvaPay ni envía ningún retiro real; en efectivo, la estimación sí
+// usa la fórmula y el tarifario reales de la documentación.
 const QUICK_AMOUNTS = [100, 200, 500, 1000];
 const STEPS = ['Monto', 'Destinatario', 'Confirmar'];
 const digits = (s) => String(s ?? '').replace(/\D/g, '');
@@ -32,7 +31,7 @@ function fieldOk(field, value) {
   return true;
 }
 
-// Dato clave del destinatario para la tarjeta resumen: la zona en
+// Dato clave del destinatario para la fila del listado: la zona en
 // efectivo, los últimos 4 de la tarjeta, el correo/celular de Zelle
 // o la wallet. Nunca el carnet ni la tarjeta completa.
 function keyLineFor(tick, d) {
@@ -59,37 +58,16 @@ function defaultRecipient(tick, extras) {
     : { mode: 'new', details: {}, applied: null };
 }
 
-export default function QvapayWidget({ variant }) {
-  const isCash = variant === 'cash';
-  const cashMethod = QVAPAY_METHODS[0];
-  const initialTick = isCash ? 'USDCASH' : 'BANK_CUP';
-  const [methodTick, setMethodTick] = React.useState(initialTick);
-  const method = QVAPAY_METHODS.find((m) => m.tick === methodTick) || cashMethod;
-  // En efectivo el monto es lo que se ENTREGA (múltiplo de 5); en general
-  // es el bruto que se debita del saldo.
-  const [amountText, setAmountText] = React.useState(isCash ? '200' : '100');
+export default function QvapayWidget() {
+  const [methodTick, setMethodTick] = React.useState('BANK_CUP');
+  const method = QVAPAY_METHODS.find((m) => m.tick === methodTick) || QVAPAY_METHODS.find((m) => m.tick === 'BANK_CUP');
+  const [amountText, setAmountText] = React.useState('100');
   const [step, setStep] = React.useState(1);
   const [done, setDone] = React.useState(false);
   const [methodOpen, setMethodOpen] = React.useState(false);
-  const methodRef = React.useRef(null);
-
-  // El desplegable del método se cierra al hacer clic fuera o con Escape.
-  React.useEffect(() => {
-    if (!methodOpen) return;
-    const onPointerDown = (e) => {
-      if (methodRef.current && !methodRef.current.contains(e.target)) setMethodOpen(false);
-    };
-    const onKeyDown = (e) => { if (e.key === 'Escape') setMethodOpen(false); };
-    document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [methodOpen]);
   const [extraContacts, setExtraContacts] = React.useState([]);
   const [saveContact, setSaveContact] = React.useState(false);
-  const initialRecipient = defaultRecipient(initialTick, []);
+  const initialRecipient = defaultRecipient('BANK_CUP', []);
   const [details, setDetails] = React.useState(initialRecipient.details);
   const [appliedContact, setAppliedContact] = React.useState(initialRecipient.applied);
   const [recipientMode, setRecipientMode] = React.useState(initialRecipient.mode);
@@ -98,32 +76,22 @@ export default function QvapayWidget({ variant }) {
 
   const province = details['Provincia'] || '';
   const municipality = details['Municipio'] || '';
-  const zone = isCash || method.tick === 'USDCASH' ? qvapayZone(province, municipality) : null;
+  // La zona solo existe si el método es efectivo: la aportan los datos
+  // del destinatario (paso 2).
+  const zone = method.tick === 'USDCASH' ? qvapayZone(province, municipality) : null;
 
   const amountNum = parseFloat(String(amountText).replace(',', '.')) || 0;
-  // Efectivo: el objetivo es lo que se entrega, en múltiplos de 5.
-  const cashTarget = isCash ? Math.floor(amountNum / 5) * 5 : 0;
-  const cashBruto = isCash && zone ? cashBrutoFor(cashTarget, zone) : 0;
-  const cashCharge = isCash && zone ? cashZoneCharge(cashBruto, zone) : 0;
-  // General: el bruto es el monto; lo que se recibe es el monto menos la
+  // El bruto es el monto; lo que se recibe es el monto menos la
   // comisión (en efectivo, la fórmula real; en el resto, la comisión
   // exacta la confirma QvaPay al crear el retiro).
-  const generalReceive = !isCash && method.tick === 'USDCASH' && zone
+  const generalReceive = method.tick === 'USDCASH' && zone
     ? cashReceive(amountNum, zone)
     : amountNum;
 
   const fieldsValid = method.fields.every((f) => fieldOk(f, details[f.key]));
-  // En efectivo la zona la aporta el destinatario (paso 2), así que el
-  // débito exacto solo existe a partir de ahí.
-  const cashZoneOk = !!zone && cashTarget >= zone.min && cashBruto >= cashMethod.min;
-  const cashValid = isCash && cashTarget >= 5 && cashZoneOk && fieldsValid;
-  const generalValid = !isCash && amountNum >= method.min && fieldsValid;
-  const valid = isCash ? cashValid : generalValid;
-  const step1Valid = isCash ? cashTarget >= 5 : amountNum >= method.min;
-  const step2Valid = recipientMode === 'saved'
-    ? !!applied && (isCash ? cashZoneOk : true)
-    : fieldsValid && (isCash ? cashZoneOk : true);
-  const ctaAmount = isCash ? cashBruto : amountNum;
+  const valid = amountNum >= method.min && fieldsValid;
+  const step1Valid = amountNum >= method.min;
+  const step2Valid = recipientMode === 'saved' ? !!applied : fieldsValid;
   const recipientName = recipientMode === 'saved' ? applied?.name : details['Nombre y Apellidos'];
   const recipientKey = recipientMode === 'saved' && applied
     ? keyLineFor(applied.tick, applied.details)
@@ -144,12 +112,6 @@ export default function QvapayWidget({ variant }) {
     const v = e.target.value.replace(/[^0-9.,]/g, '').replace(',', '.');
     const parts = v.split('.');
     setAmountText(parts.length > 2 ? `${parts[0]}.${parts.slice(1).join('')}` : v);
-  };
-
-  const snapCashAmount = () => {
-    if (!isCash) return;
-    const n = parseFloat(String(amountText).replace(',', '.')) || 0;
-    setAmountText(String(Math.max(0, Math.floor(n / 5) * 5)));
   };
 
   const applyRecipient = (tick, extras) => {
@@ -198,6 +160,22 @@ export default function QvapayWidget({ variant }) {
     applyRecipient(methodTick, extraContacts);
   };
 
+  // El desplegable del método se cierra al hacer clic fuera o con Escape.
+  const methodRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!methodOpen) return;
+    const onPointerDown = (e) => {
+      if (methodRef.current && !methodRef.current.contains(e.target)) setMethodOpen(false);
+    };
+    const onKeyDown = (e) => { if (e.key === 'Escape') setMethodOpen(false); };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [methodOpen]);
+
   if (done) {
     return (
       <section className="qv-widget" aria-label="Retiro simulado">
@@ -213,18 +191,10 @@ export default function QvapayWidget({ variant }) {
           </span>
           <h3 className="qv-done-title">Retiro simulado</h3>
           <p className="qv-done-text">
-            {isCash
-              ? `Se entregarían $${fmtUsd(cashTarget)} en efectivo a ${details['Nombre y Apellidos'] || 'el beneficiario'} en ${municipality}, ${province}.`
-              : `Se retirarían $${fmtUsd(amountNum)} por ${method.label}.`}
+            {`Se retirarían $${fmtUsd(amountNum)} por ${method.label}.`}
           </p>
           <dl className="qv-summary">
-            <div className="qv-summary-row"><dt>{isCash ? 'Se debita de tu saldo' : 'Monto'}</dt><dd>${fmtUsd(ctaAmount)}</dd></div>
-            {isCash && (
-              <>
-                <div className="qv-summary-row"><dt>Cargo de la zona</dt><dd>${fmtUsd(cashCharge)}</dd></div>
-                <div className="qv-summary-row"><dt>Entrega estimada</dt><dd>{zone ? `${zone.etaMin}–${zone.etaMax} h` : '—'}</dd></div>
-              </>
-            )}
+            <div className="qv-summary-row"><dt>Monto</dt><dd>${fmtUsd(amountNum)}</dd></div>
           </dl>
           <p className="qv-demo-note">Simulación: no se envió ningún retiro real a QvaPay.</p>
           <button type="button" className="qv-cta" onClick={reset}>Hacer otro retiro</button>
@@ -256,36 +226,33 @@ export default function QvapayWidget({ variant }) {
 
       {step === 1 && (
         <>
-          {/* Monto: en efectivo, lo que se entrega; en general, lo que se retira. */}
+          {/* Monto que se retira (el bruto que se debita del saldo). */}
           <div className="qv-field">
-            <span className="qv-field-label">{isCash ? 'Recibes en efectivo' : 'Retiras'}</span>
+            <span className="qv-field-label">Retiras</span>
             <div className="qv-field-row">
               <input
                 className="qv-amount"
                 type="text"
                 inputMode="decimal"
-                aria-label={isCash ? 'Monto a entregar en efectivo' : 'Monto a retirar'}
+                aria-label="Monto a retirar"
                 value={amountText}
                 onChange={onAmountChange}
-                onBlur={snapCashAmount}
                 placeholder="0,00"
               />
               <span className="qv-pill">USD</span>
             </div>
           </div>
-          {isCash && <p className="qv-field-hint">En billetes: múltiplos de $5, mínimo $50.</p>}
 
-          {/* Segundo campo, superpuesto como en el clon: lo que se debita. */}
+          {/* Segundo campo, superpuesto como en el clon: lo que se recibe. */}
           <div className="qv-field qv-receive-field">
-            <span className="qv-field-label">{isCash ? 'Se debita de tu saldo' : 'Recibes (estimado)'}</span>
+            <span className="qv-field-label">Recibes (estimado)</span>
             <div className="qv-field-row">
               <span className="qv-amount qv-amount-receive">
-                {isCash ? (zone ? `$${fmtUsd(cashBruto)}` : '—') : `$${fmtUsd(generalReceive)}`}
+                ${fmtUsd(generalReceive)}
               </span>
               <span className="qv-pill">USD</span>
             </div>
           </div>
-          {isCash && !zone && <p className="qv-field-hint">El débito exacto se calcula con la zona del destinatario.</p>}
 
           <div className="qv-quick-row" role="group" aria-label="Montos rápidos">
             {QUICK_AMOUNTS.map((q) => (
@@ -300,40 +267,30 @@ export default function QvapayWidget({ variant }) {
             ))}
           </div>
 
-          {/* Método: fijo en efectivo, desplegable en la versión general. */}
-          {isCash ? (
-            <div className="qv-paywith">
-              <div className="qv-paywith-label-row"><span className="qv-field-label">Retirar con</span></div>
-              <div className="qv-paywith-row">
-                <span className="qv-method">Efectivo en Cuba · USDCASH</span>
-                <span className="qv-fee">Mín. $50</span>
+          {/* Método: desplegable flotante con los 10 métodos. */}
+          <div className="qv-paywith" ref={methodRef}>
+            <div className="qv-paywith-label-row"><span className="qv-field-label">Retirar con</span></div>
+            <button type="button" className="qv-paywith-row" aria-expanded={methodOpen} onClick={() => setMethodOpen((o) => !o)}>
+              <span className="qv-method">{method.label} · {method.tick}</span>
+              <span className="qv-fee">Mín. ${method.min}<span className="qv-chev" aria-hidden="true" /></span>
+            </button>
+            <div className={`qv-method-options${methodOpen ? ' open' : ''}`}>
+              <div className="qv-method-options-inner">
+                {QVAPAY_METHODS.map((m) => (
+                  <button
+                    key={m.tick}
+                    type="button"
+                    className={`qv-method-option${m.tick === method.tick ? ' is-selected' : ''}`}
+                    onClick={() => switchMethod(m.tick)}
+                  >
+                    <span>{m.label}</span>
+                    <span className="qv-method-min">Mín. ${m.min}</span>
+                    {m.tick === method.tick && <span className="qv-method-check" aria-hidden="true">✓</span>}
+                  </button>
+                ))}
               </div>
             </div>
-          ) : (
-            <div className="qv-paywith" ref={methodRef}>
-              <div className="qv-paywith-label-row"><span className="qv-field-label">Retirar con</span></div>
-              <button type="button" className="qv-paywith-row" aria-expanded={methodOpen} onClick={() => setMethodOpen((o) => !o)}>
-                <span className="qv-method">{method.label} · {method.tick}</span>
-                <span className="qv-fee">Mín. ${method.min}<span className="qv-chev" aria-hidden="true" /></span>
-              </button>
-              <div className={`qv-method-options${methodOpen ? ' open' : ''}`}>
-                <div className="qv-method-options-inner">
-                  {QVAPAY_METHODS.map((m) => (
-                    <button
-                      key={m.tick}
-                      type="button"
-                      className={`qv-method-option${m.tick === method.tick ? ' is-selected' : ''}`}
-                      onClick={() => switchMethod(m.tick)}
-                    >
-                      <span>{m.label}</span>
-                      <span className="qv-method-min">Mín. ${m.min}</span>
-                      {m.tick === method.tick && <span className="qv-method-check" aria-hidden="true">✓</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
+          </div>
 
           <button type="button" className="qv-cta qv-step-cta" disabled={!step1Valid} onClick={() => setStep(2)}>Continuar</button>
         </>
@@ -441,14 +398,6 @@ export default function QvapayWidget({ variant }) {
             </>
           )}
 
-          {isCash && zone && !cashZoneOk && (
-            <p className="qv-step-warn">
-              {cashTarget < zone.min
-                ? `Mínimo en ${municipality}: $${fmtUsd(zone.min)}.`
-                : 'El débito mínimo es $50.'}
-            </p>
-          )}
-
           <div className="qv-step-actions">
             <button type="button" className="qv-back" onClick={() => setStep(1)}>Atrás</button>
             <button type="button" className="qv-cta" disabled={!step2Valid} onClick={() => setStep(3)}>Continuar</button>
@@ -460,27 +409,17 @@ export default function QvapayWidget({ variant }) {
         <>
           {/* Confirmar: resumen de todo antes de retirar. */}
           <dl className="qv-summary qv-summary-confirm">
-            <div className="qv-summary-row"><dt>{isCash ? 'Recibes en efectivo' : 'Retiras'}</dt><dd>${fmtUsd(isCash ? cashTarget : amountNum)}</dd></div>
-            <div className="qv-summary-row"><dt>{isCash ? 'Se debita de tu saldo' : 'Recibes (estimado)'}</dt><dd>${fmtUsd(isCash ? cashBruto : generalReceive)}</dd></div>
+            <div className="qv-summary-row"><dt>Retiras</dt><dd>${fmtUsd(amountNum)}</dd></div>
+            <div className="qv-summary-row"><dt>Recibes (estimado)</dt><dd>${fmtUsd(generalReceive)}</dd></div>
             <div className="qv-summary-row"><dt>Retirar con</dt><dd>{method.label} · {method.tick}</dd></div>
             <div className="qv-summary-row"><dt>Destinatario</dt><dd className="qv-summary-recipient"><span>{recipientName}</span>{recipientKey && <span className="qv-summary-key">{recipientKey}</span>}</dd></div>
-            {isCash && zone && (
-              <>
-                <div className="qv-summary-row"><dt>Cargo de la zona</dt><dd>${fmtUsd(cashCharge)}</dd></div>
-                <div className="qv-summary-row"><dt>Entrega estimada</dt><dd>{zone.etaMin}–{zone.etaMax} h</dd></div>
-              </>
-            )}
-            {!isCash && (
-              <>
-                <div className="qv-summary-row"><dt>Mínimo</dt><dd>${fmtUsd(method.min)}</dd></div>
-                <div className="qv-summary-row"><dt>Comisión</dt><dd>{method.feeNote}</dd></div>
-              </>
-            )}
+            <div className="qv-summary-row"><dt>Mínimo</dt><dd>${fmtUsd(method.min)}</dd></div>
+            <div className="qv-summary-row"><dt>Comisión</dt><dd>{method.feeNote}</dd></div>
           </dl>
           <div className="qv-step-actions">
             <button type="button" className="qv-back" onClick={() => setStep(2)}>Atrás</button>
             <button type="button" className="qv-cta" disabled={!valid} onClick={confirmWithdrawal}>
-              {isCash ? `Retirar $${fmtUsd(ctaAmount)} en efectivo` : `Retirar $${fmtUsd(ctaAmount)}`}
+              {`Retirar $${fmtUsd(amountNum)}`}
             </button>
           </div>
           <p className="qv-demo-note">Simulación: no se envía ningún retiro real a QvaPay.</p>

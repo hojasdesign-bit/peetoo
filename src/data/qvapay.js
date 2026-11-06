@@ -363,25 +363,14 @@ export const QVAPAY_SAVED_CONTACTS = [
 ];
 
 // Contenido de la página (hero, pasos, métodos populares, nota de comisiones).
+// Una sola versión: el retiro general. La de solo efectivo era una prueba.
 export const QVAPAY_CONTENT = {
-  general: {
-    title: 'Retirar con QvaPay',
-    description: 'Retira tu saldo en efectivo, a tarjeta, por Zelle o por transferencia, con el formulario exacto que pide QvaPay para cada método.',
-    stepsTitle: 'Retirar en 3 pasos',
-    steps: [
-      { title: 'Elige el monto y el método', text: 'Escribe cuánto quieres retirar y por dónde lo quieres recibir: efectivo, tarjeta, Zelle, banco o cripto.', visual: 'buy-select' },
-      { title: 'Completa los datos del beneficiario', text: 'El formulario cambia con el método: solo pide las claves exactas que QvaPay necesita, ni una más ni una menos.', visual: 'pay' },
-      { title: 'Confirma y sigue el estado', text: 'Revisa el monto, la comisión y el plazo estimado. El estado del retiro llega por webhook y se puede consultar en cualquier momento.', visual: 'receive-bank' },
-    ],
-  },
-  cash: {
-    title: 'Retirar efectivo con QvaPay',
-    description: 'Dólares en efectivo en casi todo el país: elige la provincia y el municipio, y el widget calcula lo que se debita y lo que se entrega en billetes.',
-    stepsTitle: 'Retirar efectivo en 3 pasos',
-    steps: [
-      { title: 'Elige cuánto se entrega', text: 'Escribe lo que quieres que reciba el beneficiario, en múltiplos de 5. El widget calcula cuánto se debita de tu saldo.', visual: 'buy-select' },
-      { title: 'Datos de quien recibe', text: 'Nombre, carné, celular y dirección de entrega, con la provincia y el municipio del tarifario de QvaPay.', visual: 'pay' },
-      { title: 'Confirma y espera la entrega', text: 'Revisa el cargo de la zona y el plazo estimado. QvaPay coordina la entrega por teléfono con el beneficiario.', visual: 'receive-bank' },
-    ],
-  },
+  title: 'Retirar con QvaPay',
+  description: 'Retira tu saldo en efectivo, a tarjeta, por Zelle o por transferencia, con el formulario exacto que pide QvaPay para cada método.',
+  stepsTitle: 'Retirar en 3 pasos',
+  steps: [
+    { title: 'Elige el monto y el método', text: 'Escribe cuánto quieres retirar y por dónde lo quieres recibir: efectivo, tarjeta, Zelle, banco o cripto.', visual: 'buy-select' },
+    { title: 'Completa los datos del beneficiario', text: 'El formulario cambia con el método: solo pide las claves exactas que QvaPay necesita, ni una más ni una menos.', visual: 'pay' },
+    { title: 'Confirma y sigue el estado', text: 'Revisa el monto, la comisión y el plazo estimado. El estado del retiro llega por webhook y se puede consultar en cualquier momento.', visual: 'receive-bank' },
+  ],
 };
