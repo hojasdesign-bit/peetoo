@@ -1151,6 +1151,7 @@ body {
 }
 [data-theme="claro"] .qv-widget { box-shadow: 0 24px 60px rgba(30, 27, 80, 0.12); }
 .qv-widget-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 24px; }
+.qv-widget-no-head { padding-top: 16px; }
 .qv-widget-body { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--cds-border-strong) transparent; }
 .qv-widget-body::-webkit-scrollbar { width: 6px; }
 .qv-widget-body::-webkit-scrollbar-thumb { background: var(--cds-border-strong); border-radius: 999px; }
@@ -1247,7 +1248,7 @@ body {
    selección de método de pago del widget original (saeta arriba para
    cerrarlo, buscador y lista con desplazamiento interno). */
 .qv-method-overlay { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; background: var(--cds-surface); border-radius: 28px; padding: 16px 16px 20px; box-sizing: border-box; }
-.qv-overlay-head { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; margin-bottom: 16px; }
+.qv-overlay-head { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; height: 40px; margin-bottom: 16px; }
 .qv-overlay-back { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; background: var(--cds-input-bg); border: 0; border-radius: 50%; color: var(--cds-ink); cursor: pointer; }
 .qv-overlay-back:hover { background: var(--cds-surface-overlay); }
 .qv-overlay-title { text-align: center; font-size: 17px; font-weight: 700; color: var(--cds-ink); }

@@ -307,12 +307,15 @@ export default function QvapayWidget({ variant = 'or' }) {
     );
   }
 
+  const listStep2 = step === 2 && variant === 'list';
   return (
-    <section className="qv-widget" aria-label="Widget de retiro con QvaPay">
-      <div className="qv-widget-head">
-        <span className="qv-widget-brand">Retiro con QvaPay</span>
-        <span className="qv-demo">Demo</span>
-      </div>
+    <section className={`qv-widget${listStep2 ? ' qv-widget-no-head' : ''}`} aria-label="Widget de retiro con QvaPay">
+      {!listStep2 && (
+        <div className="qv-widget-head">
+          <span className="qv-widget-brand">Retiro con QvaPay</span>
+          <span className="qv-demo">Demo</span>
+        </div>
+      )}
 
       <div className="qv-widget-body">
         {step === 1 && (
