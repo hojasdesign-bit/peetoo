@@ -6,7 +6,7 @@ import { SwappedMethodIcon } from '../components/SwappedMethodIcon.jsx';
 import QvapayWidget from '../components/QvapayWidget.jsx';
 import { QVAPAY_CONTENT, QVAPAY_METHODS } from '../data/qvapay.js';
 
-// Glifo genérico por método (los de /swapped más Efectivo y Cripto).
+// Glifo genérico por método (los de /swapped más Efectivo).
 const METHOD_GLYPH = {
   USDCASH: 'Efectivo',
   BANK_CUP: 'Card',
@@ -16,8 +16,6 @@ const METHOD_GLYPH = {
   ZELLE: 'Rapid Transfer',
   BANK: 'Bank Transfer',
   BANK_INTL: 'Bank Transfer',
-  USDT: 'Cripto',
-  BTCLN: 'Cripto',
 };
 
 // Vista /crypto/qvapay: misma página que /swapped (hero + widget fijo a
@@ -68,7 +66,7 @@ export default function QvapayView() {
           <section className="swapped-info-card" aria-label="Comisiones y plazos">
             <h3 className="swapped-info-heading">Comisiones y plazos</h3>
             <p className="swapped-info-text">
-              Cada método tiene su propio formulario y su mínimo: cripto desde $2, tarjetas cubanas desde $1,
+              Cada método tiene su propio formulario y su mínimo: tarjetas cubanas desde $1,
               Zelle y efectivo desde $50, transferencias desde $100.
               Las claves del formulario son exactas: una de más o una de menos rechaza el retiro entero.
               La comisión exacta la confirma QvaPay al crear el retiro.

@@ -1135,6 +1135,8 @@ body {
    superpuestos, píldoras, montos rápidos, CTA violeta), sobre los
    tokens --cds-* para que claro y oscuro salgan del tema de peetoo. */
 .qv-widget {
+  position: relative;
+  overflow: hidden;
   width: 382px;
   max-width: 100%;
   background: var(--cds-surface);
@@ -1233,31 +1235,29 @@ body {
 .qv-fee { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--cds-ink); white-space: nowrap; }
 .qv-chev { width: 16px; height: 16px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23a1a1a1' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
 [data-theme="claro"] .qv-chev { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%236b7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
-.qv-paywith { position: relative; }
-.qv-method-options { position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 10; background: var(--cds-surface); border: 1px solid var(--cds-border); border-radius: 16px; padding: 8px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35); display: none; }
-.qv-method-options.open { display: block; }
-.qv-method-options-inner { display: flex; flex-direction: column; gap: 6px; max-height: 264px; overflow-y: auto; }
-.qv-paywith-row .qv-chev { transition: transform 0.2s ease; }
-.qv-paywith-row[aria-expanded="true"] .qv-chev { transform: rotate(180deg); }
-.qv-method-option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 9px;
-  padding: 9px 10px;
-  color: var(--cds-ink);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-}
-.qv-method-option:hover, .qv-method-option.is-selected { background: var(--cds-surface-overlay); }
-.qv-method-min { margin-left: auto; font-size: 13px; font-weight: 400; color: var(--cds-muted); }
-.qv-method-check { color: var(--cds-accent); font-weight: 700; }
+/* Panel de selección del método: cubre todo el widget, como la
+   selección de método de pago del widget original (saeta arriba para
+   cerrarlo, buscador y lista con desplazamiento interno). */
+.qv-method-overlay { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; background: var(--cds-surface); border-radius: 28px; padding: 16px 16px 20px; box-sizing: border-box; }
+.qv-overlay-head { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; margin-bottom: 16px; }
+.qv-overlay-back { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; background: var(--cds-input-bg); border: 0; border-radius: 50%; color: var(--cds-ink); cursor: pointer; }
+.qv-overlay-back:hover { background: var(--cds-surface-overlay); }
+.qv-overlay-title { text-align: center; font-size: 17px; font-weight: 700; color: var(--cds-ink); }
+.qv-overlay-search { position: relative; }
+.qv-overlay-search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--cds-muted); display: inline-flex; pointer-events: none; }
+.qv-overlay-search-input { width: 100%; height: 48px; background: var(--cds-input-bg); border: 1px solid transparent; border-radius: 12px; padding: 0 16px 0 40px; color: var(--cds-ink); font-family: inherit; font-size: 15px; outline: none; box-sizing: border-box; }
+.qv-overlay-search-input::placeholder { color: var(--cds-muted); }
+.qv-overlay-search-input:focus { border-color: var(--cds-accent); box-shadow: var(--cds-focus-ring); }
+.qv-overlay-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; overflow-y: auto; }
+.qv-overlay-option { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; background: var(--cds-input-bg); border: 1px solid transparent; border-radius: 12px; padding: 8px 14px 8px 12px; color: var(--cds-ink); font-family: inherit; font-size: 14px; font-weight: 500; text-align: left; cursor: pointer; box-sizing: border-box; }
+.qv-overlay-option:hover { background: var(--cds-surface-overlay); }
+.qv-overlay-option.is-selected { border-color: var(--cds-accent); background: var(--cds-surface-overlay); }
+.qv-overlay-icon { flex: none; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; color: var(--cds-ink); }
+.qv-overlay-icon svg { width: 22px; height: 22px; }
+.qv-overlay-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qv-overlay-min { margin-left: auto; flex: none; font-size: 13px; font-weight: 400; color: var(--cds-muted); }
+.qv-overlay-check { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--cds-ink); color: var(--cds-surface); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+.qv-overlay-empty { margin: 16px 2px 0; font-size: 14px; color: var(--cds-muted); text-align: center; }
 .qv-details { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 .qv-detail-field { display: flex; flex-direction: column; gap: 6px; }
 .qv-detail-label { font-size: 14px; font-weight: 500; color: var(--cds-muted); }
@@ -1365,21 +1365,9 @@ body {
 .qv-saved-check { margin-left: auto; color: var(--cds-accent); font-weight: 700; }
 .qv-saved-note { margin: 8px 2px 0; font-size: 12px; color: var(--cds-muted); }
 
-/* Pasos del widget de QvaPay. */
-.qv-steps { display: flex; gap: 4px; margin: 0 0 20px; }
-.qv-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; padding: 0; font-family: inherit; }
-.qv-step:disabled { cursor: default; }
-button.qv-step:not(:disabled) { cursor: pointer; }
-.qv-step-dot { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--cds-border-strong); background: var(--cds-input-bg); color: var(--cds-muted); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
-.qv-step-label { font-size: 11px; font-weight: 600; color: var(--cds-muted); }
-.qv-step.active .qv-step-dot { background: var(--cds-accent); border-color: var(--cds-accent); color: #fff; }
-.qv-step.active .qv-step-label { color: var(--cds-ink); }
-.qv-step.done .qv-step-dot { border-color: var(--cds-accent); color: var(--cds-accent); background: rgba(70, 8, 227, 0.08); }
-.qv-step-cta { margin-top: 20px; }
-.qv-step-actions { display: flex; gap: 8px; margin-top: 20px; }
-.qv-step-actions .qv-cta { flex: 1; width: auto; }
-.qv-back { flex: none; height: 48px; padding: 0 18px; background: transparent; border: 1px solid var(--cds-border-strong); border-radius: 16px; color: var(--cds-ink); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
-.qv-back:hover { background: var(--cds-surface-overlay); }
+/* Destinatario en la pantalla única del widget. */
+.qv-recipient { margin-top: 20px; }
+.qv-main-cta { margin-top: 20px; }
 .qv-other { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 56px; background: transparent; border: 1px dashed var(--cds-border-strong); border-radius: 12px; color: var(--cds-ink); font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
 .qv-other:hover { background: var(--cds-surface-overlay); }
 .qv-other.is-selected { border-style: solid; border-color: var(--cds-accent); background: var(--cds-surface-overlay); }
@@ -1389,7 +1377,3 @@ button.qv-step:not(:disabled) { cursor: pointer; }
 .qv-contact-key { font-size: 12px; color: var(--cds-muted); }
 .qv-save-check { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 14px; color: var(--cds-ink); cursor: pointer; }
 .qv-save-check input { width: 16px; height: 16px; accent-color: var(--cds-accent); }
-.qv-step-warn { margin: 12px 2px 0; font-size: 12px; color: var(--cds-danger); }
-.qv-summary-confirm { margin-top: 0; padding-top: 0; border-top: 0; }
-.qv-summary-recipient { display: flex; flex-direction: column; align-items: flex-end; }
-.qv-summary-key { font-size: 12px; font-weight: 400; color: var(--cds-muted); }

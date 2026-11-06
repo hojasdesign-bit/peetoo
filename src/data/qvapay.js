@@ -301,28 +301,6 @@ export const QVAPAY_METHODS = [
       { key: 'Direccion', type: 'text', placeholder: 'Calle y número, ciudad', hint: 'Sin tilde, tal cual' },
     ],
   },
-  {
-    tick: 'USDT',
-    label: 'USDT (TRC20)',
-    short: 'USDT',
-    kind: 'crypto',
-    min: 2,
-    feeNote: 'La dirección se valida contra la red',
-    fields: [
-      { key: 'Wallet', type: 'text', placeholder: 'TXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
-    ],
-  },
-  {
-    tick: 'BTCLN',
-    label: 'Bitcoin Lightning',
-    short: 'Lightning',
-    kind: 'lightning',
-    min: 2,
-    feeNote: 'Factura BOLT11 o Lightning Address',
-    fields: [
-      { key: 'Wallet', type: 'text', placeholder: 'lnbc… o nombre@dominio.com' },
-    ],
-  },
 ];
 
 
@@ -369,7 +347,7 @@ export const QVAPAY_CONTENT = {
   description: 'Retira tu saldo en efectivo, a tarjeta, por Zelle o por transferencia, con el formulario exacto que pide QvaPay para cada método.',
   stepsTitle: 'Retirar en 3 pasos',
   steps: [
-    { title: 'Elige el monto y el método', text: 'Escribe cuánto quieres retirar y por dónde lo quieres recibir: efectivo, tarjeta, Zelle, banco o cripto.', visual: 'buy-select' },
+    { title: 'Elige el monto y el método', text: 'Escribe cuánto quieres retirar y por dónde lo quieres recibir: efectivo, tarjeta, Zelle o banco.', visual: 'buy-select' },
     { title: 'Completa los datos del beneficiario', text: 'El formulario cambia con el método: solo pide las claves exactas que QvaPay necesita, ni una más ni una menos.', visual: 'pay' },
     { title: 'Confirma y sigue el estado', text: 'Revisa el monto, la comisión y el plazo estimado. El estado del retiro llega por webhook y se puede consultar en cualquier momento.', visual: 'receive-bank' },
   ],

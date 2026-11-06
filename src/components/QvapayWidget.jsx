@@ -1,4 +1,5 @@
 import React from 'react';
+import { SwappedMethodIcon } from './SwappedMethodIcon.jsx';
 import {
   QVAPAY_METHODS,
   QVAPAY_SAVED_CONTACTS,
@@ -9,16 +10,29 @@ import {
   fmtUsd,
 } from '../data/qvapay.js';
 
-// Widget de retiro con QvaPay en 3 pasos dentro de la tarjeta
-// (1 Monto, 2 Destinatario, 3 Confirmar), con los estilos del widget
-// del clon de Swapped. El destinatario es un contacto guardado (sus
-// datos se gestionan fuera, en QvaPay) u otra persona, cuyo formulario
-// vive solo en su paso. Una sola versión: el retiro general (el monto
-// es el bruto que se debita del saldo). Demo: no llama a la API de
-// QvaPay ni envía ningún retiro real; en efectivo, la estimación sí
-// usa la fórmula y el tarifario reales de la documentación.
+// Glifo genérico por método (los de /swapped más Efectivo), para las
+// filas del panel de selección.
+const METHOD_GLYPH = {
+  USDCASH: 'Efectivo',
+  BANK_CUP: 'Card',
+  BANK_MLC: 'Card',
+  CLASICA: 'Card',
+  TROPICAL: 'Card',
+  ZELLE: 'Rapid Transfer',
+  BANK: 'Bank Transfer',
+  BANK_INTL: 'Bank Transfer',
+};
+
+// Widget de retiro con QvaPay en una sola pantalla, con los estilos del
+// widget del clon de Swapped. El método se elige en un panel completo
+// sobre el widget (con buscador y saeta para cerrarlo), como la
+// selección de método de pago del widget original. El destinatario es
+// un contacto guardado (sus datos se gestionan fuera, en QvaPay) u otra
+// persona, cuyo formulario va en línea. Una sola versión: el retiro
+// general (el monto es el bruto que se debita del saldo). Demo: no
+// llama a la API de QvaPay ni envía ningún retiro real; en efectivo,
+// la estimación sí usa la fórmula y el tarifario reales de la documentación.
 const QUICK_AMOUNTS = [100, 200, 500, 1000];
-const STEPS = ['Monto', 'Destinatario', 'Confirmar'];
 const digits = (s) => String(s ?? '').replace(/\D/g, '');
 
 function fieldOk(field, value) {
@@ -32,8 +46,8 @@ function fieldOk(field, value) {
 }
 
 // Dato clave del destinatario para la fila del listado: la zona en
-// efectivo, los últimos 4 de la tarjeta, el correo/celular de Zelle
-// o la wallet. Nunca el carnet ni la tarjeta completa.
+// efectivo, los últimos 4 de la tarjeta o el correo/celular de Zelle.
+// Nunca el carnet ni la tarjeta completa.
 function keyLineFor(tick, d) {
   if (tick === 'USDCASH') {
     const z = qvapayZone(d['Provincia'], d['Municipio']);
@@ -42,7 +56,6 @@ function keyLineFor(tick, d) {
   }
   if (d['Nro de tarjeta']) return `Tarjeta ···· ${digits(d['Nro de tarjeta']).slice(-4)}`;
   if (d['Correo o Celular']) return d['Correo o Celular'];
-  if (d['Wallet']) return `Wallet ···· ${String(d['Wallet']).slice(-6)}`;
   return '';
 }
 
@@ -62,9 +75,9 @@ export default function QvapayWidget() {
   const [methodTick, setMethodTick] = React.useState('BANK_CUP');
   const method = QVAPAY_METHODS.find((m) => m.tick === methodTick) || QVAPAY_METHODS.find((m) => m.tick === 'BANK_CUP');
   const [amountText, setAmountText] = React.useState('100');
-  const [step, setStep] = React.useState(1);
   const [done, setDone] = React.useState(false);
-  const [methodOpen, setMethodOpen] = React.useState(false);
+  const [methodOverlay, setMethodOverlay] = React.useState(false);
+  const [methodSearch, setMethodSearch] = React.useState('');
   const [extraContacts, setExtraContacts] = React.useState([]);
   const [saveContact, setSaveContact] = React.useState(false);
   const initialRecipient = defaultRecipient('BANK_CUP', []);
@@ -77,7 +90,7 @@ export default function QvapayWidget() {
   const province = details['Provincia'] || '';
   const municipality = details['Municipio'] || '';
   // La zona solo existe si el método es efectivo: la aportan los datos
-  // del destinatario (paso 2).
+  // del destinatario.
   const zone = method.tick === 'USDCASH' ? qvapayZone(province, municipality) : null;
 
   const amountNum = parseFloat(String(amountText).replace(',', '.')) || 0;
@@ -90,12 +103,6 @@ export default function QvapayWidget() {
 
   const fieldsValid = method.fields.every((f) => fieldOk(f, details[f.key]));
   const valid = amountNum >= method.min && fieldsValid;
-  const step1Valid = amountNum >= method.min;
-  const step2Valid = recipientMode === 'saved' ? !!applied : fieldsValid;
-  const recipientName = recipientMode === 'saved' ? applied?.name : details['Nombre y Apellidos'];
-  const recipientKey = recipientMode === 'saved' && applied
-    ? keyLineFor(applied.tick, applied.details)
-    : keyLineFor(method.tick, details);
 
   const setDetail = (key, value) => {
     setAppliedContact(null);
@@ -124,7 +131,8 @@ export default function QvapayWidget() {
   const switchMethod = (tick) => {
     setMethodTick(tick);
     applyRecipient(tick, extraContacts);
-    setMethodOpen(false);
+    setMethodSearch('');
+    setMethodOverlay(false);
   };
 
   // Elegir un contacto guardado usa sus datos tal cual, sin formulario.
@@ -155,26 +163,24 @@ export default function QvapayWidget() {
 
   const reset = () => {
     setDone(false);
-    setStep(1);
     setSaveContact(false);
     applyRecipient(methodTick, extraContacts);
   };
 
-  // El desplegable del método se cierra al hacer clic fuera o con Escape.
-  const methodRef = React.useRef(null);
+  // El panel de métodos se cierra con Escape; al abrirse, el foco va al buscador.
+  const searchInputRef = React.useRef(null);
   React.useEffect(() => {
-    if (!methodOpen) return;
-    const onPointerDown = (e) => {
-      if (methodRef.current && !methodRef.current.contains(e.target)) setMethodOpen(false);
-    };
-    const onKeyDown = (e) => { if (e.key === 'Escape') setMethodOpen(false); };
-    document.addEventListener('pointerdown', onPointerDown);
+    if (!methodOverlay) return undefined;
+    const onKeyDown = (e) => { if (e.key === 'Escape') setMethodOverlay(false); };
     document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [methodOpen]);
+    searchInputRef.current?.focus();
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [methodOverlay]);
+
+  const searchQuery = methodSearch.trim().toLowerCase();
+  const filteredMethods = searchQuery
+    ? QVAPAY_METHODS.filter((m) => `${m.label} ${m.tick} ${m.short || ''}`.toLowerCase().includes(searchQuery))
+    : QVAPAY_METHODS;
 
   if (done) {
     return (
@@ -210,220 +216,210 @@ export default function QvapayWidget() {
         <span className="qv-demo">Demo</span>
       </div>
 
-      {/* Pasos: solo se puede volver a un paso ya completado. */}
-      <div className="qv-steps" role="group" aria-label="Pasos del retiro">
-        {STEPS.map((label, i) => {
-          const n = i + 1;
-          const state = n < step ? 'done' : n === step ? 'active' : '';
-          return (
-            <button key={label} type="button" className={`qv-step ${state}`} disabled={n >= step} onClick={() => setStep(n)} aria-current={n === step ? 'step' : undefined}>
-              <span className="qv-step-dot" aria-hidden="true">{n < step ? '✓' : n}</span>
-              <span className="qv-step-label">{label}</span>
-            </button>
-          );
-        })}
+      {/* Monto que se retira (el bruto que se debita del saldo). */}
+      <div className="qv-field">
+        <span className="qv-field-label">Retiras</span>
+        <div className="qv-field-row">
+          <input
+            className="qv-amount"
+            type="text"
+            inputMode="decimal"
+            aria-label="Monto a retirar"
+            value={amountText}
+            onChange={onAmountChange}
+            placeholder="0,00"
+          />
+          <span className="qv-pill">USD</span>
+        </div>
       </div>
 
-      {step === 1 && (
-        <>
-          {/* Monto que se retira (el bruto que se debita del saldo). */}
-          <div className="qv-field">
-            <span className="qv-field-label">Retiras</span>
-            <div className="qv-field-row">
-              <input
-                className="qv-amount"
-                type="text"
-                inputMode="decimal"
-                aria-label="Monto a retirar"
-                value={amountText}
-                onChange={onAmountChange}
-                placeholder="0,00"
-              />
-              <span className="qv-pill">USD</span>
-            </div>
-          </div>
+      {/* Segundo campo, superpuesto como en el clon: lo que se recibe. */}
+      <div className="qv-field qv-receive-field">
+        <span className="qv-field-label">Recibes (estimado)</span>
+        <div className="qv-field-row">
+          <span className="qv-amount qv-amount-receive">
+            ${fmtUsd(generalReceive)}
+          </span>
+          <span className="qv-pill">USD</span>
+        </div>
+      </div>
 
-          {/* Segundo campo, superpuesto como en el clon: lo que se recibe. */}
-          <div className="qv-field qv-receive-field">
-            <span className="qv-field-label">Recibes (estimado)</span>
-            <div className="qv-field-row">
-              <span className="qv-amount qv-amount-receive">
-                ${fmtUsd(generalReceive)}
-              </span>
-              <span className="qv-pill">USD</span>
-            </div>
-          </div>
+      <div className="qv-quick-row" role="group" aria-label="Montos rápidos">
+        {QUICK_AMOUNTS.map((q) => (
+          <button
+            key={q}
+            type="button"
+            className={`qv-quick${amountNum === q ? ' active' : ''}`}
+            onClick={() => setAmountText(String(q))}
+          >
+            ${q >= 1000 ? '1k' : q}
+          </button>
+        ))}
+      </div>
 
-          <div className="qv-quick-row" role="group" aria-label="Montos rápidos">
-            {QUICK_AMOUNTS.map((q) => (
+      {/* Método: la fila abre el panel completo de selección. */}
+      <div className="qv-paywith">
+        <div className="qv-paywith-label-row"><span className="qv-field-label">Retirar con</span></div>
+        <button type="button" className="qv-paywith-row" aria-expanded={methodOverlay} onClick={() => { setMethodSearch(''); setMethodOverlay(true); }}>
+          <span className="qv-method">{method.label} · {method.tick}</span>
+          <span className="qv-fee">Mín. ${method.min}<span className="qv-chev" aria-hidden="true" /></span>
+        </button>
+      </div>
+
+      {/* Destinatario: contacto guardado u otra persona, en línea. */}
+      <div className="qv-recipient">
+        <span className="qv-saved-label">Destinatario</span>
+        {savedForMethod.length > 0 ? (
+          <>
+            <div className="qv-saved-list">
+              {savedForMethod.map((c) => (
+                <button
+                  key={c.name}
+                  type="button"
+                  className={`qv-contact-row${appliedContact === c.name ? ' is-selected' : ''}`}
+                  onClick={() => applyContact(c)}
+                  aria-pressed={appliedContact === c.name}
+                >
+                  <span className="qv-saved-avatar" aria-hidden="true">{c.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}</span>
+                  <span className="qv-contact-info">
+                    <span className="qv-contact-name">{c.name}</span>
+                    <span className="qv-contact-key">{keyLineFor(c.tick, c.details)}</span>
+                  </span>
+                  {appliedContact === c.name && <span className="qv-saved-check" aria-hidden="true">✓</span>}
+                </button>
+              ))}
               <button
-                key={q}
                 type="button"
-                className={`qv-quick${amountNum === q ? ' active' : ''}`}
-                onClick={() => setAmountText(String(q))}
+                className={`qv-other${recipientMode === 'new' ? ' is-selected' : ''}`}
+                onClick={chooseOtherPerson}
               >
-                ${q >= 1000 ? '1k' : q}
+                <span className="qv-other-plus" aria-hidden="true">+</span> Otra persona
               </button>
-            ))}
-          </div>
-
-          {/* Método: desplegable flotante con los 10 métodos. */}
-          <div className="qv-paywith" ref={methodRef}>
-            <div className="qv-paywith-label-row"><span className="qv-field-label">Retirar con</span></div>
-            <button type="button" className="qv-paywith-row" aria-expanded={methodOpen} onClick={() => setMethodOpen((o) => !o)}>
-              <span className="qv-method">{method.label} · {method.tick}</span>
-              <span className="qv-fee">Mín. ${method.min}<span className="qv-chev" aria-hidden="true" /></span>
-            </button>
-            <div className={`qv-method-options${methodOpen ? ' open' : ''}`}>
-              <div className="qv-method-options-inner">
-                {QVAPAY_METHODS.map((m) => (
-                  <button
-                    key={m.tick}
-                    type="button"
-                    className={`qv-method-option${m.tick === method.tick ? ' is-selected' : ''}`}
-                    onClick={() => switchMethod(m.tick)}
-                  >
-                    <span>{m.label}</span>
-                    <span className="qv-method-min">Mín. ${m.min}</span>
-                    {m.tick === method.tick && <span className="qv-method-check" aria-hidden="true">✓</span>}
-                  </button>
-                ))}
-              </div>
             </div>
-          </div>
+            {recipientMode === 'saved' && <p className="qv-saved-note">Datos gestionados en QvaPay · no se editan aquí.</p>}
+          </>
+        ) : (
+          <p className="qv-saved-note">Sin contactos guardados para este método.</p>
+        )}
 
-          <button type="button" className="qv-cta qv-step-cta" disabled={!step1Valid} onClick={() => setStep(2)}>Continuar</button>
-        </>
-      )}
-
-      {step === 2 && (
-        <>
-          {/* Destinatario: contacto guardado u otra persona. */}
-          <div>
-            <span className="qv-saved-label">Destinatario</span>
-            {savedForMethod.length > 0 ? (
-              <>
-                <div className="qv-saved-list">
-                  {savedForMethod.map((c) => (
-                    <button
-                      key={c.name}
-                      type="button"
-                      className={`qv-contact-row${appliedContact === c.name ? ' is-selected' : ''}`}
-                      onClick={() => applyContact(c)}
-                      aria-pressed={appliedContact === c.name}
-                    >
-                      <span className="qv-saved-avatar" aria-hidden="true">{c.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}</span>
-                      <span className="qv-contact-info">
-                        <span className="qv-contact-name">{c.name}</span>
-                        <span className="qv-contact-key">{keyLineFor(c.tick, c.details)}</span>
-                      </span>
-                      {appliedContact === c.name && <span className="qv-saved-check" aria-hidden="true">✓</span>}
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    className={`qv-other${recipientMode === 'new' ? ' is-selected' : ''}`}
-                    onClick={chooseOtherPerson}
-                  >
-                    <span className="qv-other-plus" aria-hidden="true">+</span> Otra persona
-                  </button>
-                </div>
-                {recipientMode === 'saved' && <p className="qv-saved-note">Datos gestionados en QvaPay · no se editan aquí.</p>}
-              </>
-            ) : (
-              <p className="qv-saved-note">Sin contactos guardados para este método.</p>
-            )}
-          </div>
-
-          {/* Otra persona: el formulario del método, solo en su paso. */}
-          {recipientMode === 'new' && (
-            <>
-              <div className="qv-details">
-                {method.fields.map((f) => {
-                  const value = details[f.key] || '';
-                  if (f.type === 'select-province') {
-                    return (
-                      <label className="qv-detail-field" key={f.key}>
-                        <span className="qv-detail-label">{f.key}</span>
-                        <select
-                          className="qv-select"
-                          aria-label={f.key}
-                          value={value}
-                          onChange={(e) => setDetail(f.key, e.target.value)}
-                        >
-                          <option value="">{f.placeholder}</option>
-                          {QVAPAY_PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
-                        </select>
-                      </label>
-                    );
-                  }
-                  if (f.type === 'select-municipality') {
-                    const options = province ? qvapayMunicipalities(province) : [];
-                    return (
-                      <label className="qv-detail-field" key={f.key}>
-                        <span className="qv-detail-label">{f.key}</span>
-                        <select
-                          className="qv-select"
-                          aria-label={f.key}
-                          value={value}
-                          disabled={!province}
-                          onChange={(e) => setDetail(f.key, e.target.value)}
-                        >
-                          <option value="">{province ? f.placeholder : 'Primero elige la provincia'}</option>
-                          {options.map((m) => <option key={m} value={m}>{m}</option>)}
-                        </select>
-                      </label>
-                    );
-                  }
+        {/* Otra persona: el formulario del método, en línea. */}
+        {recipientMode === 'new' && (
+          <>
+            <div className="qv-details">
+              {method.fields.map((f) => {
+                const value = details[f.key] || '';
+                if (f.type === 'select-province') {
                   return (
                     <label className="qv-detail-field" key={f.key}>
-                      <span className="qv-detail-label">{f.key}{f.hint ? <span className="qv-detail-hint"> · {f.hint}</span> : ''}</span>
-                      <input
-                        className="qv-input"
-                        type="text"
-                        inputMode={f.type === 'number' ? 'numeric' : f.type === 'phone' ? 'tel' : 'text'}
+                      <span className="qv-detail-label">{f.key}</span>
+                      <select
+                        className="qv-select"
                         aria-label={f.key}
                         value={value}
-                        placeholder={f.placeholder}
-                        onChange={(e) => setDetail(f.key, f.type === 'number' ? digits(e.target.value) : e.target.value)}
-                      />
+                        onChange={(e) => setDetail(f.key, e.target.value)}
+                      >
+                        <option value="">{f.placeholder}</option>
+                        {QVAPAY_PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
+                      </select>
                     </label>
                   );
-                })}
-              </div>
-              <label className="qv-save-check">
-                <input type="checkbox" checked={saveContact} onChange={(e) => setSaveContact(e.target.checked)} />
-                Guardar este contacto para la próxima vez
-              </label>
-            </>
-          )}
+                }
+                if (f.type === 'select-municipality') {
+                  const options = province ? qvapayMunicipalities(province) : [];
+                  return (
+                    <label className="qv-detail-field" key={f.key}>
+                      <span className="qv-detail-label">{f.key}</span>
+                      <select
+                        className="qv-select"
+                        aria-label={f.key}
+                        value={value}
+                        disabled={!province}
+                        onChange={(e) => setDetail(f.key, e.target.value)}
+                      >
+                        <option value="">{province ? f.placeholder : 'Primero elige la provincia'}</option>
+                        {options.map((m) => <option key={m} value={m}>{m}</option>)}
+                      </select>
+                    </label>
+                  );
+                }
+                return (
+                  <label className="qv-detail-field" key={f.key}>
+                    <span className="qv-detail-label">{f.key}{f.hint ? <span className="qv-detail-hint"> · {f.hint}</span> : ''}</span>
+                    <input
+                      className="qv-input"
+                      type="text"
+                      inputMode={f.type === 'number' ? 'numeric' : f.type === 'phone' ? 'tel' : 'text'}
+                      aria-label={f.key}
+                      value={value}
+                      placeholder={f.placeholder}
+                      onChange={(e) => setDetail(f.key, f.type === 'number' ? digits(e.target.value) : e.target.value)}
+                    />
+                  </label>
+                );
+              })}
+            </div>
+            <label className="qv-save-check">
+              <input type="checkbox" checked={saveContact} onChange={(e) => setSaveContact(e.target.checked)} />
+              Guardar este contacto para la próxima vez
+            </label>
+          </>
+        )}
+      </div>
 
-          <div className="qv-step-actions">
-            <button type="button" className="qv-back" onClick={() => setStep(1)}>Atrás</button>
-            <button type="button" className="qv-cta" disabled={!step2Valid} onClick={() => setStep(3)}>Continuar</button>
-          </div>
-        </>
-      )}
+      <button type="button" className="qv-cta qv-main-cta" disabled={!valid} onClick={confirmWithdrawal}>
+        {`Retirar $${fmtUsd(amountNum)}`}
+      </button>
+      <p className="qv-demo-note">Simulación: no se envía ningún retiro real a QvaPay.</p>
 
-      {step === 3 && (
-        <>
-          {/* Confirmar: resumen de todo antes de retirar. */}
-          <dl className="qv-summary qv-summary-confirm">
-            <div className="qv-summary-row"><dt>Retiras</dt><dd>${fmtUsd(amountNum)}</dd></div>
-            <div className="qv-summary-row"><dt>Recibes (estimado)</dt><dd>${fmtUsd(generalReceive)}</dd></div>
-            <div className="qv-summary-row"><dt>Retirar con</dt><dd>{method.label} · {method.tick}</dd></div>
-            <div className="qv-summary-row"><dt>Destinatario</dt><dd className="qv-summary-recipient"><span>{recipientName}</span>{recipientKey && <span className="qv-summary-key">{recipientKey}</span>}</dd></div>
-            <div className="qv-summary-row"><dt>Mínimo</dt><dd>${fmtUsd(method.min)}</dd></div>
-            <div className="qv-summary-row"><dt>Comisión</dt><dd>{method.feeNote}</dd></div>
-          </dl>
-          <div className="qv-step-actions">
-            <button type="button" className="qv-back" onClick={() => setStep(2)}>Atrás</button>
-            <button type="button" className="qv-cta" disabled={!valid} onClick={confirmWithdrawal}>
-              {`Retirar $${fmtUsd(amountNum)}`}
+      {/* Panel de selección del método: cubre todo el widget, como en el
+          widget original, y se cierra con la saeta de arriba o con Escape. */}
+      {methodOverlay && (
+        <div className="qv-method-overlay" role="dialog" aria-label="Retirar con">
+          <div className="qv-overlay-head">
+            <button type="button" className="qv-overlay-back" aria-label="Volver" onClick={() => setMethodOverlay(false)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </button>
+            <span className="qv-overlay-title">Retirar con</span>
+            <span aria-hidden="true" />
           </div>
-          <p className="qv-demo-note">Simulación: no se envía ningún retiro real a QvaPay.</p>
-        </>
+          <div className="qv-overlay-search">
+            <span className="qv-overlay-search-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2" />
+                <path d="M16 16l4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </span>
+            <input
+              ref={searchInputRef}
+              className="qv-overlay-search-input"
+              type="search"
+              aria-label="Buscar métodos"
+              placeholder="Buscar métodos"
+              value={methodSearch}
+              onChange={(e) => setMethodSearch(e.target.value)}
+            />
+          </div>
+          <div className="qv-overlay-list">
+            {filteredMethods.map((m) => (
+              <button
+                key={m.tick}
+                type="button"
+                className={`qv-overlay-option${m.tick === method.tick ? ' is-selected' : ''}`}
+                onClick={() => switchMethod(m.tick)}
+              >
+                <span className="qv-overlay-icon" aria-hidden="true"><SwappedMethodIcon method={METHOD_GLYPH[m.tick]} /></span>
+                <span className="qv-overlay-name">{m.label}</span>
+                <span className="qv-overlay-min">Mín. ${m.min}</span>
+                {m.tick === method.tick && <span className="qv-overlay-check" aria-hidden="true">✓</span>}
+              </button>
+            ))}
+            {filteredMethods.length === 0 && (
+              <p className="qv-overlay-empty">Sin métodos para «{methodSearch.trim()}».</p>
+            )}
+          </div>
+        </div>
       )}
     </section>
   );
