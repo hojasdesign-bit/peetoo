@@ -32,6 +32,7 @@ export default function QvapayDebugView() {
       <h1 className="qv-debug-title">QvaPay · Debug del destinatario</h1>
       <p className="qv-debug-sub">Página de pruebas, no enlazada en el header. Cada cambio de variante reinicia el widget.</p>
       <SegmentedControl
+        className="qv-debug-seg"
         ariaLabel="Flujo de selección del destinatario"
         options={VARIANTS.map((v) => ({ value: v.id, label: v.label }))}
         value={variant}

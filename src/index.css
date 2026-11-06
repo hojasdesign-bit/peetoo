@@ -1258,7 +1258,9 @@ body {
 .qv-overlay-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; overflow-y: auto; }
 .qv-overlay-list-no-search { margin-top: 0; }
 .qv-or-divider { display: flex; align-items: center; gap: 12px; margin: 16px 0 0; color: var(--cds-muted); font-size: 12px; font-weight: 600; }
-.qv-debug { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: 48px 24px 60px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.qv-debug { position: relative; z-index: 1; flex: 1; min-width: 0; width: 100%; max-width: 1120px; margin: 0 auto; padding: 48px 24px 60px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.qv-debug .qv-widget { width: 100%; max-width: 382px; }
+.qv-debug .qv-debug-seg { max-width: 382px; }
 .qv-debug-title { margin: 0; font-size: 28px; line-height: 36px; font-weight: 700; color: var(--cds-ink); text-align: center; }
 .qv-debug-sub { margin: 0; font-size: 14px; color: var(--cds-muted); text-align: center; }
 .qv-debug-desc { margin: 0 0 8px; font-size: 14px; color: var(--cds-muted); text-align: center; max-width: 560px; }
