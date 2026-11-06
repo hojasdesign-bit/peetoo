@@ -26,6 +26,7 @@ export function SegmentedControl({
             type="button"
             role="tab"
             aria-selected={active}
+            aria-label={opt.ariaLabel}
             className={cn(styles.seg, active && styles.active, active && tone === 'accent' && styles.activeAccent)}
             onClick={() => onChange?.(opt.value)}
           >

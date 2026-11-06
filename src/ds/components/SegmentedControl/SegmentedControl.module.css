@@ -11,6 +11,9 @@
 
 .seg {
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 38px;
   padding: 0 var(--cds-space-4);
   background: transparent;
