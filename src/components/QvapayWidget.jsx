@@ -91,6 +91,7 @@ export default function QvapayWidget({ variant = 'or' }) {
   const [done, setDone] = React.useState(false);
   const [methodOverlay, setMethodOverlay] = React.useState(false);
   const [recipientOverlay, setRecipientOverlay] = React.useState(false);
+  const [recipientSearch, setRecipientSearch] = React.useState('');
   const [provinceOverlay, setProvinceOverlay] = React.useState(false);
   const [municipalityOverlay, setMunicipalityOverlay] = React.useState(false);
   const [methodSearch, setMethodSearch] = React.useState('');
@@ -229,11 +230,13 @@ export default function QvapayWidget({ variant = 'or' }) {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [methodOverlay]);
 
-  // El panel del destinatario se cierra con Escape.
+  // El panel del destinatario se cierra con Escape; al abrirse, el foco va al buscador.
+  const recipientSearchInputRef = React.useRef(null);
   React.useEffect(() => {
     if (!recipientOverlay) return undefined;
     const onKeyDown = (e) => { if (e.key === 'Escape') setRecipientOverlay(false); };
     document.addEventListener('keydown', onKeyDown);
+    recipientSearchInputRef.current?.focus();
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [recipientOverlay]);
 
@@ -261,6 +264,11 @@ export default function QvapayWidget({ variant = 'or' }) {
   const filteredMethods = searchQuery
     ? QVAPAY_METHODS.filter((m) => `${m.label} ${m.tick} ${m.short || ''}`.toLowerCase().includes(searchQuery))
     : QVAPAY_METHODS;
+
+  const recipientSearchQuery = recipientSearch.trim().toLowerCase();
+  const filteredRecipients = recipientSearchQuery
+    ? savedForMethod.filter((c) => `${c.name} ${keyLineFor(c.tick, c.details)}`.toLowerCase().includes(recipientSearchQuery))
+    : savedForMethod;
 
   const provinceSearchQuery = provinceSearch.trim().toLowerCase();
   const filteredProvinces = provinceSearchQuery
@@ -401,7 +409,7 @@ export default function QvapayWidget({ variant = 'or' }) {
                     type="button"
                     className="qv-contact-row qv-recipient-row"
                     aria-expanded={recipientOverlay}
-                    onClick={() => setRecipientOverlay(true)}
+                    onClick={() => { setRecipientSearch(''); setRecipientOverlay(true); }}
                   >
                     {recipientMode === 'saved' && applied ? (
                       <>
@@ -597,8 +605,25 @@ export default function QvapayWidget({ variant = 'or' }) {
             <span className="qv-overlay-title">Destinatario</span>
             <span aria-hidden="true" />
           </div>
-          <div className="qv-overlay-list qv-overlay-list-no-search">
-            {savedForMethod.map((c) => (
+          <div className="qv-overlay-search">
+            <span className="qv-overlay-search-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2" />
+                <path d="M16 16l4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </span>
+            <input
+              ref={recipientSearchInputRef}
+              className="qv-overlay-search-input"
+              type="search"
+              aria-label="Buscar destinatarios"
+              placeholder="Buscar destinatarios"
+              value={recipientSearch}
+              onChange={(e) => setRecipientSearch(e.target.value)}
+            />
+          </div>
+          <div className="qv-overlay-list">
+            {filteredRecipients.map((c) => (
               <button
                 key={c.name}
                 type="button"
@@ -614,6 +639,9 @@ export default function QvapayWidget({ variant = 'or' }) {
                 {appliedContact === c.name && <span className="qv-saved-check" aria-hidden="true">✓</span>}
               </button>
             ))}
+            {filteredRecipients.length === 0 && (
+              <p className="qv-overlay-empty">Sin destinatarios para «{recipientSearch.trim()}».</p>
+            )}
             <button
               type="button"
               className={`qv-other${recipientMode === 'new' ? ' is-selected' : ''}`}
