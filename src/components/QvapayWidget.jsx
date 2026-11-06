@@ -1,6 +1,6 @@
 import React from 'react';
 import { SwappedMethodIcon } from './SwappedMethodIcon.jsx';
-import { cupPng, usdPng } from '../assets/coins/fiat-images.js';
+import { usdPng } from '../assets/coins/fiat-images.js';
 import zelleIcon from '../assets/coins/zelle.svg';
 import {
   QVAPAY_METHODS,
@@ -32,7 +32,7 @@ const QUICK_AMOUNTS = [100, 200, 500, 1000];
 // las transferencias). Las tarjetas aún no tienen icono: quedan con el
 // glifo genérico hasta que se creen.
 const METHOD_ICON = {
-  USDCASH: cupPng,
+  USDCASH: usdPng,
   ZELLE: zelleIcon,
   BANK: usdPng,
   BANK_INTL: usdPng,
