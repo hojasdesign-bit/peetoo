@@ -1360,6 +1360,7 @@ body {
 .qv-saved { margin-top: 20px; }
 .qv-saved-label { font-size: 14px; font-weight: 600; line-height: 24px; color: var(--cds-muted); }
 .qv-saved-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.qv-list-search { margin-top: 8px; }
 .qv-contact-row {
   display: flex;
   align-items: center;

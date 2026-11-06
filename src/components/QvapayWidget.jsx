@@ -184,6 +184,7 @@ export default function QvapayWidget({ variant = 'or' }) {
     setMethodTick(tick);
     applyRecipient(tick, extraContacts);
     setMethodSearch('');
+    setRecipientSearch('');
     setMethodOverlay(false);
   };
 
@@ -230,13 +231,11 @@ export default function QvapayWidget({ variant = 'or' }) {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [methodOverlay]);
 
-  // El panel del destinatario se cierra con Escape; al abrirse, el foco va al buscador.
-  const recipientSearchInputRef = React.useRef(null);
+  // El panel del destinatario se cierra con Escape.
   React.useEffect(() => {
     if (!recipientOverlay) return undefined;
     const onKeyDown = (e) => { if (e.key === 'Escape') setRecipientOverlay(false); };
     document.addEventListener('keydown', onKeyDown);
-    recipientSearchInputRef.current?.focus();
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [recipientOverlay]);
 
@@ -379,8 +378,25 @@ export default function QvapayWidget({ variant = 'or' }) {
               <span className="qv-saved-label">Destinatario</span>
               {savedForMethod.length > 0 ? (
                 variant === 'list' ? (
-                  <div className="qv-saved-list">
-                    {savedForMethod.map((c) => (
+                  <>
+                    <div className="qv-overlay-search qv-list-search">
+                      <span className="qv-overlay-search-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2" />
+                          <path d="M16 16l4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                      </span>
+                      <input
+                        className="qv-overlay-search-input"
+                        type="search"
+                        aria-label="Buscar destinatarios"
+                        placeholder="Buscar destinatarios"
+                        value={recipientSearch}
+                        onChange={(e) => setRecipientSearch(e.target.value)}
+                      />
+                    </div>
+                    <div className="qv-saved-list">
+                      {filteredRecipients.map((c) => (
                       <button
                         key={c.name}
                         type="button"
@@ -396,6 +412,9 @@ export default function QvapayWidget({ variant = 'or' }) {
                         {appliedContact === c.name && <span className="qv-saved-check" aria-hidden="true">✓</span>}
                       </button>
                     ))}
+                    {filteredRecipients.length === 0 && (
+                      <p className="qv-overlay-empty">Sin destinatarios para «{recipientSearch.trim()}».</p>
+                    )}
                     <button
                       type="button"
                       className={`qv-other${recipientMode === 'new' ? ' is-selected' : ''}`}
@@ -403,13 +422,14 @@ export default function QvapayWidget({ variant = 'or' }) {
                     >
                       <span className="qv-other-plus" aria-hidden="true">+</span> Otra persona
                     </button>
-                  </div>
+                    </div>
+                  </>
                 ) : (
                   <button
                     type="button"
                     className="qv-contact-row qv-recipient-row"
                     aria-expanded={recipientOverlay}
-                    onClick={() => { setRecipientSearch(''); setRecipientOverlay(true); }}
+                    onClick={() => setRecipientOverlay(true)}
                   >
                     {recipientMode === 'saved' && applied ? (
                       <>
@@ -605,25 +625,8 @@ export default function QvapayWidget({ variant = 'or' }) {
             <span className="qv-overlay-title">Destinatario</span>
             <span aria-hidden="true" />
           </div>
-          <div className="qv-overlay-search">
-            <span className="qv-overlay-search-icon" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2" />
-                <path d="M16 16l4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </span>
-            <input
-              ref={recipientSearchInputRef}
-              className="qv-overlay-search-input"
-              type="search"
-              aria-label="Buscar destinatarios"
-              placeholder="Buscar destinatarios"
-              value={recipientSearch}
-              onChange={(e) => setRecipientSearch(e.target.value)}
-            />
-          </div>
-          <div className="qv-overlay-list">
-            {filteredRecipients.map((c) => (
+          <div className="qv-overlay-list qv-overlay-list-no-search">
+            {savedForMethod.map((c) => (
               <button
                 key={c.name}
                 type="button"
@@ -639,9 +642,6 @@ export default function QvapayWidget({ variant = 'or' }) {
                 {appliedContact === c.name && <span className="qv-saved-check" aria-hidden="true">✓</span>}
               </button>
             ))}
-            {filteredRecipients.length === 0 && (
-              <p className="qv-overlay-empty">Sin destinatarios para «{recipientSearch.trim()}».</p>
-            )}
             <button
               type="button"
               className={`qv-other${recipientMode === 'new' ? ' is-selected' : ''}`}
