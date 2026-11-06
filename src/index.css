@@ -1249,7 +1249,7 @@ body {
 .qv-overlay-search-input::placeholder { color: var(--cds-muted); }
 .qv-overlay-search-input:focus { border-color: var(--cds-accent); box-shadow: var(--cds-focus-ring); }
 .qv-overlay-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; overflow-y: auto; }
-.qv-overlay-option { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; background: var(--cds-input-bg); border: 1px solid transparent; border-radius: 12px; padding: 8px 14px 8px 12px; color: var(--cds-ink); font-family: inherit; font-size: 14px; font-weight: 500; text-align: left; cursor: pointer; box-sizing: border-box; }
+.qv-overlay-option { display: flex; align-items: center; gap: 12px; width: 100%; height: 40px; background: var(--cds-input-bg); border: 1px solid transparent; border-radius: 12px; padding: 12px 14px; color: var(--cds-ink); font-family: inherit; font-size: 14px; line-height: 14px; font-weight: 500; text-align: left; cursor: pointer; box-sizing: border-box; }
 .qv-overlay-option:hover { background: var(--cds-surface-overlay); }
 .qv-overlay-option.is-selected { border-color: var(--cds-accent); background: var(--cds-surface-overlay); }
 .qv-overlay-icon { flex: none; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; color: var(--cds-ink); }
