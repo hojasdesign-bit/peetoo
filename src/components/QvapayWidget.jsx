@@ -379,7 +379,12 @@ export default function QvapayWidget({ variant = 'or' }) {
               {savedForMethod.length > 0 ? (
                 variant === 'list' ? (
                   <>
-                    <div className="qv-overlay-search qv-list-search">
+                    <div className="qv-overlay-head">
+                      <span aria-hidden="true" />
+                      <span className="qv-overlay-title">Destinatario</span>
+                      <span aria-hidden="true" />
+                    </div>
+                    <div className="qv-overlay-search">
                       <span className="qv-overlay-search-icon" aria-hidden="true">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                           <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2" />
