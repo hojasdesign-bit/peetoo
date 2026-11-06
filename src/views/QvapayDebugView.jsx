@@ -25,7 +25,7 @@ const VARIANTS = [
 ];
 
 export default function QvapayDebugView() {
-  const [variant, setVariant] = React.useState('or');
+  const [variant, setVariant] = React.useState('list');
   const current = VARIANTS.find((v) => v.id === variant) || VARIANTS[2];
   return (
     <main className="qv-debug">

@@ -83,7 +83,7 @@ function defaultRecipient(tick, extras) {
     : { mode: 'new', details: {}, applied: null };
 }
 
-export default function QvapayWidget({ variant = 'or' }) {
+export default function QvapayWidget({ variant = 'list' }) {
   const [methodTick, setMethodTick] = React.useState('BANK_CUP');
   const method = QVAPAY_METHODS.find((m) => m.tick === methodTick) || QVAPAY_METHODS.find((m) => m.tick === 'BANK_CUP');
   const [amountText, setAmountText] = React.useState('100');
