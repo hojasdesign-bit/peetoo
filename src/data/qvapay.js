@@ -325,6 +325,43 @@ export const QVAPAY_METHODS = [
   },
 ];
 
+
+// Contactos guardados (demo): beneficiarios con sus datos ya completos.
+// Elegir uno rellena el formulario del método, como los métodos guardados
+// de QvaPay (GET /user/payment-methods). Yanelis es el ejemplo de la
+// documentación; los otros dos son ficticios, como el resto de peetoo.
+export const QVAPAY_SAVED_CONTACTS = [
+  {
+    name: 'Yanelis Pérez Rodríguez',
+    tick: 'USDCASH',
+    details: {
+      'Nombre y Apellidos': 'Yanelis Pérez Rodríguez',
+      'Carnet de Identidad': '85010112345',
+      'Nro de Celular': '+5355512345',
+      'Dirección': 'Calle Martí #123 e/ Céspedes y Maceo, Reparto Centro',
+      'Provincia': 'Villa Clara',
+      'Municipio': 'Santa Clara',
+    },
+  },
+  {
+    name: 'Luis Fernández Gómez',
+    tick: 'BANK_CUP',
+    details: {
+      'Nombre y Apellidos': 'Luis Fernández Gómez',
+      'Nro de tarjeta': '9227069987654321',
+      'Nro de celular': '+5355512345',
+    },
+  },
+  {
+    name: 'María González Ruiz',
+    tick: 'ZELLE',
+    details: {
+      'Nombre y Apellidos': 'María González Ruiz',
+      'Correo o Celular': 'maria.gonzalez@correo.com',
+    },
+  },
+];
+
 // Contenido de la página (hero, pasos, métodos populares, nota de comisiones).
 export const QVAPAY_CONTENT = {
   general: {

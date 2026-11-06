@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   QVAPAY_METHODS,
+  QVAPAY_SAVED_CONTACTS,
   QVAPAY_PROVINCES,
   qvapayMunicipalities,
   qvapayZone,
@@ -39,6 +40,8 @@ export default function QvapayWidget({ variant }) {
   const [details, setDetails] = React.useState({});
   const [methodOpen, setMethodOpen] = React.useState(false);
   const [done, setDone] = React.useState(false);
+  const [appliedContact, setAppliedContact] = React.useState(null);
+  const savedForMethod = QVAPAY_SAVED_CONTACTS.filter((c) => c.tick === method.tick);
 
   const province = details['Provincia'] || '';
   const municipality = details['Municipio'] || '';
@@ -69,6 +72,7 @@ export default function QvapayWidget({ variant }) {
   const ctaAmount = isCash ? cashBruto : amountNum;
 
   const setDetail = (key, value) => {
+    setAppliedContact(null);
     setDetails((d) => {
       const next = { ...d, [key]: value };
       // Cambiar de provincia vacía el municipio (cada provincia tiene
@@ -93,7 +97,14 @@ export default function QvapayWidget({ variant }) {
   const switchMethod = (tick) => {
     setMethodTick(tick);
     setDetails({});
+    setAppliedContact(null);
     setMethodOpen(false);
+  };
+
+  // Elegir un contacto guardado rellena el formulario del método.
+  const applyContact = (contact) => {
+    setDetails({ ...contact.details });
+    setAppliedContact(contact.name);
   };
 
   const reset = () => {
@@ -218,6 +229,28 @@ export default function QvapayWidget({ variant }) {
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Contacto guardado: elegirlo rellena el formulario. */}
+      {savedForMethod.length > 0 && (
+        <div className="qv-saved">
+          <span className="qv-saved-label">Contacto guardado</span>
+          <div className="qv-saved-list">
+            {savedForMethod.map((c) => (
+              <button
+                key={c.name}
+                type="button"
+                className={`qv-saved-chip${appliedContact === c.name ? ' is-selected' : ''}`}
+                onClick={() => applyContact(c)}
+              >
+                <span className="qv-saved-avatar" aria-hidden="true">{c.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}</span>
+                <span className="qv-saved-name">{c.name}</span>
+                {appliedContact === c.name && <span className="qv-saved-check" aria-hidden="true">✓</span>}
+              </button>
+            ))}
+          </div>
+          {appliedContact && <p className="qv-saved-note">Datos de {appliedContact} · contacto guardado</p>}
         </div>
       )}
 
