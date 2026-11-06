@@ -69,7 +69,7 @@ export default function QvapayView() {
               Cada método tiene su propio formulario y su mínimo: tarjetas cubanas desde $1,
               Zelle y efectivo desde $50, transferencias desde $100.
               Las claves del formulario son exactas: una de más o una de menos rechaza el retiro entero.
-              La comisión exacta la confirma QvaPay al crear el retiro.
+              QvaPay cobra comisión por retiro según el método (1%–15%: CUP 10%, MLC 15%; Zelle $2 fijos hasta $100; efectivo $5 fijos por debajo de $100, más el cargo de zona). El widget la descuenta del estimado.
             </p>
           </section>
         </div>

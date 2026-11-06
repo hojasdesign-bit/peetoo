@@ -164,6 +164,16 @@ export const cashReceive = (amount, zone) => {
   return Math.max(0, Math.floor((amount - cashZoneCharge(amount, zone)) / 5) * 5);
 };
 
+// Fee de la moneda sobre el bruto (amount), según la documentación
+// ("Cómo funciona fee_out_fixed"): si hay fee fijo y el monto es menor
+// o igual al umbral, se cobra el fijo (sin porcentaje); si no, el
+// porcentaje fee_out. Sin fee fijo, siempre el porcentaje.
+export const coinFee = (amount, method) => {
+  if (!method || amount <= 0) return 0;
+  if (method.feeOutFixed && amount <= method.feeOutFixed[0]) return method.feeOutFixed[1];
+  return (amount * (method.feeOut ?? 0)) / 100;
+};
+
 // Bruto mínimo que hay que retirar para entregar exactamente `target`
 // (múltiplo de 5): se resuelve por búsqueda binaria, como recomienda la
 // documentación (partir de lo que se quiere entregar, no de un bruto
@@ -194,7 +204,9 @@ export const QVAPAY_METHODS = [
     short: 'Efectivo',
     kind: 'cash',
     min: 50,
-    feeNote: 'Cargo por zona + 0% de fee de la moneda por encima de $99.99',
+    feeOut: 0,
+    feeOutFixed: [99.99, 5],
+    feeNote: 'Cargo por zona · $5 de fee si retiras $99,99 o menos',
     fields: [
       { key: 'Nombre y Apellidos', type: 'text', placeholder: 'Yanelis Pérez Rodríguez' },
       { key: 'Carnet de Identidad', type: 'number', placeholder: '85010112345', hint: '11 dígitos' },
@@ -210,6 +222,8 @@ export const QVAPAY_METHODS = [
     short: 'CUP',
     kind: 'card',
     min: 1,
+    feeOut: 10,
+    feeOutFixed: null,
     feeNote: 'La tarjeta tiene que ser CUP',
     fields: [
       { key: 'Nombre y Apellidos', type: 'text', placeholder: 'Yanelis Pérez Rodríguez' },
@@ -223,6 +237,8 @@ export const QVAPAY_METHODS = [
     short: 'MLC',
     kind: 'card',
     min: 1,
+    feeOut: 15,
+    feeOutFixed: null,
     feeNote: 'La tarjeta tiene que ser MLC',
     fields: [
       { key: 'Nombre y Apellidos', type: 'text', placeholder: 'Yanelis Pérez Rodríguez' },
@@ -236,6 +252,8 @@ export const QVAPAY_METHODS = [
     short: 'Clásica',
     kind: 'card',
     min: 1,
+    feeOut: 2.5,
+    feeOutFixed: null,
     feeNote: 'La tarjeta tiene que ser Clásica',
     fields: [
       { key: 'Nombre y Apellidos', type: 'text', placeholder: 'Yanelis Pérez Rodríguez' },
@@ -249,6 +267,8 @@ export const QVAPAY_METHODS = [
     short: 'Tropical',
     kind: 'card',
     min: 1,
+    feeOut: 5,
+    feeOutFixed: null,
     feeNote: 'Prepago en USD (también vale BANDECPREPAGO)',
     fields: [
       { key: 'Nombre y Apellidos', type: 'text', placeholder: 'Yanelis Pérez Rodríguez' },
@@ -262,6 +282,8 @@ export const QVAPAY_METHODS = [
     short: 'Zelle',
     kind: 'zelle',
     min: 50,
+    feeOut: 1,
+    feeOutFixed: [100, 2],
     feeNote: 'Correo o celular del destinatario',
     fields: [
       { key: 'Nombre y Apellidos', type: 'text', placeholder: 'Yanelis Pérez Rodríguez' },
@@ -274,6 +296,8 @@ export const QVAPAY_METHODS = [
     short: 'Banco EE. UU.',
     kind: 'bank',
     min: 100,
+    feeOut: 2,
+    feeOutFixed: null,
     feeNote: 'Transferencia en USD a un banco de EE. UU.',
     fields: [
       { key: 'Nombre y Apellidos', type: 'text', placeholder: 'Yanelis Pérez Rodríguez' },
@@ -290,6 +314,8 @@ export const QVAPAY_METHODS = [
     short: 'SWIFT',
     kind: 'bank_intl',
     min: 100,
+    feeOut: 2,
+    feeOutFixed: null,
     feeNote: 'Transferencia internacional por SWIFT',
     fields: [
       { key: 'Nombre y Apellidos', type: 'text', placeholder: 'Yanelis Pérez Rodríguez' },
