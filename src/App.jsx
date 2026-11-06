@@ -599,7 +599,7 @@ export default function App() {
     coins: [
       { symbol: '$', color: '#D64545', label: 'Comprar CUP', code: 'CuPcash', src: cupPng, method: 'Efectivo', currency: 'CUP' },
       { symbol: '$', color: '#2E7D32', label: 'Comprar USD', code: 'USDcash', src: usdPng, method: 'Efectivo', currency: 'USD' },
-      { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'USDzl', method: 'Zelle', currency: 'USD' },
+      { symbol: 'Z', color: '#6d1ed4', label: 'Comprar Zelle', code: 'USDzl', src: zelleIcon, method: 'Zelle', currency: 'USD' },
       { symbol: 'P', color: '#003087', label: 'Comprar PayPal', code: 'USDpp', src: paypalIcon, method: 'PayPal', currency: 'USD' },
       { symbol: 'P', color: '#003087', label: 'Comprar PayPal', code: 'EURpp', src: paypalIcon, method: 'PayPal', currency: 'EUR' },
       { symbol: 'P', color: '#003087', label: 'Comprar PayPal', code: 'MXNpp', src: paypalIcon, method: 'PayPal', currency: 'MXN' },

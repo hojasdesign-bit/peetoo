@@ -1,5 +1,7 @@
 import React from 'react';
 import { SwappedMethodIcon } from './SwappedMethodIcon.jsx';
+import { cupPng, usdPng } from '../assets/coins/fiat-images.js';
+import zelleIcon from '../assets/coins/zelle.svg';
 import {
   QVAPAY_METHODS,
   QVAPAY_SAVED_CONTACTS,
@@ -10,17 +12,23 @@ import {
   fmtUsd,
 } from '../data/qvapay.js';
 
-// Glifo genérico por método (los de /swapped más Efectivo), para las
-// filas del panel de selección.
+// Icono por método: las imágenes que usamos en la columna Das/Recibes
+// (foto CUP para el efectivo, logo de Zelle para Zelle, foto USD para
+// las transferencias). Las tarjetas aún no tienen icono: quedan con el
+// glifo genérico hasta que se creen.
+const METHOD_ICON = {
+  USDCASH: cupPng,
+  ZELLE: zelleIcon,
+  BANK: usdPng,
+  BANK_INTL: usdPng,
+};
+
+// Glifo genérico de reserva para los métodos sin icono propio.
 const METHOD_GLYPH = {
-  USDCASH: 'Efectivo',
   BANK_CUP: 'Card',
   BANK_MLC: 'Card',
   CLASICA: 'Card',
   TROPICAL: 'Card',
-  ZELLE: 'Rapid Transfer',
-  BANK: 'Bank Transfer',
-  BANK_INTL: 'Bank Transfer',
 };
 
 // Widget de retiro con QvaPay en una sola pantalla, con los estilos del
@@ -409,7 +417,7 @@ export default function QvapayWidget() {
                 className={`qv-overlay-option${m.tick === method.tick ? ' is-selected' : ''}`}
                 onClick={() => switchMethod(m.tick)}
               >
-                <span className="qv-overlay-icon" aria-hidden="true"><SwappedMethodIcon method={METHOD_GLYPH[m.tick]} /></span>
+                <span className="qv-overlay-icon" aria-hidden="true">{METHOD_ICON[m.tick] ? <img src={METHOD_ICON[m.tick]} alt="" /> : <SwappedMethodIcon method={METHOD_GLYPH[m.tick]} />}</span>
                 <span className="qv-overlay-name">{m.label}</span>
                 <span className="qv-overlay-min">Mín. ${m.min}</span>
                 {m.tick === method.tick && <span className="qv-overlay-check" aria-hidden="true">✓</span>}

@@ -1254,6 +1254,7 @@ body {
 .qv-overlay-option.is-selected { border-color: var(--cds-accent); background: var(--cds-surface-overlay); }
 .qv-overlay-icon { flex: none; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; color: var(--cds-ink); }
 .qv-overlay-icon svg { width: 22px; height: 22px; }
+.qv-overlay-icon img { width: 22px; height: 22px; object-fit: cover; border-radius: 50%; }
 .qv-overlay-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .qv-overlay-min { margin-left: auto; flex: none; font-size: 13px; font-weight: 400; color: var(--cds-muted); }
 .qv-overlay-check { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--cds-ink); color: var(--cds-surface); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
