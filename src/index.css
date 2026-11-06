@@ -472,9 +472,9 @@ body {
 .order-form { display: flex; flex-direction: column; gap: 16px; }
 .order-done { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding: 16px 0; }
 
-/* Selector de tema del pie (solo iconos): compacto, 40px por segmento. */
+/* Selector de tema del pie (solo iconos): compacto, 30px por segmento. */
 .app-footer .theme-switch { width: auto; }
-.app-footer .theme-switch [role="tab"] { flex: 0 0 40px; padding: 0; }
+.app-footer .theme-switch [role="tab"] { flex: 0 0 30px; padding: 0; }
 
 /* Acciones de la orden: CTA principal + desplegable «•••» (compartir,
    detalles, perfil, favoritos, denunciar, bloquear). El menú es fixed y
