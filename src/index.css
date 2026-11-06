@@ -1257,7 +1257,10 @@ body {
 .qv-overlay-search-input:focus { border-color: var(--cds-accent); box-shadow: var(--cds-focus-ring); }
 .qv-overlay-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; overflow-y: auto; }
 .qv-overlay-list-no-search { margin-top: 0; }
+.qv-or-divider { display: flex; align-items: center; gap: 12px; margin: 16px 0 0; color: var(--cds-muted); font-size: 12px; font-weight: 600; }
+.qv-or-divider::before, .qv-or-divider::after { content: ''; flex: 1; height: 1px; background: var(--cds-border); }
 .qv-recipient-row .qv-chev { flex: none; margin-left: auto; }
+.qv-select-empty { color: var(--cds-muted); }
 .qv-overlay-option { display: flex; align-items: center; gap: 12px; width: 100%; height: 40px; background: var(--cds-input-bg); border: 1px solid transparent; border-radius: 12px; padding: 12px 14px; color: var(--cds-ink); font-family: inherit; font-size: 14px; line-height: 14px; font-weight: 500; text-align: left; cursor: pointer; box-sizing: border-box; }
 .qv-overlay-option:hover { background: var(--cds-surface-overlay); }
 .qv-overlay-option.is-selected { border-color: var(--cds-accent); background: var(--cds-surface-overlay); }
@@ -1274,7 +1277,7 @@ body {
 .qv-summary-key { font-size: 12px; font-weight: 400; color: var(--cds-muted); }
 .qv-overlay-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .qv-overlay-min { margin-left: auto; flex: none; font-size: 13px; font-weight: 400; color: var(--cds-muted); }
-.qv-overlay-check { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--cds-ink); color: var(--cds-surface); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+.qv-overlay-check { margin-left: auto; flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--cds-ink); color: var(--cds-surface); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
 .qv-overlay-empty { margin: 16px 2px 0; font-size: 14px; color: var(--cds-muted); text-align: center; }
 .qv-details { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 .qv-detail-field { display: flex; flex-direction: column; gap: 6px; }

@@ -148,6 +148,12 @@ export const QVAPAY_ZONES = [
 export const QVAPAY_PROVINCES = [...new Set(QVAPAY_ZONES.map((z) => z.p))];
 export const qvapayMunicipalities = (province) => QVAPAY_ZONES.filter((z) => z.p === province).map((z) => z.m);
 export const qvapayZone = (province, municipality) => QVAPAY_ZONES.find((z) => z.p === province && z.m === municipality) || null;
+// Fee de una zona (municipio): el % es provider_pct + margen (el de la
+// zona o el global cuando es null). Es por municipio, no por provincia.
+export const qvapayZoneFeePct = (province, municipality) => {
+  const z = qvapayZone(province, municipality);
+  return z ? z.pp + (z.mp ?? QVAPAY_CASH_MARGIN_GLOBAL) : null;
+};
 
 // Cargo de la zona sobre el bruto (amount): max(bruto x pp%, flat) +
 // bruto x margen% (margen de la zona o el global si es null).

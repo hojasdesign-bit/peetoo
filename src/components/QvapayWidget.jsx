@@ -8,6 +8,7 @@ import {
   QVAPAY_PROVINCES,
   qvapayMunicipalities,
   qvapayZone,
+  qvapayZoneFeePct,
   coinFee,
   cashZoneCharge,
   fmtUsd,
@@ -90,7 +91,9 @@ export default function QvapayWidget() {
   const [done, setDone] = React.useState(false);
   const [methodOverlay, setMethodOverlay] = React.useState(false);
   const [recipientOverlay, setRecipientOverlay] = React.useState(false);
+  const [provinceOverlay, setProvinceOverlay] = React.useState(false);
   const [methodSearch, setMethodSearch] = React.useState('');
+  const [provinceSearch, setProvinceSearch] = React.useState('');
   const [extraContacts, setExtraContacts] = React.useState([]);
   const [saveContact, setSaveContact] = React.useState(false);
   const initialRecipient = defaultRecipient('BANK_CUP', []);
@@ -101,6 +104,9 @@ export default function QvapayWidget() {
   const applied = savedForMethod.find((c) => c.name === appliedContact) || null;
 
   const province = details['Provincia'] || '';
+  // La provincia del formulario (persona nueva): con un contacto
+  // guardado el formulario está vacío y no usa su provincia.
+  const formProvince = recipientMode === 'saved' ? '' : province;
   const municipality = details['Municipio'] || '';
   // La zona solo existe si el método es efectivo: la aportan los datos
   // del destinatario (paso 2).
@@ -132,6 +138,19 @@ export default function QvapayWidget() {
     : keyLineFor(method.tick, details);
 
   const setDetail = (key, value) => {
+    // Escribir en el formulario es la otra rama: pasa a «Otra persona»
+    // y empieza un destinatario nuevo (los datos del contacto guardado
+    // no se editan aquí).
+    if (recipientMode === 'saved') {
+      setRecipientMode('new');
+      setAppliedContact(null);
+      setDetails(() => {
+        const next = { [key]: value };
+        if (key === 'Provincia') next['Municipio'] = '';
+        return next;
+      });
+      return;
+    }
     setAppliedContact(null);
     setDetails((d) => {
       const next = { ...d, [key]: value };
@@ -213,10 +232,25 @@ export default function QvapayWidget() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [recipientOverlay]);
 
+  // El panel de provincias se cierra con Escape; al abrirse, el foco va al buscador.
+  const provinceSearchInputRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!provinceOverlay) return undefined;
+    const onKeyDown = (e) => { if (e.key === 'Escape') setProvinceOverlay(false); };
+    document.addEventListener('keydown', onKeyDown);
+    provinceSearchInputRef.current?.focus();
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [provinceOverlay]);
+
   const searchQuery = methodSearch.trim().toLowerCase();
   const filteredMethods = searchQuery
     ? QVAPAY_METHODS.filter((m) => `${m.label} ${m.tick} ${m.short || ''}`.toLowerCase().includes(searchQuery))
     : QVAPAY_METHODS;
+
+  const provinceSearchQuery = provinceSearch.trim().toLowerCase();
+  const filteredProvinces = provinceSearchQuery
+    ? QVAPAY_PROVINCES.filter((p) => p.toLowerCase().includes(provinceSearchQuery))
+    : QVAPAY_PROVINCES;
 
   if (done) {
     return (
@@ -310,7 +344,7 @@ export default function QvapayWidget() {
 
         {step === 2 && (
           <>
-            {/* Destinatario: un select que abre el panel, como el método. */}
+            {/* Destinatario: el select o el formulario, separados por «o». */}
             <div>
               <span className="qv-saved-label">Destinatario</span>
               {savedForMethod.length > 0 ? (
@@ -346,68 +380,72 @@ export default function QvapayWidget() {
               )}
             </div>
 
-            {/* Otra persona: el formulario del método, solo en su paso. */}
-            {recipientMode === 'new' && (
-              <>
-                <div className="qv-details">
-                  {method.fields.map((f) => {
-                    const value = details[f.key] || '';
-                    if (f.type === 'select-province') {
-                      return (
-                        <label className="qv-detail-field" key={f.key}>
-                          <span className="qv-detail-label">{f.key}</span>
-                          <select
-                            className="qv-select"
-                            aria-label={f.key}
-                            value={value}
-                            onChange={(e) => setDetail(f.key, e.target.value)}
-                          >
-                            <option value="">{f.placeholder}</option>
-                            {QVAPAY_PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
-                          </select>
-                        </label>
-                      );
-                    }
-                    if (f.type === 'select-municipality') {
-                      const options = province ? qvapayMunicipalities(province) : [];
-                      return (
-                        <label className="qv-detail-field" key={f.key}>
-                          <span className="qv-detail-label">{f.key}</span>
-                          <select
-                            className="qv-select"
-                            aria-label={f.key}
-                            value={value}
-                            disabled={!province}
-                            onChange={(e) => setDetail(f.key, e.target.value)}
-                          >
-                            <option value="">{province ? f.placeholder : 'Primero elige la provincia'}</option>
-                            {options.map((m) => <option key={m} value={m}>{m}</option>)}
-                          </select>
-                        </label>
-                      );
-                    }
-                    return (
-                      <label className="qv-detail-field" key={f.key}>
-                        <span className="qv-detail-label">{f.key}{f.hint ? <span className="qv-detail-hint"> · {f.hint}</span> : ''}</span>
-                        <input
-                          className="qv-input"
-                          type="text"
-                          inputMode={f.type === 'number' ? 'numeric' : f.type === 'phone' ? 'tel' : 'text'}
-                          aria-label={f.key}
-                          value={value}
-                          placeholder={f.placeholder}
-                          onChange={(e) => setDetail(f.key, f.type === 'number' ? digits(e.target.value) : e.target.value)}
-                        />
-                      </label>
-                    );
-                  })}
-                </div>
-                <label className="qv-save-check">
-                  <input type="checkbox" checked={saveContact} onChange={(e) => setSaveContact(e.target.checked)} />
-                  Guardar este contacto para la próxima vez
-                </label>
-              </>
-            )}
+            {/* «o»: el select y el formulario son dos caminos excluyentes. */}
+            {savedForMethod.length > 0 && <div className="qv-or-divider" aria-hidden="true"><span>o</span></div>}
+
+            {/* Persona nueva: el formulario del método, siempre visible
+                en su paso. Con un contacto guardado está vacío: escribir
+                en él pasa a «Otra persona». */}
+            <div className="qv-details">
+              {method.fields.map((f) => {
+                const value = recipientMode === 'saved' ? '' : (details[f.key] || '');
+                if (f.type === 'select-province') {
+                  return (
+                    <div className="qv-detail-field" key={f.key}>
+                      <span className="qv-detail-label">{f.key}</span>
+                      <button
+                        type="button"
+                        className="qv-paywith-row"
+                        aria-expanded={provinceOverlay}
+                        onClick={() => { setProvinceSearch(''); setProvinceOverlay(true); }}
+                      >
+                        <span className={formProvince ? 'qv-method' : 'qv-method qv-select-empty'}>{formProvince || f.placeholder}</span>
+                        <span className="qv-chev" aria-hidden="true" />
+                      </button>
+                    </div>
+                  );
+                }
+                if (f.type === 'select-municipality') {
+                  const options = formProvince ? qvapayMunicipalities(formProvince) : [];
+                  return (
+                    <label className="qv-detail-field" key={f.key}>
+                      <span className="qv-detail-label">{f.key}</span>
+                      <select
+                        className="qv-select"
+                        aria-label={f.key}
+                        value={value}
+                        disabled={!formProvince}
+                        onChange={(e) => setDetail(f.key, e.target.value)}
+                      >
+                        <option value="">{formProvince ? f.placeholder : 'Primero elige la provincia'}</option>
+                        {options.map((m) => {
+                          const fee = qvapayZoneFeePct(formProvince, m);
+                          return <option key={m} value={m}>{fee == null ? m : `${m} · ${fee}%`}</option>;
+                        })}
+                      </select>
+                    </label>
+                  );
+                }
+                return (
+                  <label className="qv-detail-field" key={f.key}>
+                    <span className="qv-detail-label">{f.key}{f.hint ? <span className="qv-detail-hint"> · {f.hint}</span> : ''}</span>
+                    <input
+                      className="qv-input"
+                      type="text"
+                      inputMode={f.type === 'number' ? 'numeric' : f.type === 'phone' ? 'tel' : 'text'}
+                      aria-label={f.key}
+                      value={value}
+                      placeholder={f.placeholder}
+                      onChange={(e) => setDetail(f.key, f.type === 'number' ? digits(e.target.value) : e.target.value)}
+                    />
+                  </label>
+                );
+              })}
+            </div>
+            <label className="qv-save-check">
+              <input type="checkbox" checked={saveContact} onChange={(e) => setSaveContact(e.target.checked)} />
+              Guardar este contacto para la próxima vez
+            </label>
 
           </>
         )}
@@ -536,6 +574,55 @@ export default function QvapayWidget() {
             >
               <span className="qv-other-plus" aria-hidden="true">+</span> Otra persona
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Panel de selección de la provincia: cubre todo el widget, como
+          el del método, y se cierra con la saeta de arriba o con Escape. */}
+      {provinceOverlay && (
+        <div className="qv-method-overlay" role="dialog" aria-label="Provincia">
+          <div className="qv-overlay-head">
+            <button type="button" className="qv-overlay-back" aria-label="Volver" onClick={() => setProvinceOverlay(false)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <span className="qv-overlay-title">Provincia</span>
+            <span aria-hidden="true" />
+          </div>
+          <div className="qv-overlay-search">
+            <span className="qv-overlay-search-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2" />
+                <path d="M16 16l4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </span>
+            <input
+              ref={provinceSearchInputRef}
+              className="qv-overlay-search-input"
+              type="search"
+              aria-label="Buscar provincias"
+              placeholder="Buscar provincias"
+              value={provinceSearch}
+              onChange={(e) => setProvinceSearch(e.target.value)}
+            />
+          </div>
+          <div className="qv-overlay-list">
+            {filteredProvinces.map((p) => (
+              <button
+                key={p}
+                type="button"
+                className={`qv-overlay-option${formProvince === p ? ' is-selected' : ''}`}
+                onClick={() => { setDetail('Provincia', p); setProvinceOverlay(false); }}
+              >
+                <span className="qv-overlay-name">{p}</span>
+                {formProvince === p && <span className="qv-overlay-check" aria-hidden="true">✓</span>}
+              </button>
+            ))}
+            {filteredProvinces.length === 0 && (
+              <p className="qv-overlay-empty">Sin provincias para «{provinceSearch.trim()}».</p>
+            )}
           </div>
         </div>
       )}
