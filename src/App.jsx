@@ -45,6 +45,7 @@ import placeholderGenericIcon from './assets/coins/placeholder-generic.svg';
 import { HomePage } from './views/HomePages.jsx';
 const SwappedView = React.lazy(() => import('./views/SwappedView.jsx'));
 const QvapayView = React.lazy(() => import('./views/QvapayView.jsx'));
+const QvapayDebugView = React.lazy(() => import('./views/QvapayDebugView.jsx'));
 const ProfileView = React.lazy(() => import('./views/ProfileView.jsx'));
 const LegalPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.LegalPage })));
 const GlossaryPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.GlossaryPage })));
@@ -194,6 +195,7 @@ export default function App() {
       window.history.replaceState(null, '', `/crypto/qvapay${window.location.search}`);
       return { view: 'qvapay', profile: '' };
     }
+    if (inner === '/qvapay/debug') return { view: 'qvapay-debug', profile: '' };
     if (inner === '/qvapay') return { view: 'qvapay', profile: '' };
     if (inner === '/legal') return { view: 'legal', profile: '' };
     if (inner === '/glosario') return { view: 'glossary', profile: '' };
@@ -1210,7 +1212,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
     + (isNarrow && marketSegment !== 'divisa' && (side === 'buy' ? sellCurrency : buyCurrency) !== 'all' ? 1 : 0);
 
   return (
-    <div className={`app${view === 'swapped' ? ' app-swapped' : ''}${view === 'qvapay' ? ' app-qvapay' : ''}`}>
+    <div className={`app${view === 'swapped' ? ' app-swapped' : ''}${view === 'qvapay' || view === 'qvapay-debug' ? ' app-qvapay' : ''}`}>
       {/* En /swapped, el glosario y Legal el fondo es plano como en
           las páginas de Swapped (#101010 sin resplandor); en el resto
           sigue el PageBackground. */}
@@ -1379,6 +1381,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
       <React.Suspense fallback={null}><SwappedView swappedSide={swappedSide} setSwappedSide={setSwappedSide} swappedContent={swappedContent} swappedStatsRef={swappedStatsRef} swappedFaqOpen={swappedFaqOpen} setSwappedFaqOpen={setSwappedFaqOpen} /></React.Suspense>
       ) : view === 'qvapay' ? (
       <React.Suspense fallback={null}><QvapayView /></React.Suspense>
+      ) : view === 'qvapay-debug' ? (
+      <React.Suspense fallback={null}><QvapayDebugView /></React.Suspense>
       ) : view === 'profile' ? (
       <React.Suspense fallback={null}><ProfileView profileTrader={profileTrader} profileOffers={profileOffers} profileBuyCount={profileBuyCount} profileSellCount={profileSellCount} profilePayMethods={profilePayMethods} profileChains={profileChains} profileHasCash={profileHasCash} profileHasOnline={profileHasOnline} profileCashCities={profileCashCities} profileCryptoCounts={profileCryptoCounts} profileFiatCounts={profileFiatCounts} profileOthersAvg={profileOthersAvg} gaugeC={gaugeC} profileCurrent={profileCurrent} profileTotalPages={profileTotalPages} profilePageOffers={profilePageOffers} profileFrom={profileFrom} profileTo={profileTo} showAllCryptos={showAllCryptos} setShowAllCryptos={setShowAllCryptos} showAllFiats={showAllFiats} setShowAllFiats={setShowAllFiats} copiedMethod={copiedMethod} qrModal={qrModal} setQrModal={setQrModal} handleCopy={handleCopy} scrollToOffers={scrollToOffers} setProfilePage={setProfilePage} goToMarket={goToMarket} renderOfferRow={renderOfferRow} /></React.Suspense>
       ) : view === 'legal' ? (
