@@ -1151,8 +1151,10 @@ body {
 }
 [data-theme="claro"] .qv-widget { box-shadow: 0 24px 60px rgba(30, 27, 80, 0.12); }
 .qv-widget-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 24px; }
-.qv-widget-head-left { display: flex; align-items: center; gap: 12px; }
+.qv-widget-head-back { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; height: 40px; padding-bottom: 0; margin-bottom: 24px; }
+.qv-widget-head-back .qv-widget-brand { text-align: center; font-size: 17px; font-weight: 700; }
 .qv-widget-no-head { padding-top: 16px; }
+.qv-widget-has-back { padding-top: 16px; }
 .qv-widget-body { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--cds-border-strong) transparent; }
 .qv-widget-body::-webkit-scrollbar { width: 6px; }
 .qv-widget-body::-webkit-scrollbar-thumb { background: var(--cds-border-strong); border-radius: 999px; }
