@@ -89,6 +89,7 @@ export default function QvapayWidget() {
   const [step, setStep] = React.useState(1);
   const [done, setDone] = React.useState(false);
   const [methodOverlay, setMethodOverlay] = React.useState(false);
+  const [recipientOverlay, setRecipientOverlay] = React.useState(false);
   const [methodSearch, setMethodSearch] = React.useState('');
   const [extraContacts, setExtraContacts] = React.useState([]);
   const [saveContact, setSaveContact] = React.useState(false);
@@ -204,6 +205,14 @@ export default function QvapayWidget() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [methodOverlay]);
 
+  // El panel del destinatario se cierra con Escape.
+  React.useEffect(() => {
+    if (!recipientOverlay) return undefined;
+    const onKeyDown = (e) => { if (e.key === 'Escape') setRecipientOverlay(false); };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [recipientOverlay]);
+
   const searchQuery = methodSearch.trim().toLowerCase();
   const filteredMethods = searchQuery
     ? QVAPAY_METHODS.filter((m) => `${m.label} ${m.tick} ${m.short || ''}`.toLowerCase().includes(searchQuery))
@@ -301,36 +310,35 @@ export default function QvapayWidget() {
 
         {step === 2 && (
           <>
-            {/* Destinatario: contacto guardado u otra persona. */}
+            {/* Destinatario: un select que abre el panel, como el método. */}
             <div>
               <span className="qv-saved-label">Destinatario</span>
               {savedForMethod.length > 0 ? (
                 <>
-                  <div className="qv-saved-list">
-                    {savedForMethod.map((c) => (
-                      <button
-                        key={c.name}
-                        type="button"
-                        className={`qv-contact-row${appliedContact === c.name ? ' is-selected' : ''}`}
-                        onClick={() => applyContact(c)}
-                        aria-pressed={appliedContact === c.name}
-                      >
-                        <span className="qv-saved-avatar" aria-hidden="true">{c.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}</span>
+                  <button
+                    type="button"
+                    className="qv-contact-row qv-recipient-row"
+                    aria-expanded={recipientOverlay}
+                    onClick={() => setRecipientOverlay(true)}
+                  >
+                    {recipientMode === 'saved' && applied ? (
+                      <>
+                        <span className="qv-saved-avatar" aria-hidden="true">{applied.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}</span>
                         <span className="qv-contact-info">
-                          <span className="qv-contact-name">{c.name}</span>
-                          <span className="qv-contact-key">{keyLineFor(c.tick, c.details)}</span>
+                          <span className="qv-contact-name">{applied.name}</span>
+                          <span className="qv-contact-key">{keyLineFor(applied.tick, applied.details)}</span>
                         </span>
-                        {appliedContact === c.name && <span className="qv-saved-check" aria-hidden="true">✓</span>}
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      className={`qv-other${recipientMode === 'new' ? ' is-selected' : ''}`}
-                      onClick={chooseOtherPerson}
-                    >
-                      <span className="qv-other-plus" aria-hidden="true">+</span> Otra persona
-                    </button>
-                  </div>
+                      </>
+                    ) : (
+                      <>
+                        <span className="qv-saved-avatar" aria-hidden="true">+</span>
+                        <span className="qv-contact-info">
+                          <span className="qv-contact-name">Otra persona</span>
+                        </span>
+                      </>
+                    )}
+                    <span className="qv-chev" aria-hidden="true" />
+                  </button>
                   {recipientMode === 'saved' && <p className="qv-saved-note">Datos gestionados en QvaPay · no se editan aquí.</p>}
                 </>
               ) : (
@@ -487,6 +495,47 @@ export default function QvapayWidget() {
             {filteredMethods.length === 0 && (
               <p className="qv-overlay-empty">Sin métodos para «{methodSearch.trim()}».</p>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Panel de selección del destinatario: cubre todo el widget, como
+          el del método, y se cierra con la saeta de arriba o con Escape. */}
+      {recipientOverlay && savedForMethod.length > 0 && (
+        <div className="qv-method-overlay" role="dialog" aria-label="Destinatario">
+          <div className="qv-overlay-head">
+            <button type="button" className="qv-overlay-back" aria-label="Volver" onClick={() => setRecipientOverlay(false)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <span className="qv-overlay-title">Destinatario</span>
+            <span aria-hidden="true" />
+          </div>
+          <div className="qv-overlay-list qv-overlay-list-no-search">
+            {savedForMethod.map((c) => (
+              <button
+                key={c.name}
+                type="button"
+                className={`qv-contact-row${appliedContact === c.name ? ' is-selected' : ''}`}
+                onClick={() => { applyContact(c); setRecipientOverlay(false); }}
+                aria-pressed={appliedContact === c.name}
+              >
+                <span className="qv-saved-avatar" aria-hidden="true">{c.name.split(' ').map((w) => w[0]).slice(0, 2).join('')}</span>
+                <span className="qv-contact-info">
+                  <span className="qv-contact-name">{c.name}</span>
+                  <span className="qv-contact-key">{keyLineFor(c.tick, c.details)}</span>
+                </span>
+                {appliedContact === c.name && <span className="qv-saved-check" aria-hidden="true">✓</span>}
+              </button>
+            ))}
+            <button
+              type="button"
+              className={`qv-other${recipientMode === 'new' ? ' is-selected' : ''}`}
+              onClick={() => { chooseOtherPerson(); setRecipientOverlay(false); }}
+            >
+              <span className="qv-other-plus" aria-hidden="true">+</span> Otra persona
+            </button>
           </div>
         </div>
       )}

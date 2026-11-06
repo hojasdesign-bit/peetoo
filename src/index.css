@@ -1256,6 +1256,8 @@ body {
 .qv-overlay-search-input::placeholder { color: var(--cds-muted); }
 .qv-overlay-search-input:focus { border-color: var(--cds-accent); box-shadow: var(--cds-focus-ring); }
 .qv-overlay-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; overflow-y: auto; }
+.qv-overlay-list-no-search { margin-top: 0; }
+.qv-recipient-row .qv-chev { flex: none; margin-left: auto; }
 .qv-overlay-option { display: flex; align-items: center; gap: 12px; width: 100%; height: 40px; background: var(--cds-input-bg); border: 1px solid transparent; border-radius: 12px; padding: 12px 14px; color: var(--cds-ink); font-family: inherit; font-size: 14px; line-height: 14px; font-weight: 500; text-align: left; cursor: pointer; box-sizing: border-box; }
 .qv-overlay-option:hover { background: var(--cds-surface-overlay); }
 .qv-overlay-option.is-selected { border-color: var(--cds-accent); background: var(--cds-surface-overlay); }
@@ -1347,7 +1349,6 @@ body {
 /* Contacto guardado del widget de QvaPay. */
 .qv-saved { margin-top: 20px; }
 .qv-saved-label { font-size: 14px; font-weight: 600; line-height: 24px; color: var(--cds-muted); }
-.qv-saved-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
 .qv-contact-row {
   display: flex;
   align-items: center;
