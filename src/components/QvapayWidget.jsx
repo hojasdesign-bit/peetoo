@@ -375,7 +375,7 @@ export default function QvapayWidget({ variant = 'or' }) {
             {/* Destinatario: lista, select con panel, o select + «o»
                 + formulario. La variante la elige la página de debug. */}
             <div>
-              <span className="qv-saved-label">Destinatario</span>
+              {variant !== 'list' && <span className="qv-saved-label">Destinatario</span>}
               {savedForMethod.length > 0 ? (
                 variant === 'list' ? (
                   <>
