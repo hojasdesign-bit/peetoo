@@ -92,8 +92,10 @@ export default function QvapayWidget({ variant = 'or' }) {
   const [methodOverlay, setMethodOverlay] = React.useState(false);
   const [recipientOverlay, setRecipientOverlay] = React.useState(false);
   const [provinceOverlay, setProvinceOverlay] = React.useState(false);
+  const [municipalityOverlay, setMunicipalityOverlay] = React.useState(false);
   const [methodSearch, setMethodSearch] = React.useState('');
   const [provinceSearch, setProvinceSearch] = React.useState('');
+  const [municipalitySearch, setMunicipalitySearch] = React.useState('');
   const [extraContacts, setExtraContacts] = React.useState([]);
   const [saveContact, setSaveContact] = React.useState(false);
   const initialRecipient = defaultRecipient('BANK_CUP', []);
@@ -108,6 +110,9 @@ export default function QvapayWidget({ variant = 'or' }) {
   // guardado el formulario está vacío y no usa su provincia.
   const formProvince = recipientMode === 'saved' ? '' : province;
   const municipality = details['Municipio'] || '';
+  // El municipio del formulario (persona nueva): con un contacto
+  // guardado el formulario está vacío y no usa su municipio.
+  const formMunicipality = recipientMode === 'saved' ? '' : municipality;
   // La zona solo existe si el método es efectivo: la aportan los datos
   // del destinatario (paso 2).
   const zone = method.tick === 'USDCASH' ? qvapayZone(province, municipality) : null;
@@ -242,6 +247,16 @@ export default function QvapayWidget({ variant = 'or' }) {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [provinceOverlay]);
 
+  // El panel de municipios se cierra con Escape; al abrirse, el foco va al buscador.
+  const municipalitySearchInputRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!municipalityOverlay) return undefined;
+    const onKeyDown = (e) => { if (e.key === 'Escape') setMunicipalityOverlay(false); };
+    document.addEventListener('keydown', onKeyDown);
+    municipalitySearchInputRef.current?.focus();
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [municipalityOverlay]);
+
   const searchQuery = methodSearch.trim().toLowerCase();
   const filteredMethods = searchQuery
     ? QVAPAY_METHODS.filter((m) => `${m.label} ${m.tick} ${m.short || ''}`.toLowerCase().includes(searchQuery))
@@ -251,6 +266,12 @@ export default function QvapayWidget({ variant = 'or' }) {
   const filteredProvinces = provinceSearchQuery
     ? QVAPAY_PROVINCES.filter((p) => p.toLowerCase().includes(provinceSearchQuery))
     : QVAPAY_PROVINCES;
+
+  const municipalities = formProvince ? qvapayMunicipalities(formProvince) : [];
+  const municipalitySearchQuery = municipalitySearch.trim().toLowerCase();
+  const filteredMunicipalities = municipalitySearchQuery
+    ? municipalities.filter((m) => m.toLowerCase().includes(municipalitySearchQuery))
+    : municipalities;
 
   if (done) {
     return (
@@ -434,24 +455,20 @@ export default function QvapayWidget({ variant = 'or' }) {
                       );
                     }
                     if (f.type === 'select-municipality') {
-                      const options = formProvince ? qvapayMunicipalities(formProvince) : [];
                       return (
-                        <label className="qv-detail-field" key={f.key}>
+                        <div className="qv-detail-field" key={f.key}>
                           <span className="qv-detail-label">{f.key}</span>
-                          <select
-                            className="qv-select"
-                            aria-label={f.key}
-                            value={value}
+                          <button
+                            type="button"
+                            className="qv-paywith-row"
+                            aria-expanded={municipalityOverlay}
                             disabled={!formProvince}
-                            onChange={(e) => setDetail(f.key, e.target.value)}
+                            onClick={() => { setMunicipalitySearch(''); setMunicipalityOverlay(true); }}
                           >
-                            <option value="">{formProvince ? f.placeholder : 'Primero elige la provincia'}</option>
-                            {options.map((m) => {
-                              const fee = qvapayZoneFeePct(formProvince, m);
-                              return <option key={m} value={m}>{fee == null ? m : `${m} · ${fee}%`}</option>;
-                            })}
-                          </select>
-                        </label>
+                            <span className={formMunicipality ? 'qv-method' : 'qv-method qv-select-empty'}>{formMunicipality || (formProvince ? f.placeholder : 'Primero elige la provincia')}</span>
+                            <span className="qv-chev" aria-hidden="true" />
+                          </button>
+                        </div>
                       );
                     }
                     return (
@@ -652,6 +669,60 @@ export default function QvapayWidget({ variant = 'or' }) {
             ))}
             {filteredProvinces.length === 0 && (
               <p className="qv-overlay-empty">Sin provincias para «{provinceSearch.trim()}».</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Panel de selección del municipio: cubre todo el widget, como
+          el de la provincia, y se cierra con la saeta de arriba o con
+          Escape. El fee % va como meta a la derecha de cada opción. */}
+      {municipalityOverlay && (
+        <div className="qv-method-overlay" role="dialog" aria-label="Municipio">
+          <div className="qv-overlay-head">
+            <button type="button" className="qv-overlay-back" aria-label="Volver" onClick={() => setMunicipalityOverlay(false)}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <span className="qv-overlay-title">Municipio</span>
+            <span aria-hidden="true" />
+          </div>
+          <div className="qv-overlay-search">
+            <span className="qv-overlay-search-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2" />
+                <path d="M16 16l4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </span>
+            <input
+              ref={municipalitySearchInputRef}
+              className="qv-overlay-search-input"
+              type="search"
+              aria-label="Buscar municipios"
+              placeholder="Buscar municipios"
+              value={municipalitySearch}
+              onChange={(e) => setMunicipalitySearch(e.target.value)}
+            />
+          </div>
+          <div className="qv-overlay-list">
+            {filteredMunicipalities.map((m) => {
+              const fee = qvapayZoneFeePct(formProvince, m);
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  className={`qv-overlay-option${formMunicipality === m ? ' is-selected' : ''}`}
+                  onClick={() => { setDetail('Municipio', m); setMunicipalityOverlay(false); }}
+                >
+                  <span className="qv-overlay-name">{m}</span>
+                  {fee != null && <span className="qv-overlay-min">{fee}%</span>}
+                  {formMunicipality === m && <span className="qv-overlay-check" aria-hidden="true">✓</span>}
+                </button>
+              );
+            })}
+            {filteredMunicipalities.length === 0 && (
+              <p className="qv-overlay-empty">Sin municipios para «{municipalitySearch.trim()}».</p>
             )}
           </div>
         </div>
