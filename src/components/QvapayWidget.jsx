@@ -7,16 +7,17 @@ import usdcIcon from '../assets/coins/usdc.svg';
 import usatIcon from '../assets/coins/usat.svg';
 import pyusdIcon from '../assets/coins/pyusd.svg';
 import ousdIcon from '../assets/coins/ousd.svg';
+import { usdgPng } from '../assets/coins/usdg.js';
 import cuFlag from '../assets/flags/cu.svg';
 import usFlag from '../assets/flags/us.svg';
 import bscIcon from '../assets/chains/bsc.svg';
 import ethIcon from '../assets/chains/eth.svg';
 import polIcon from '../assets/chains/pol.svg';
 import arbIcon from '../assets/chains/arbitrum.svg';
-import opIcon from '../assets/chains/optimism.svg';
 import baseIcon from '../assets/chains/base.svg';
-import solIcon from '../assets/chains/sol.svg';
-import trxIcon from '../assets/chains/trx.svg';
+import hypeIcon from '../assets/chains/hype.svg';
+import arcIcon from '../assets/chains/arc.svg';
+import hoodIcon from '../assets/chains/hood.svg';
 import {
   QVAPAY_COUNTRIES,
   QVAPAY_PAY_CHAINS,
@@ -62,9 +63,9 @@ const METHOD_ICON = {
 const COUNTRY_FLAG = { CU: cuFlag, US: usFlag };
 
 // Logos de las cryptos con las que se paga y fotos de las fiats que se reciben.
-const PAY_CRYPTO_ICON = { USDT: usdtIcon, USDC: usdcIcon, USAT: usatIcon, PYUSD: pyusdIcon, ZLUSD: zelleIcon, OUSD: ousdIcon };
+const PAY_CRYPTO_ICON = { USDT: usdtIcon, USDC: usdcIcon, USAT: usatIcon, PYUSD: pyusdIcon, ZLUSD: zelleIcon, OUSD: ousdIcon, USDG: usdgPng };
 // Logo por cadena (selector de cadena del panel «Pagar con»).
-const CHAIN_ICON = { BSC: bscIcon, ETH: ethIcon, POL: polIcon, ARB: arbIcon, OP: opIcon, BASE: baseIcon, SOL: solIcon, TRX: trxIcon };
+const CHAIN_ICON = { BSC: bscIcon, ETH: ethIcon, POL: polIcon, ARB: arbIcon, BASE: baseIcon, HYPE: hypeIcon, ARC: arcIcon, HOOD: hoodIcon };
 const RECEIVE_FIAT_ICON = { USD: usdPng, CUP: cupPng };
 
 // Glifo genérico de reserva para los métodos sin icono propio.

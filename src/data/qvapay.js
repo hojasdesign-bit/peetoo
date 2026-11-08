@@ -216,6 +216,7 @@ export const QVAPAY_PAY_CRYPTOS = [
   { code: 'PYUSD', label: 'PayPal USD' },
   { code: 'ZLUSD', label: 'Zelle USD' },
   { code: 'OUSD', label: 'Origin USD' },
+  { code: 'USDG', label: 'Global Dollar' },
 ];
 
 // Cadenas (blockchains) para pagar con crypto: cada cadena ofrece las
@@ -227,10 +228,10 @@ export const QVAPAY_PAY_CHAINS = [
   { code: 'ETH', label: 'Ethereum', cryptos: ['USDT', 'USDC', 'USAT', 'PYUSD', 'OUSD'] },
   { code: 'POL', label: 'Polygon', cryptos: ['USDT', 'USDC'] },
   { code: 'ARB', label: 'Arbitrum', cryptos: ['USDT', 'USDC'] },
-  { code: 'OP', label: 'Optimism', cryptos: ['USDT', 'USDC'] },
   { code: 'BASE', label: 'Base', cryptos: ['USDT', 'USDC'] },
-  { code: 'SOL', label: 'Solana', cryptos: ['USDT', 'USDC', 'PYUSD'] },
-  { code: 'TRX', label: 'Tron', cryptos: ['USDT'] },
+  { code: 'HYPE', label: 'HyperEVM', cryptos: ['USDT', 'USDC'] },
+  { code: 'ARC', label: 'Arc', cryptos: ['USDC'] },
+  { code: 'HOOD', label: 'Robinhood Chain', cryptos: ['USDG'] },
 ];
 
 // Fiats que se pueden recibir (la tarjeta CUP es la única vía para CUP).
