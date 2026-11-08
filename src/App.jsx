@@ -219,7 +219,7 @@ export default function App() {
   const [copiedMethod, setCopiedMethod] = React.useState(null);
   const [qrModal, setQrModal] = React.useState(null);
   // Lado de la página de Swapped (toggle Comprar/Vender): lo fija la
-  // tarjeta del menú Swapped; por defecto Comprar. La página es
+  // tarjeta Comprar del menú Remesar; por defecto Comprar. La página es
   // genérica, sin énfasis a ninguna moneda: el widget arranca en BTC
   // (su moneda por defecto) y dentro de él se puede cambiar.
   const [swappedSide, setSwappedSide] = React.useState('buy');
@@ -232,8 +232,8 @@ export default function App() {
     window.history.pushState(null, '', '/crypto/swapped');
     setView('swapped');
   };
-  // Tarjetas del menú Swapped: llevan a la misma página (/swapped) con
-  // el lado ya elegido; el toggle de la página solo cambia el lado.
+  // Tarjeta Comprar del menú Remesar: lleva a /swapped con el lado
+  // ya elegido; el toggle de la página solo cambia el lado.
   const goSwappedSide = (side) => {
     setSwappedSide(side);
     setSwappedMenuOpen(false);
@@ -458,7 +458,7 @@ export default function App() {
   // por clic fuera evalúa fiatMenuOpen en su array de dependencias
   // durante el render; declararlo después rompería con TDZ.
   const [fiatMenuOpen, setFiatMenuOpen] = React.useState(false);
-  // Menú Swapped del header: dos tarjetas (Comprar / Vender), como el
+  // Menú Remesar del header: dos tarjetas (Comprar / Enviar), como el
   // menú Productos de swapped.com. Mismo patrón que los otros menús:
   // hover en escritorio (150ms de margen), clic como respaldo.
   const [swappedMenuOpen, setSwappedMenuOpen] = React.useState(false);
@@ -476,7 +476,7 @@ export default function App() {
   };
   // Menú hamburguesa (móvil ≤720px, como en swapped.com/es/): el botón
   // va en la fila del header y el panel contiene las dos secciones
-  // desplegables + el enlace a Swapped + la insignia Demo.
+  // desplegables + el menú Remesar + la insignia Demo.
   const [hamburgerOpen, setHamburgerOpen] = React.useState(false);
   // Pie de enlaces informativos + redes de ejemplo: Glosario y Legal
   // navegan a sus páginas internas; Blog y redes quedan pendientes
@@ -1268,11 +1268,10 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                 aria-expanded={swappedMenuOpen}
                 onClick={() => { setSwappedMenuOpen((o) => !o); setBuyMenuOpen(false); setFiatMenuOpen(false); }}
               >
-                Swapped
+                Remesar
                 <span className="swapped-menu-chev" aria-hidden="true" />
               </button>
             </span>
-            <a href="/crypto/qvapay" className="topbar-link" onClick={(e) => { e.preventDefault(); goToQvapay(); }}>QvaPay</a>
           </span>
           <span className="topbar-right">
             <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
@@ -1298,14 +1297,14 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
           <DropdownMenu dropdown={fiatDropdown} onNavigate={onFiatMenuNavigate} />
         )}
         {swappedMenuOpen && !isNarrow && (
-          <div className="swapped-panel" role="menu" aria-label="Swapped">
+          <div className="swapped-panel" role="menu" aria-label="Remesar">
             <button type="button" className="swapped-card" role="menuitem" onClick={() => goSwappedSide('buy')}>
               <span className="swapped-card-title">Comprar</span>
               <span className="swapped-card-desc">Compra cripto al instante con tarjeta, transferencia, Apple Pay, Google Pay y más.</span>
             </button>
-            <button type="button" className="swapped-card" role="menuitem" onClick={() => goSwappedSide('sell')}>
-              <span className="swapped-card-title">Vender</span>
-              <span className="swapped-card-desc">Vende tu cripto y recibe el dinero con tu método de pago preferido.</span>
+            <button type="button" className="swapped-card" role="menuitem" onClick={() => goToQvapay()}>
+              <span className="swapped-card-title">Enviar</span>
+              <span className="swapped-card-desc">Envía tu cripto a Cuba y retírala en efectivo, tarjeta o Zelle con QvaPay.</span>
             </button>
             {/* Enlaces + redes en la columna lateral, como en los otros
                 menús, no en un pie abajo (el pie solo queda en el cajón móvil). */}
@@ -1352,7 +1351,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
               aria-expanded={swappedMenuOpen}
               onClick={() => { setSwappedMenuOpen((o) => !o); setBuyMenuOpen(false); setFiatMenuOpen(false); }}
             >
-              Swapped
+              Remesar
               <span className={`drawer-chev ${swappedMenuOpen ? 'drawer-chev-open' : ''}`} aria-hidden="true" />
             </button>
             {swappedMenuOpen && (
@@ -1361,13 +1360,12 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                   <span className="swapped-card-title">Comprar</span>
                   <span className="swapped-card-desc">Compra cripto al instante con tarjeta, transferencia, Apple Pay, Google Pay y más.</span>
                 </button>
-                <button type="button" className="swapped-card" onClick={() => goSwappedSide('sell')}>
-                  <span className="swapped-card-title">Vender</span>
-                  <span className="swapped-card-desc">Vende tu cripto y recibe el dinero con tu método de pago preferido.</span>
+                <button type="button" className="swapped-card" onClick={() => goToQvapay()}>
+                  <span className="swapped-card-title">Enviar</span>
+                  <span className="swapped-card-desc">Envía tu cripto a Cuba y retírala en efectivo, tarjeta o Zelle con QvaPay.</span>
                 </button>
               </div>
             )}
-            <a href="/crypto/qvapay" className="drawer-link" onClick={(e) => { e.preventDefault(); goToQvapay(); }}>QvaPay</a>
             {/* En móvil, enlaces y redes una sola vez, fuera de los submenús */}
             {renderInfoFoot('drawer-info-foot')}
             <span className="drawer-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
