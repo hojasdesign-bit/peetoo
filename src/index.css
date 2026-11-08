@@ -1254,7 +1254,11 @@ body {
 .qv-overlay-head { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; height: 40px; margin-bottom: 16px; }
 /* Selector de país del panel de métodos: bandera circular + chevron,
    como el «Pagar con» del widget original (Cuba por defecto). */
-.qv-country-btn { display: inline-flex; align-items: center; justify-content: center; gap: 3px; width: 100%; height: 100%; padding: 0; background: transparent; border: 0; color: var(--cds-muted); cursor: pointer; }
+/* Cabecera del panel de métodos con selector de país: celdas laterales
+   de 56px para que quepa la píldora del país sin descentrar el título. */
+.qv-overlay-head-country { grid-template-columns: 56px 1fr 56px; }
+.qv-country-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; width: 100%; height: 36px; padding: 0; background: var(--cds-input-bg); border: 0; border-radius: 999px; color: var(--cds-muted); cursor: pointer; }
+.qv-country-btn:hover { background: var(--cds-surface-overlay); }
 .qv-country-btn img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
 .qv-country-flag { object-position: left center; }
 .qv-overlay-back { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; background: var(--cds-input-bg); border: 0; border-radius: 50%; color: var(--cds-ink); cursor: pointer; }
