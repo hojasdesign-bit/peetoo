@@ -206,6 +206,27 @@ export const fmtUsd = (n) => n.toLocaleString('es-ES', { minimumFractionDigits: 
 // Países de la selección de método de retiro (el panel del widget):
 // Cuba sale por defecto; Estados Unidos agrupa Zelle, transferencia
 // en EE. UU. y SWIFT. El campo `country` de cada método lo ubica.
+// Cryptos con las que se puede pagar el retiro: stablecoins en USD (1:1),
+// así el monto en crypto equivale al monto en USD para la comisión y el
+// estimado. EURC no entra: está anclada al euro y no hay tasa EUR/USD.
+export const QVAPAY_PAY_CRYPTOS = [
+  { code: 'USDT', label: 'Tether USD' },
+  { code: 'USDC', label: 'USD Coin' },
+  { code: 'USAT', label: 'Tether USAT' },
+  { code: 'PYUSD', label: 'PayPal USD' },
+  { code: 'ZLUSD', label: 'Zelle USD' },
+  { code: 'OUSD', label: 'Origin USD' },
+];
+
+// Fiats que se pueden recibir (la tarjeta CUP es la única vía para CUP).
+export const QVAPAY_RECEIVE_FIATS = [
+  { code: 'USD', label: 'Dólar estadounidense' },
+  { code: 'CUP', label: 'Peso cubano' },
+];
+
+// Tasa de conversión USD→CUP para el estimado (ancla elTOQUE, como Divisa).
+export const QVAPAY_CUP_RATE = 890;
+
 export const QVAPAY_COUNTRIES = [
   { code: 'CU', label: 'Cuba' },
   { code: 'US', label: 'Estados Unidos' },
@@ -215,6 +236,7 @@ export const QVAPAY_METHODS = [
   {
     tick: 'USDCASH',
     country: 'CU',
+    fiat: 'USD',
     label: 'Efectivo en Cuba',
     short: 'Efectivo',
     kind: 'cash',
@@ -234,6 +256,7 @@ export const QVAPAY_METHODS = [
   {
     tick: 'BANK_CUP',
     country: 'CU',
+    fiat: 'CUP',
     label: 'Tarjeta CUP',
     short: 'CUP',
     kind: 'card',
@@ -250,6 +273,7 @@ export const QVAPAY_METHODS = [
   {
     tick: 'BANK_MLC',
     country: 'CU',
+    fiat: 'USD',
     label: 'Tarjeta MLC',
     short: 'MLC',
     kind: 'card',
@@ -266,6 +290,7 @@ export const QVAPAY_METHODS = [
   {
     tick: 'CLASICA',
     country: 'CU',
+    fiat: 'USD',
     label: 'Tarjeta Clásica',
     short: 'Clásica',
     kind: 'card',
@@ -282,6 +307,7 @@ export const QVAPAY_METHODS = [
   {
     tick: 'TROPICAL',
     country: 'CU',
+    fiat: 'USD',
     label: 'Tarjeta Tropical',
     short: 'Tropical',
     kind: 'card',
@@ -298,6 +324,7 @@ export const QVAPAY_METHODS = [
   {
     tick: 'ZELLE',
     country: 'US',
+    fiat: 'USD',
     label: 'Zelle',
     short: 'Zelle',
     kind: 'zelle',
@@ -313,6 +340,7 @@ export const QVAPAY_METHODS = [
   {
     tick: 'BANK',
     country: 'US',
+    fiat: 'USD',
     label: 'Transferencia en EE. UU.',
     short: 'Banco EE. UU.',
     kind: 'bank',
@@ -332,6 +360,7 @@ export const QVAPAY_METHODS = [
   {
     tick: 'BANK_INTL',
     country: 'US',
+    fiat: 'USD',
     label: 'Transferencia internacional',
     short: 'SWIFT',
     kind: 'bank_intl',
