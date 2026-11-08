@@ -203,9 +203,18 @@ export const fmtUsd = (n) => n.toLocaleString('es-ES', { minimumFractionDigits: 
 
 // Métodos de retiro (tabla de la documentación, vigentes 2026-10-20).
 // fields: claves exactas del working_data, con su tipo y ejemplo.
+// Países de la selección de método de retiro (el panel del widget):
+// Cuba sale por defecto; Estados Unidos agrupa Zelle, transferencia
+// en EE. UU. y SWIFT. El campo `country` de cada método lo ubica.
+export const QVAPAY_COUNTRIES = [
+  { code: 'CU', label: 'Cuba' },
+  { code: 'US', label: 'Estados Unidos' },
+];
+
 export const QVAPAY_METHODS = [
   {
     tick: 'USDCASH',
+    country: 'CU',
     label: 'Efectivo en Cuba',
     short: 'Efectivo',
     kind: 'cash',
@@ -224,6 +233,7 @@ export const QVAPAY_METHODS = [
   },
   {
     tick: 'BANK_CUP',
+    country: 'CU',
     label: 'Tarjeta CUP',
     short: 'CUP',
     kind: 'card',
@@ -239,6 +249,7 @@ export const QVAPAY_METHODS = [
   },
   {
     tick: 'BANK_MLC',
+    country: 'CU',
     label: 'Tarjeta MLC',
     short: 'MLC',
     kind: 'card',
@@ -254,6 +265,7 @@ export const QVAPAY_METHODS = [
   },
   {
     tick: 'CLASICA',
+    country: 'CU',
     label: 'Tarjeta Clásica',
     short: 'Clásica',
     kind: 'card',
@@ -269,6 +281,7 @@ export const QVAPAY_METHODS = [
   },
   {
     tick: 'TROPICAL',
+    country: 'CU',
     label: 'Tarjeta Tropical',
     short: 'Tropical',
     kind: 'card',
@@ -284,6 +297,7 @@ export const QVAPAY_METHODS = [
   },
   {
     tick: 'ZELLE',
+    country: 'US',
     label: 'Zelle',
     short: 'Zelle',
     kind: 'zelle',
@@ -298,6 +312,7 @@ export const QVAPAY_METHODS = [
   },
   {
     tick: 'BANK',
+    country: 'US',
     label: 'Transferencia en EE. UU.',
     short: 'Banco EE. UU.',
     kind: 'bank',
@@ -316,6 +331,7 @@ export const QVAPAY_METHODS = [
   },
   {
     tick: 'BANK_INTL',
+    country: 'US',
     label: 'Transferencia internacional',
     short: 'SWIFT',
     kind: 'bank_intl',

@@ -1252,6 +1252,11 @@ body {
    cerrarlo, buscador y lista con desplazamiento interno). */
 .qv-method-overlay { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; background: var(--cds-surface); border-radius: 28px; padding: 16px 16px 20px; box-sizing: border-box; }
 .qv-overlay-head { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; height: 40px; margin-bottom: 16px; }
+/* Selector de país del panel de métodos: bandera circular + chevron,
+   como el «Pagar con» del widget original (Cuba por defecto). */
+.qv-country-btn { display: inline-flex; align-items: center; justify-content: center; gap: 3px; width: 100%; height: 100%; padding: 0; background: transparent; border: 0; color: var(--cds-muted); cursor: pointer; }
+.qv-country-btn img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+.qv-country-flag { object-position: left center; }
 .qv-overlay-back { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; background: var(--cds-input-bg); border: 0; border-radius: 50%; color: var(--cds-ink); cursor: pointer; }
 .qv-overlay-back:hover { background: var(--cds-surface-overlay); }
 .qv-overlay-title { text-align: center; font-size: 17px; font-weight: 700; color: var(--cds-ink); }
@@ -1261,6 +1266,8 @@ body {
 .qv-overlay-search-input::placeholder { color: var(--cds-muted); }
 .qv-overlay-search-input:focus { border-color: var(--cds-accent); box-shadow: var(--cds-focus-ring); }
 .qv-overlay-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; overflow-y: auto; }
+/* Título de la sección de métodos del país («Popular en Cuba»). */
+.qv-overlay-section { margin: 16px 2px 0; font-size: 14px; font-weight: 600; line-height: 24px; color: var(--cds-ink); }
 .qv-overlay-list-no-search { margin-top: 0; }
 .qv-or-divider { display: flex; align-items: center; gap: 12px; margin: 16px 0 0; color: var(--cds-muted); font-size: 12px; font-weight: 600; }
 .qv-debug { position: relative; z-index: 1; flex: 1; min-width: 0; width: 100%; max-width: 1120px; margin: 0 auto; padding: 48px 24px 60px; display: flex; flex-direction: column; align-items: center; gap: 16px; }

@@ -2,7 +2,10 @@ import React from 'react';
 import { SwappedMethodIcon } from './SwappedMethodIcon.jsx';
 import { usdPng } from '../assets/coins/fiat-images.js';
 import zelleIcon from '../assets/coins/zelle.svg';
+import cuFlag from '../assets/flags/cu.svg';
+import usFlag from '../assets/flags/us.svg';
 import {
+  QVAPAY_COUNTRIES,
   QVAPAY_METHODS,
   QVAPAY_SAVED_CONTACTS,
   QVAPAY_PROVINCES,
@@ -37,6 +40,9 @@ const METHOD_ICON = {
   BANK: usdPng,
   BANK_INTL: usdPng,
 };
+
+// Bandera circular por país (selector del panel de métodos).
+const COUNTRY_FLAG = { CU: cuFlag, US: usFlag };
 
 // Glifo genérico de reserva para los métodos sin icono propio.
 const METHOD_GLYPH = {
@@ -90,6 +96,10 @@ export default function QvapayWidget({ variant = 'list' }) {
   const [step, setStep] = React.useState(1);
   const [done, setDone] = React.useState(false);
   const [methodOverlay, setMethodOverlay] = React.useState(false);
+  // País del panel de métodos: Cuba sale por defecto; Estados Unidos
+  // agrupa Zelle, transferencia en EE. UU. y SWIFT.
+  const [methodCountry, setMethodCountry] = React.useState('CU');
+  const [countryOverlay, setCountryOverlay] = React.useState(false);
   const [recipientOverlay, setRecipientOverlay] = React.useState(false);
   const [recipientSearch, setRecipientSearch] = React.useState('');
   const [provinceOverlay, setProvinceOverlay] = React.useState(false);
@@ -222,14 +232,15 @@ export default function QvapayWidget({ variant = 'list' }) {
   };
 
   // El panel de métodos se cierra con Escape; al abrirse, el foco va al buscador.
+  // En la vista de selección de país, Escape vuelve a la lista de métodos.
   const searchInputRef = React.useRef(null);
   React.useEffect(() => {
     if (!methodOverlay) return undefined;
-    const onKeyDown = (e) => { if (e.key === 'Escape') setMethodOverlay(false); };
+    const onKeyDown = (e) => { if (e.key === 'Escape') { countryOverlay ? setCountryOverlay(false) : setMethodOverlay(false); } };
     document.addEventListener('keydown', onKeyDown);
-    searchInputRef.current?.focus();
+    if (!countryOverlay) searchInputRef.current?.focus();
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [methodOverlay]);
+  }, [methodOverlay, countryOverlay]);
 
   // El panel del destinatario se cierra con Escape.
   React.useEffect(() => {
@@ -260,9 +271,11 @@ export default function QvapayWidget({ variant = 'list' }) {
   }, [municipalityOverlay]);
 
   const searchQuery = methodSearch.trim().toLowerCase();
+  const countryMethods = QVAPAY_METHODS.filter((m) => m.country === methodCountry);
+  const countryLabel = (QVAPAY_COUNTRIES.find((c) => c.code === methodCountry) || QVAPAY_COUNTRIES[0]).label;
   const filteredMethods = searchQuery
-    ? QVAPAY_METHODS.filter((m) => `${m.label} ${m.tick} ${m.short || ''}`.toLowerCase().includes(searchQuery))
-    : QVAPAY_METHODS;
+    ? countryMethods.filter((m) => `${m.label} ${m.tick} ${m.short || ''}`.toLowerCase().includes(searchQuery))
+    : countryMethods;
 
   const recipientSearchQuery = recipientSearch.trim().toLowerCase();
   const filteredRecipients = recipientSearchQuery
@@ -372,7 +385,7 @@ export default function QvapayWidget({ variant = 'list' }) {
             {/* Método: la fila abre el panel completo de selección. */}
             <div className="qv-paywith">
               <div className="qv-paywith-label-row"><span className="qv-field-label">Retirar con</span></div>
-              <button type="button" className="qv-paywith-row" aria-expanded={methodOverlay} onClick={() => { setMethodSearch(''); setMethodOverlay(true); }}>
+              <button type="button" className="qv-paywith-row" aria-expanded={methodOverlay} onClick={() => { setMethodSearch(''); setCountryOverlay(false); setMethodOverlay(true); }}>
                 <span className="qv-method">{method.label} · {method.tick}</span>
                 <span className="qv-fee">Mín. ${method.min}<span className="qv-chev" aria-hidden="true" /></span>
               </button>
@@ -581,51 +594,78 @@ export default function QvapayWidget({ variant = 'list' }) {
       {/* Panel de selección del método: cubre todo el widget, como en el
           widget original, y se cierra con la saeta de arriba o con Escape. */}
       {methodOverlay && (
-        <div className="qv-method-overlay" role="dialog" aria-label="Retirar con">
+        <div className="qv-method-overlay" role="dialog" aria-label={countryOverlay ? 'Seleccionar país' : 'Retirar con'}>
           <div className="qv-overlay-head">
-            <button type="button" className="qv-overlay-back" aria-label="Volver" onClick={() => setMethodOverlay(false)}>
+            <button type="button" className="qv-overlay-back" aria-label="Volver" onClick={() => countryOverlay ? setCountryOverlay(false) : setMethodOverlay(false)}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
-            <span className="qv-overlay-title">Retirar con</span>
-            <span aria-hidden="true" />
-          </div>
-          <div className="qv-overlay-search">
-            <span className="qv-overlay-search-icon" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2" />
-                <path d="M16 16l4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </span>
-            <input
-              ref={searchInputRef}
-              className="qv-overlay-search-input"
-              type="search"
-              aria-label="Buscar métodos"
-              placeholder="Buscar métodos"
-              value={methodSearch}
-              onChange={(e) => setMethodSearch(e.target.value)}
-            />
-          </div>
-          <div className="qv-overlay-list">
-            {filteredMethods.map((m) => (
-              <button
-                key={m.tick}
-                type="button"
-                className={`qv-overlay-option${m.tick === method.tick ? ' is-selected' : ''}`}
-                onClick={() => switchMethod(m.tick)}
-              >
-                <span className="qv-overlay-icon" aria-hidden="true">{METHOD_ICON[m.tick] ? <img src={METHOD_ICON[m.tick]} alt="" /> : <SwappedMethodIcon method={METHOD_GLYPH[m.tick]} />}</span>
-                <span className="qv-overlay-name">{m.label}</span>
-                <span className="qv-overlay-min">Mín. ${m.min}</span>
-                {m.tick === method.tick && <span className="qv-overlay-check" aria-hidden="true">✓</span>}
+            <span className="qv-overlay-title">{countryOverlay ? 'Seleccionar país' : 'Retirar con'}</span>
+            {countryOverlay ? <span aria-hidden="true" /> : (
+              <button type="button" className="qv-country-btn" aria-label={`País: ${countryLabel}. Cambiar país`} onClick={() => setCountryOverlay(true)}>
+                <img className="qv-country-flag" src={COUNTRY_FLAG[methodCountry]} alt="" />
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </button>
-            ))}
-            {filteredMethods.length === 0 && (
-              <p className="qv-overlay-empty">Sin métodos para «{methodSearch.trim()}».</p>
             )}
           </div>
+          {countryOverlay ? (
+            <div className="qv-overlay-list qv-overlay-list-no-search">
+              {QVAPAY_COUNTRIES.map((c) => (
+                <button
+                  key={c.code}
+                  type="button"
+                  className={`qv-overlay-option${c.code === methodCountry ? ' is-selected' : ''}`}
+                  onClick={() => { setMethodCountry(c.code); setMethodSearch(''); setCountryOverlay(false); }}
+                >
+                  <span className="qv-overlay-icon" aria-hidden="true"><img className="qv-country-flag" src={COUNTRY_FLAG[c.code]} alt="" /></span>
+                  <span className="qv-overlay-name">{c.label}</span>
+                  {c.code === methodCountry && <span className="qv-overlay-check" aria-hidden="true">✓</span>}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <>
+              <div className="qv-overlay-search">
+                <span className="qv-overlay-search-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="2" />
+                    <path d="M16 16l4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </span>
+                <input
+                  ref={searchInputRef}
+                  className="qv-overlay-search-input"
+                  type="search"
+                  aria-label="Buscar métodos"
+                  placeholder="Buscar métodos"
+                  value={methodSearch}
+                  onChange={(e) => setMethodSearch(e.target.value)}
+                />
+              </div>
+              <p className="qv-overlay-section">Popular en {countryLabel}</p>
+              <div className="qv-overlay-list">
+                {filteredMethods.map((m) => (
+                  <button
+                    key={m.tick}
+                    type="button"
+                    className={`qv-overlay-option${m.tick === method.tick ? ' is-selected' : ''}`}
+                    onClick={() => switchMethod(m.tick)}
+                  >
+                    <span className="qv-overlay-icon" aria-hidden="true">{METHOD_ICON[m.tick] ? <img src={METHOD_ICON[m.tick]} alt="" /> : <SwappedMethodIcon method={METHOD_GLYPH[m.tick]} />}</span>
+                    <span className="qv-overlay-name">{m.label}</span>
+                    <span className="qv-overlay-min">Mín. ${m.min}</span>
+                    {m.tick === method.tick && <span className="qv-overlay-check" aria-hidden="true">✓</span>}
+                  </button>
+                ))}
+                {filteredMethods.length === 0 && (
+                  <p className="qv-overlay-empty">Sin métodos para «{methodSearch.trim()}».</p>
+                )}
+              </div>
+            </>
+          )}
         </div>
       )}
 
