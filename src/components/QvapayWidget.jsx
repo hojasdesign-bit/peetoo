@@ -9,8 +9,17 @@ import pyusdIcon from '../assets/coins/pyusd.svg';
 import ousdIcon from '../assets/coins/ousd.svg';
 import cuFlag from '../assets/flags/cu.svg';
 import usFlag from '../assets/flags/us.svg';
+import bscIcon from '../assets/chains/bsc.svg';
+import ethIcon from '../assets/chains/eth.svg';
+import polIcon from '../assets/chains/pol.svg';
+import arbIcon from '../assets/chains/arbitrum.svg';
+import opIcon from '../assets/chains/optimism.svg';
+import baseIcon from '../assets/chains/base.svg';
+import solIcon from '../assets/chains/sol.svg';
+import trxIcon from '../assets/chains/trx.svg';
 import {
   QVAPAY_COUNTRIES,
+  QVAPAY_PAY_CHAINS,
   QVAPAY_PAY_CRYPTOS,
   QVAPAY_RECEIVE_FIATS,
   QVAPAY_CUP_RATE,
@@ -54,6 +63,8 @@ const COUNTRY_FLAG = { CU: cuFlag, US: usFlag };
 
 // Logos de las cryptos con las que se paga y fotos de las fiats que se reciben.
 const PAY_CRYPTO_ICON = { USDT: usdtIcon, USDC: usdcIcon, USAT: usatIcon, PYUSD: pyusdIcon, ZLUSD: zelleIcon, OUSD: ousdIcon };
+// Logo por cadena (selector de cadena del panel «Pagar con»).
+const CHAIN_ICON = { BSC: bscIcon, ETH: ethIcon, POL: polIcon, ARB: arbIcon, OP: opIcon, BASE: baseIcon, SOL: solIcon, TRX: trxIcon };
 const RECEIVE_FIAT_ICON = { USD: usdPng, CUP: cupPng };
 
 // Glifo genérico de reserva para los métodos sin icono propio.
@@ -115,6 +126,11 @@ export default function QvapayWidget({ variant = 'list' }) {
   // Pagar con crypto (stablecoin en USD, 1:1) y recibir en fiat (USD o CUP).
   const [payCrypto, setPayCrypto] = React.useState('USDT');
   const [receiveFiat, setReceiveFiat] = React.useState('USD');
+  // Cadena con la que se paga: BNB Chain por defecto (la que más se usa
+  // en Cuba); su selección es una píldora en el panel «Pagar con», como
+  // la del país en el panel de métodos.
+  const [payChain, setPayChain] = React.useState('BSC');
+  const [chainOverlay, setChainOverlay] = React.useState(false);
   const [cryptoOverlay, setCryptoOverlay] = React.useState(false);
   const [fiatOverlay, setFiatOverlay] = React.useState(false);
   const [recipientOverlay, setRecipientOverlay] = React.useState(false);
@@ -230,13 +246,22 @@ export default function QvapayWidget({ variant = 'list' }) {
     }
   };
 
+  // Elegir cadena: filtra las cryptos a las de esa cadena; si la crypto
+  // elegida no existe en ella, pasa a la primera de la cadena (USDT).
+  const selectChain = (code) => {
+    setPayChain(code);
+    setChainOverlay(false);
+    const chain = QVAPAY_PAY_CHAINS.find((c) => c.code === code);
+    if (chain && !chain.cryptos.includes(payCrypto)) setPayCrypto(chain.cryptos[0]);
+  };
+
   // Los paneles de crypto y de fiat se cierran con Escape.
   React.useEffect(() => {
     if (!cryptoOverlay && !fiatOverlay) return undefined;
-    const onKeyDown = (e) => { if (e.key === 'Escape') { setCryptoOverlay(false); setFiatOverlay(false); } };
+    const onKeyDown = (e) => { if (e.key === 'Escape') { if (chainOverlay) setChainOverlay(false); else { setCryptoOverlay(false); setFiatOverlay(false); } } };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [cryptoOverlay, fiatOverlay]);
+  }, [cryptoOverlay, fiatOverlay, chainOverlay]);
 
   // Elegir un contacto guardado usa sus datos tal cual, sin formulario.
   const applyContact = (contact) => {
@@ -313,6 +338,8 @@ export default function QvapayWidget({ variant = 'list' }) {
   const searchQuery = methodSearch.trim().toLowerCase();
   const countryMethods = QVAPAY_METHODS.filter((m) => m.fiat === receiveFiat && m.country === methodCountry);
   const countryLabel = (QVAPAY_COUNTRIES.find((c) => c.code === methodCountry) || QVAPAY_COUNTRIES[0]).label;
+  const chainLabel = (QVAPAY_PAY_CHAINS.find((c) => c.code === payChain) || QVAPAY_PAY_CHAINS[0]).label;
+  const chainCryptos = QVAPAY_PAY_CRYPTOS.filter((c) => (QVAPAY_PAY_CHAINS.find((x) => x.code === payChain) || QVAPAY_PAY_CHAINS[0]).cryptos.includes(c.code));
   const filteredMethods = searchQuery
     ? countryMethods.filter((m) => `${m.label} ${m.tick} ${m.short || ''}`.toLowerCase().includes(searchQuery))
     : countryMethods;
@@ -352,6 +379,7 @@ export default function QvapayWidget({ variant = 'list' }) {
           </p>
           <dl className="qv-summary">
             <div className="qv-summary-row"><dt>Monto</dt><dd>{fmtUsd(amountNum)} {payCrypto}</dd></div>
+            <div className="qv-summary-row"><dt>Cadena</dt><dd>{chainLabel}</dd></div>
           </dl>
           <p className="qv-demo-note">Simulación: no se envió ningún retiro real a QvaPay.</p>
           <button type="button" className="qv-cta" onClick={reset}>Hacer otro retiro</button>
@@ -615,6 +643,7 @@ export default function QvapayWidget({ variant = 'list' }) {
             {/* Confirmar: resumen de todo antes de retirar. */}
             <dl className="qv-summary qv-summary-confirm">
               <div className="qv-summary-row"><dt>Retiras</dt><dd>{fmtUsd(amountNum)} {payCrypto}</dd></div>
+              <div className="qv-summary-row"><dt>Cadena</dt><dd>{chainLabel}</dd></div>
               <div className="qv-summary-row"><dt>Recibes (estimado)</dt><dd>{fmtUsd(receiveAmount)} {receiveFiat}</dd></div>
               <div className="qv-summary-row"><dt>Retirar con</dt><dd>{method.label} · {method.tick}</dd></div>
               <div className="qv-summary-row"><dt>Destinatario</dt><dd className="qv-summary-recipient"><span>{recipientName}</span>{recipientKey && <span className="qv-summary-key">{recipientKey}</span>}</dd></div>
@@ -721,20 +750,46 @@ export default function QvapayWidget({ variant = 'list' }) {
         </div>
       )}
 
-      {/* Panel de selección de la crypto con la que se paga. */}
+      {/* Panel de selección de la crypto con la que se paga. La cadena
+          se elige con una píldora arriba a la derecha, como el país en el
+          panel de métodos; al tocarla, el panel muestra la lista de cadenas. */}
       {cryptoOverlay && (
-        <div className="qv-method-overlay" role="dialog" aria-label="Pagar con">
-          <div className="qv-overlay-head">
-            <button type="button" className="qv-overlay-back" aria-label="Volver" onClick={() => setCryptoOverlay(false)}>
+        <div className="qv-method-overlay" role="dialog" aria-label={chainOverlay ? 'Seleccionar cadena' : 'Pagar con'}>
+          <div className="qv-overlay-head qv-overlay-head-country">
+            <button type="button" className="qv-overlay-back" aria-label="Volver" onClick={() => chainOverlay ? setChainOverlay(false) : setCryptoOverlay(false)}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
-            <span className="qv-overlay-title">Pagar con</span>
-            <span aria-hidden="true" />
+            <span className="qv-overlay-title">{chainOverlay ? 'Seleccionar cadena' : 'Pagar con'}</span>
+            {chainOverlay ? <span aria-hidden="true" /> : (
+              <button type="button" className="qv-chain-btn" aria-label={`Cadena: ${chainLabel}. Cambiar cadena`} onClick={() => setChainOverlay(true)}>
+                <img className="qv-chain-flag" src={CHAIN_ICON[payChain]} alt="" />
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            )}
           </div>
+          {chainOverlay ? (
+            <div className="qv-overlay-list qv-overlay-list-no-search">
+              {QVAPAY_PAY_CHAINS.map((ch) => (
+                <button
+                  key={ch.code}
+                  type="button"
+                  className={`qv-overlay-option${ch.code === payChain ? ' is-selected' : ''}`}
+                  onClick={() => selectChain(ch.code)}
+                >
+                  <span className="qv-overlay-icon" aria-hidden="true"><img src={CHAIN_ICON[ch.code]} alt="" /></span>
+                  <span className="qv-overlay-name">{ch.label}</span>
+                  <span className="qv-overlay-min">{ch.cryptos.length} {ch.cryptos.length === 1 ? 'crypto' : 'cryptos'}</span>
+                  {ch.code === payChain && <span className="qv-overlay-check" aria-hidden="true">✓</span>}
+                </button>
+              ))}
+            </div>
+          ) : (
           <div className="qv-overlay-list qv-overlay-list-no-search">
-            {QVAPAY_PAY_CRYPTOS.map((c) => (
+            {chainCryptos.map((c) => (
               <button
                 key={c.code}
                 type="button"
@@ -748,6 +803,7 @@ export default function QvapayWidget({ variant = 'list' }) {
               </button>
             ))}
           </div>
+          )}
         </div>
       )}
 

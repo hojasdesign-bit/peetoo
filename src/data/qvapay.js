@@ -218,6 +218,21 @@ export const QVAPAY_PAY_CRYPTOS = [
   { code: 'OUSD', label: 'Origin USD' },
 ];
 
+// Cadenas (blockchains) para pagar con crypto: cada cadena ofrece las
+// stablecoins que existen en ella. BNB Chain sale por defecto: es la
+// que más se usa en Cuba. Al cambiar de cadena, la crypto se ajusta a
+// la primera de esa cadena si la elegida no existe en ella.
+export const QVAPAY_PAY_CHAINS = [
+  { code: 'BSC', label: 'BNB Chain', cryptos: ['USDT', 'USDC', 'ZLUSD'] },
+  { code: 'ETH', label: 'Ethereum', cryptos: ['USDT', 'USDC', 'USAT', 'PYUSD', 'OUSD'] },
+  { code: 'POL', label: 'Polygon', cryptos: ['USDT', 'USDC'] },
+  { code: 'ARB', label: 'Arbitrum', cryptos: ['USDT', 'USDC'] },
+  { code: 'OP', label: 'Optimism', cryptos: ['USDT', 'USDC'] },
+  { code: 'BASE', label: 'Base', cryptos: ['USDT', 'USDC'] },
+  { code: 'SOL', label: 'Solana', cryptos: ['USDT', 'USDC', 'PYUSD'] },
+  { code: 'TRX', label: 'Tron', cryptos: ['USDT'] },
+];
+
 // Fiats que se pueden recibir (la tarjeta CUP es la única vía para CUP).
 export const QVAPAY_RECEIVE_FIATS = [
   { code: 'USD', label: 'Dólar estadounidense' },
