@@ -395,6 +395,7 @@ export default function QvapayWidget({ variant = 'list' }) {
                   placeholder="0,00"
                 />
                 <button type="button" className="qv-pill qv-pill-btn" aria-label={`Pagar con ${payCrypto}. Cambiar crypto`} onClick={() => setCryptoOverlay(true)}>
+                  <img className="qv-pill-icon" src={PAY_CRYPTO_ICON[payCrypto]} alt="" />
                   {payCrypto}
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -411,6 +412,7 @@ export default function QvapayWidget({ variant = 'list' }) {
                   {receiveFiat === 'CUP' ? fmtUsd(receiveAmount) : `$${fmtUsd(receiveAmount)}`}
                 </span>
                 <button type="button" className="qv-pill qv-pill-btn" aria-label={`Recibir en ${receiveFiat}. Cambiar fiat`} onClick={() => setFiatOverlay(true)}>
+                  <img className="qv-pill-icon" src={RECEIVE_FIAT_ICON[receiveFiat]} alt="" />
                   {receiveFiat}
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
