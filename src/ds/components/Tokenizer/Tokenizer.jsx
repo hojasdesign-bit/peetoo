@@ -35,6 +35,9 @@ export function Tokenizer({
 
   const onKeyDown = (event) => {
     if (event.key === 'Enter') {
+      // El Enter que confirma una composición IME no confirma el valor
+      // (Modern Web Guidance: isComposing o keyCode 229).
+      if (event.isComposing || event.keyCode === 229) return;
       event.preventDefault();
       commit(draft);
     } else if (event.key === ',') {

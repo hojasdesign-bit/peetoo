@@ -106,7 +106,7 @@ function keyLineFor(tick, d) {
 // método no tiene contactos guardados, formulario vacío ("otra persona").
 function defaultRecipient(tick, extras) {
   const saved = [...QVAPAY_SAVED_CONTACTS, ...extras].filter((c) => c.tick === tick);
-  const recent = [...extras].reverse().find((c) => c.tick === tick);
+  const recent = extras.findLast((c) => c.tick === tick);
   const pick = recent || saved[0];
   return pick
     ? { mode: 'saved', details: { ...pick.details }, applied: pick.name }

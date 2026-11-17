@@ -32,7 +32,9 @@ export function ChatComposer({
         placeholder={placeholder}
         aria-label="Mensaje"
         onKeyDown={(e) => {
-          if (e.key === 'Enter') send();
+          // No enviar si el Enter confirma una composición IME
+          // (Modern Web Guidance: isComposing o keyCode 229).
+          if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) send();
         }}
       />
       <button type="button" className={styles.send} onClick={send} disabled={!value?.trim()} aria-label="Enviar">

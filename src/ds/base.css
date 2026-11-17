@@ -53,11 +53,19 @@ button { font-family: inherit; }
   color: var(--cds-on-accent);
 }
 
-/* Scrollbar sutil a juego */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: var(--cds-border-strong);
-  border-radius: var(--cds-radius-pill);
-  border: 2px solid var(--cds-bg);
+/* Scrollbar sutil a juego: propiedades estándar primero y el
+   pseudo-elemento de WebKit solo como respaldo donde no exista
+   scrollbar-color (Modern Web Guidance). */
+html {
+  scrollbar-color: var(--cds-border-strong) transparent;
+  scrollbar-width: auto;
+}
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--cds-border-strong);
+    border-radius: var(--cds-radius-pill);
+    border: 2px solid var(--cds-bg);
+  }
 }
