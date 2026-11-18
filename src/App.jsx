@@ -328,9 +328,11 @@ export default function App() {
   // tomar la orden se entra al chat con el anunciante y al completar
   // se le valora. Recibe la oferta y las dos patas del modal.
   const [divisaOffer, setDivisaOffer] = React.useState(null);
+  const [divisaTakeKey, setDivisaTakeKey] = React.useState(0);
   const [divisaDas, setDivisaDas] = React.useState(null);
   const [divisaRecibes, setDivisaRecibes] = React.useState(null);
   const goToDivisaOrder = (offer, das, recibes) => {
+    setDivisaTakeKey((k) => k + 1);
     setDivisaOffer(offer || null);
     setDivisaDas(das || null);
     setDivisaRecibes(recibes || null);
@@ -1468,7 +1470,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
       ) : view === 'qvapay-debug' ? (
       <React.Suspense fallback={null}><QvapayDebugView /></React.Suspense>
       ) : view === 'divisa-order' ? (
-      <React.Suspense fallback={null}><DivisaOrderView offer={divisaOffer} das={divisaDas} recibes={divisaRecibes} goToMarket={goToMarket} goToTrader={goToTrader} user={user} onRequireLogin={requireLogin} /></React.Suspense>
+      <React.Suspense fallback={null}><DivisaOrderView offer={divisaOffer} das={divisaDas} recibes={divisaRecibes} goToMarket={goToMarket} goToTrader={goToTrader} user={user} onRequireLogin={requireLogin} takeKey={divisaTakeKey} /></React.Suspense>
       ) : view === 'profile' ? (
       <React.Suspense fallback={null}><ProfileView profileTrader={profileTrader} profileOffers={profileOffers} profileBuyCount={profileBuyCount} profileSellCount={profileSellCount} profilePayMethods={profilePayMethods} profileChains={profileChains} profileHasCash={profileHasCash} profileHasOnline={profileHasOnline} profileCashCities={profileCashCities} profileCryptoCounts={profileCryptoCounts} profileFiatCounts={profileFiatCounts} profileOthersAvg={profileOthersAvg} gaugeC={gaugeC} profileCurrent={profileCurrent} profileTotalPages={profileTotalPages} profilePageOffers={profilePageOffers} profileFrom={profileFrom} profileTo={profileTo} showAllCryptos={showAllCryptos} setShowAllCryptos={setShowAllCryptos} showAllFiats={showAllFiats} setShowAllFiats={setShowAllFiats} copiedMethod={copiedMethod} qrModal={qrModal} setQrModal={setQrModal} handleCopy={handleCopy} scrollToOffers={scrollToOffers} setProfilePage={setProfilePage} goToMarket={goToMarket} renderOfferRow={renderOfferRow} /></React.Suspense>
       ) : view === 'legal' ? (

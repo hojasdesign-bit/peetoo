@@ -80,7 +80,7 @@ function defaultAmounts(offer) {
   };
 }
 
-export default function DivisaOrderView({ offer, das, recibes, goToMarket, goToTrader, user, onRequireLogin }) {
+export default function DivisaOrderView({ offer, das, recibes, goToMarket, goToTrader, user, onRequireLogin, takeKey = 0 }) {
   const propOffer = offer || defaultOffer();
   const defaults = defaultAmounts(propOffer);
   const propDas = das && Number(das.amount) > 0 ? das : defaults.das;
@@ -168,15 +168,20 @@ export default function DivisaOrderView({ offer, das, recibes, goToMarket, goToT
 
   // Arranque: retoma la orden guardada si sigue abierta y es de esta
   // cuenta; si no, crea una. Sin sesión no se crea ni se retoma nada.
+  // Si la entrada es una toma explícita (takeKey nuevo), se crea la
+  // orden de ESA oferta aunque haya otra abierta guardada.
+  const lastTakeKeyRef = useRef(0);
   useEffect(() => {
     if (!user) return undefined;
+    const isExplicitTake = takeKey > lastTakeKeyRef.current;
+    lastTakeKeyRef.current = takeKey;
     let cancelled = false;
     (async () => {
       try {
         setOrderError(false);
         let savedId = null;
         try { savedId = window.localStorage.getItem(ORDER_KEY); } catch { /* sin almacenamiento */ }
-        const existing = savedId ? await fetchOrder(savedId).catch(() => null) : null;
+        const existing = !isExplicitTake && savedId ? await fetchOrder(savedId).catch(() => null) : null;
         if (cancelled) return;
         if (
           existing
@@ -194,9 +199,10 @@ export default function DivisaOrderView({ offer, das, recibes, goToMarket, goToT
       }
     })();
     return () => { cancelled = true; };
-    // Al montar, al reintentar y cuando la sesión llega.
+    // Al montar, al reintentar, cuando la sesión llega y en cada
+    // toma explícita.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bootKey, user]);
+  }, [bootKey, user, takeKey]);
 
   // Sondeo de la orden y su chat cada 5 s, pausado en segundo plano
   // (Modern Web Guidance: efficient-background-processing).
