@@ -47,6 +47,7 @@ const SwappedView = React.lazy(() => import('./views/SwappedView.jsx'));
 const QvapayView = React.lazy(() => import('./views/QvapayView.jsx'));
 const QvapayDebugView = React.lazy(() => import('./views/QvapayDebugView.jsx'));
 const ProfileView = React.lazy(() => import('./views/ProfileView.jsx'));
+const DivisaOrderView = React.lazy(() => import('./views/DivisaOrderView.jsx'));
 const LegalPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.LegalPage })));
 const GlossaryPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.GlossaryPage })));
 const GlossaryTermPage = React.lazy(() => import('./views/InfoPages.jsx').then((m) => ({ default: m.GlossaryTermPage })));
@@ -197,6 +198,7 @@ export default function App() {
     }
     if (inner === '/qvapay/debug') return { view: 'qvapay-debug', profile: '' };
     if (inner === '/qvapay') return { view: 'qvapay', profile: '' };
+    if (inner === '/divisa/orden') return { view: 'divisa-order', profile: '', segment: 'divisa' };
     if (inner === '/legal') return { view: 'legal', profile: '' };
     if (inner === '/glosario') return { view: 'glossary', profile: '' };
     const gm = inner.match(/^\/glosario\/(.+)$/);
@@ -277,7 +279,7 @@ export default function App() {
   // Legal, Glosario): la página queda donde estaba. A petición suya,
   // goToMarket no hace scroll en ningún camino.
   const goToMarket = () => {
-    if (view === 'home' || view === 'swapped' || view === 'profile' || view === 'legal' || view === 'glossary' || view === 'glossary-term') {
+    if (view === 'home' || view === 'swapped' || view === 'profile' || view === 'legal' || view === 'glossary' || view === 'glossary-term' || view === 'divisa-order') {
       window.history.pushState(null, '', `/${marketSegment}/`);
       setView('market');
       setQrModal(null);
@@ -318,6 +320,24 @@ export default function App() {
     setQrModal(null);
     window.history.pushState(null, '', `/crypto/perfil/${encodeURIComponent(name)}`);
     setView('profile');
+    window.scrollTo(0, 0);
+  };
+  // Pantalla de la orden de divisa (/divisa/orden): sin garantía; al
+  // tomar la orden se entra al chat con el anunciante y al completar
+  // se le valora. Recibe la oferta y las dos patas del modal.
+  const [divisaOffer, setDivisaOffer] = React.useState(null);
+  const [divisaDas, setDivisaDas] = React.useState(null);
+  const [divisaRecibes, setDivisaRecibes] = React.useState(null);
+  const goToDivisaOrder = (offer, das, recibes) => {
+    setDivisaOffer(offer || null);
+    setDivisaDas(das || null);
+    setDivisaRecibes(recibes || null);
+    setSelected(null);
+    setOrderDone(false);
+    setQrModal(null);
+    setMarketSegment('divisa');
+    window.history.pushState(null, '', '/divisa/orden');
+    setView('divisa-order');
     window.scrollTo(0, 0);
   };
   const scrollToOffers = () => {
@@ -1381,6 +1401,8 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
       <React.Suspense fallback={null}><QvapayView /></React.Suspense>
       ) : view === 'qvapay-debug' ? (
       <React.Suspense fallback={null}><QvapayDebugView /></React.Suspense>
+      ) : view === 'divisa-order' ? (
+      <React.Suspense fallback={null}><DivisaOrderView offer={divisaOffer} das={divisaDas} recibes={divisaRecibes} goToMarket={goToMarket} goToTrader={goToTrader} /></React.Suspense>
       ) : view === 'profile' ? (
       <React.Suspense fallback={null}><ProfileView profileTrader={profileTrader} profileOffers={profileOffers} profileBuyCount={profileBuyCount} profileSellCount={profileSellCount} profilePayMethods={profilePayMethods} profileChains={profileChains} profileHasCash={profileHasCash} profileHasOnline={profileHasOnline} profileCashCities={profileCashCities} profileCryptoCounts={profileCryptoCounts} profileFiatCounts={profileFiatCounts} profileOthersAvg={profileOthersAvg} gaugeC={gaugeC} profileCurrent={profileCurrent} profileTotalPages={profileTotalPages} profilePageOffers={profilePageOffers} profileFrom={profileFrom} profileTo={profileTo} showAllCryptos={showAllCryptos} setShowAllCryptos={setShowAllCryptos} showAllFiats={showAllFiats} setShowAllFiats={setShowAllFiats} copiedMethod={copiedMethod} qrModal={qrModal} setQrModal={setQrModal} handleCopy={handleCopy} scrollToOffers={scrollToOffers} setProfilePage={setProfilePage} goToMarket={goToMarket} renderOfferRow={renderOfferRow} /></React.Suspense>
       ) : view === 'legal' ? (
@@ -1810,6 +1832,9 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
             <img src={checkIcon} alt="" className="ui-icon-lg" />
             <Text>Orden creada: das {fmt(swapDasAmt)} {swapDasCode} y recibes {fmt(swapRecibesAmt)} {swapRecibesCode} con {selected.advertiser_name}.</Text>
             <Text tone="muted">Datos de muestra: no se realizó ninguna operación real.</Text>
+            {isDivisaOffer(selected) && (
+              <Button size="lg" variant="secondary" onClick={() => goToDivisaOrder(selected, { amount: swapDasAmt, code: swapDasCode }, { amount: swapRecibesAmt, code: swapRecibesCode })}>Ir al chat de la orden</Button>
+            )}
             <Button size="lg" onClick={closeModal}>{view === 'profile' ? 'Volver al perfil' : 'Volver al mercado'}</Button>
           </div>
         )}
