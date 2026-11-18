@@ -76,3 +76,10 @@
   margin-bottom: var(--cds-space-4);
   padding-right: var(--cds-space-1);
 }
+
+/* Abrir la conversación en el último mensaje de forma declarativa
+   (Modern Web Guidance: scroll-target-on-load); el efecto de scroll
+   es el respaldo donde no hay soporte. */
+.lastMsg {
+  scroll-initial-target: nearest;
+}

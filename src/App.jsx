@@ -18,6 +18,8 @@ import { MetadataList } from './ds/components/MetadataList/MetadataList.jsx';
 import { SwapPair } from './ds/components/SwapPair/SwapPair.jsx';
 import { OverflowChips } from './ds/components/OverflowChips/OverflowChips.jsx';
 import { NetworkChip } from './ds/components/NetworkChip/NetworkChip.jsx';
+import { AuthModal } from './components/AuthModal.jsx';
+import { getSession, onAuthChange, signOut, userLabelOf, walletAddressOf } from './lib/auth.js';
 import { PageBackground } from './ds/components/PageBackground/PageBackground.jsx';
 import { DropdownMenu } from './ds/components/DropdownMenu/DropdownMenu.jsx';
 import { MenuLinkColumn } from './ds/components/MenuLinkColumn/MenuLinkColumn.jsx';
@@ -339,6 +341,45 @@ export default function App() {
     window.history.pushState(null, '', '/divisa/orden');
     setView('divisa-order');
     window.scrollTo(0, 0);
+  };
+  // Sesión de Coob (Supabase Auth, la misma cuenta que la web de
+  // remesas): sin sesión no se toma ninguna orden; con sesión, la
+  // orden nace a nombre de la cuenta. Si el usuario pulsa «Comenzar
+  // intercambio» sin sesión, se le pide entrar y al lograrlo la orden
+  // se completa sola (pendingTake).
+  const [session, setSession] = React.useState(null);
+  const [authOpen, setAuthOpen] = React.useState(false);
+  const [userMenuOpen, setUserMenuOpen] = React.useState(false);
+  const [pendingTake, setPendingTake] = React.useState(false);
+  React.useEffect(() => {
+    let active = true;
+    getSession().then((s) => { if (active) setSession(s); });
+    const unsubscribe = onAuthChange((s) => {
+      setSession(s);
+      if (s) {
+        setAuthOpen(false); // Al entrar, el modal se cierra solo.
+        if (pendingTake) {
+          setPendingTake(false);
+          setOrderDone(true);
+        }
+      }
+    });
+    return () => { active = false; unsubscribe(); };
+  }, [pendingTake]);
+  React.useEffect(() => { setUserMenuOpen(false); }, [view]);
+  const user = session?.user || null;
+  const handleSignOut = async () => {
+    setUserMenuOpen(false);
+    await signOut();
+  };
+  const requireLogin = () => setAuthOpen(true);
+  const handleTakeOrder = () => {
+    if (user) {
+      setOrderDone(true);
+    } else {
+      setPendingTake(true);
+      setAuthOpen(true);
+    }
   };
   const scrollToOffers = () => {
     document.getElementById('profile-offers')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1295,8 +1336,33 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
           </span>
           <span className="topbar-right">
             <span className="topbar-demo"><Badge variant="lavender">Demo · datos de muestra</Badge></span>
-            {/* Botón de login, sin acción por el momento */}
-            <button type="button" className="topbar-login">Login</button>
+            {user ? (
+              <span className="topbar-user">
+                <button
+                  type="button"
+                  className="topbar-user-btn"
+                  aria-haspopup="menu"
+                  aria-expanded={userMenuOpen}
+                  onClick={() => setUserMenuOpen((o) => !o)}
+                >
+                  <span className="topbar-user-dot" aria-hidden="true" />
+                  <span className="topbar-user-label">{userLabelOf(user)}</span>
+                </button>
+                {userMenuOpen && (
+                  <span className="user-menu" role="menu" aria-label="Mi cuenta">
+                    <span className="user-menu-who">{userLabelOf(user)}</span>
+                    <span className="user-menu-sub">
+                      {walletAddressOf(user) ? `Wallet ${walletAddressOf(user)}` : 'Wallet integrada en tu cuenta'}
+                    </span>
+                    <button type="button" className="user-menu-btn" role="menuitem" onClick={handleSignOut}>
+                      Cerrar sesión
+                    </button>
+                  </span>
+                )}
+              </span>
+            ) : (
+              <button type="button" className="topbar-login" onClick={() => setAuthOpen(true)}>Login</button>
+            )}
           </span>
           <button
             type="button"
@@ -1402,7 +1468,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
       ) : view === 'qvapay-debug' ? (
       <React.Suspense fallback={null}><QvapayDebugView /></React.Suspense>
       ) : view === 'divisa-order' ? (
-      <React.Suspense fallback={null}><DivisaOrderView offer={divisaOffer} das={divisaDas} recibes={divisaRecibes} goToMarket={goToMarket} goToTrader={goToTrader} /></React.Suspense>
+      <React.Suspense fallback={null}><DivisaOrderView offer={divisaOffer} das={divisaDas} recibes={divisaRecibes} goToMarket={goToMarket} goToTrader={goToTrader} user={user} onRequireLogin={requireLogin} /></React.Suspense>
       ) : view === 'profile' ? (
       <React.Suspense fallback={null}><ProfileView profileTrader={profileTrader} profileOffers={profileOffers} profileBuyCount={profileBuyCount} profileSellCount={profileSellCount} profilePayMethods={profilePayMethods} profileChains={profileChains} profileHasCash={profileHasCash} profileHasOnline={profileHasOnline} profileCashCities={profileCashCities} profileCryptoCounts={profileCryptoCounts} profileFiatCounts={profileFiatCounts} profileOthersAvg={profileOthersAvg} gaugeC={gaugeC} profileCurrent={profileCurrent} profileTotalPages={profileTotalPages} profilePageOffers={profilePageOffers} profileFrom={profileFrom} profileTo={profileTo} showAllCryptos={showAllCryptos} setShowAllCryptos={setShowAllCryptos} showAllFiats={showAllFiats} setShowAllFiats={setShowAllFiats} copiedMethod={copiedMethod} qrModal={qrModal} setQrModal={setQrModal} handleCopy={handleCopy} scrollToOffers={scrollToOffers} setProfilePage={setProfilePage} goToMarket={goToMarket} renderOfferRow={renderOfferRow} /></React.Suspense>
       ) : view === 'legal' ? (
@@ -1775,7 +1841,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
                 <Text tone="muted">El monto debe estar entre {fmt(swapDasMin)} y {fmt(swapDasMax)} {swapDasCode}.</Text>
               )}
               <div className="order-actions">
-                <Button size="lg" disabled={!modalValid} onClick={() => setOrderDone(true)}>Comenzar intercambio</Button>
+                <Button size="lg" disabled={!modalValid} onClick={handleTakeOrder}>Comenzar intercambio</Button>
                 <div className="order-more" ref={moreRef}>
                   <button type="button" className="order-more-btn" aria-label="Más opciones" aria-haspopup="menu" aria-expanded={moreOpen} onClick={toggleMore}>•••</button>
                   {moreOpen && (
@@ -1839,6 +1905,7 @@ const swapDasMax = orderSide === 'sell' ? (selected?.max_amount ?? 0) / (selecte
           </div>
         )}
       </Modal>
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </div>
   );
 }

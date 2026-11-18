@@ -1427,3 +1427,78 @@ body {
 .qv-contact-key { font-size: 12px; color: var(--cds-muted); }
 .qv-save-check { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 14px; color: var(--cds-ink); cursor: pointer; }
 .qv-save-check input { width: 16px; height: 16px; accent-color: var(--cds-accent); }
+
+/* ===== Login (dialog nativo) y cuenta en el header ===== */
+dialog.auth-dialog {
+  border: none; padding: 0; background: transparent;
+  width: min(420px, calc(100vw - 32px)); max-width: 420px;
+  margin: auto;
+}
+dialog.auth-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.55);
+  overflow: hidden; overscroll-behavior: contain;
+}
+dialog.auth-dialog:modal { overscroll-behavior: contain; }
+.auth-card {
+  background: var(--cds-surface); color: var(--cds-ink);
+  border: 1px solid var(--cds-border); border-radius: 28px;
+  padding: 28px 24px 24px;
+  display: flex; flex-direction: column; gap: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+[data-theme="claro"] .auth-card { box-shadow: 0 24px 60px rgba(30, 27, 80, 0.16); }
+.auth-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.auth-title { font-size: 24px; font-weight: 700; line-height: 1.2; letter-spacing: var(--cds-tracking-tight); margin: 0; }
+.auth-close {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; flex: none; margin: -6px -6px 0 0;
+  color: var(--cds-muted); background: transparent; border: 0; border-radius: 999px; cursor: pointer;
+}
+.auth-close:hover { color: var(--cds-ink); background: var(--cds-surface-btn); }
+.auth-text { font-size: 15px; line-height: 1.5; color: var(--cds-muted); margin: 0; }
+.auth-text strong { color: var(--cds-ink); }
+.auth-divider { display: flex; align-items: center; gap: 12px; color: var(--cds-muted); font-size: 13px; }
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--cds-border); }
+.auth-form { display: flex; flex-direction: column; gap: 10px; }
+.auth-label { font-size: 14px; font-weight: 600; color: var(--cds-ink); }
+.auth-input {
+  height: 50px; padding: 0 16px; width: 100%; box-sizing: border-box;
+  font: inherit; font-size: 16px; color: var(--cds-ink);
+  background: var(--cds-input-bg, var(--cds-surface-3));
+  border: 1px solid var(--cds-border); border-radius: 16px; outline: none;
+}
+.auth-input:focus { border-color: var(--cds-accent); box-shadow: 0 0 0 3px rgba(70, 8, 227, 0.38); }
+.auth-sent { display: flex; flex-direction: column; gap: 14px; }
+.auth-error { font-size: 14px; line-height: 1.5; color: var(--cds-danger, #ef4444); margin: 0; }
+.auth-note { font-size: 13px; line-height: 1.5; color: var(--cds-muted); margin: 0; }
+
+/* Chip de cuenta cuando hay sesión: mismo tratamiento que el botón de
+   login, con el punto verde de sesión activa. */
+.topbar-user { position: relative; display: inline-flex; }
+.topbar-user-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 40px; padding: 0 16px; max-width: 220px;
+  font: inherit; font-size: 15px; font-weight: 500; line-height: 22px;
+  color: var(--cds-ink); background: transparent;
+  border: 1px solid var(--cds-border-strong); border-radius: 999px;
+  cursor: pointer; white-space: nowrap;
+}
+.topbar-user-btn:hover { border-color: var(--cds-accent); }
+.topbar-user-dot { width: 8px; height: 8px; flex: none; border-radius: 999px; background: var(--cds-success); }
+.topbar-user-label { overflow: hidden; text-overflow: ellipsis; }
+.user-menu {
+  position: absolute; top: calc(100% + 10px); right: 0; z-index: 60;
+  width: 260px; padding: 16px;
+  background: var(--cds-surface); border: 1px solid var(--cds-border); border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  display: flex; flex-direction: column; gap: 4px;
+}
+[data-theme="claro"] .user-menu { box-shadow: 0 24px 60px rgba(30, 27, 80, 0.14); }
+.user-menu-who { font-size: 14px; font-weight: 600; color: var(--cds-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-menu-sub { font-size: 12px; color: var(--cds-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 8px; }
+.user-menu-btn {
+  display: block; width: 100%; text-align: left; padding: 10px 12px;
+  font: inherit; font-size: 14px; font-weight: 500; color: var(--cds-ink);
+  background: transparent; border: 0; border-radius: 10px; cursor: pointer;
+}
+.user-menu-btn:hover { background: var(--cds-surface-btn); }
